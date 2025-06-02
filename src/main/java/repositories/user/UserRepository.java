@@ -77,4 +77,21 @@ public class UserRepository implements IUserRepository {
         }
         return false;
     }
+
+    @Override
+    public boolean update(User user) {
+        String sql = "UPDATE nguoi_dung SET ten = ?, so_dien_thoai = ?, dia_chi = ? WHERE email = ?";
+        try (Connection connection = JDBCUtils.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            preparedStatement.setString(1, user.getName());
+            preparedStatement.setString(2, user.getPhoneNumber());
+            preparedStatement.setString(3, user.getAddress());
+            preparedStatement.setString(4, user.getEmail());
+            return preparedStatement.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
 }

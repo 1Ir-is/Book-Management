@@ -6,4 +6,5 @@ public interface IUserService {
     User login(String email, String password);
     boolean register(User user);
     boolean isEmailExists(String email);
+    boolean updateUser(User user);
 }
