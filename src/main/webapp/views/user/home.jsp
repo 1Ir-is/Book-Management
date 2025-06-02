@@ -6,11 +6,6 @@
   To change this template use File | Settings | File Templates.
 --%>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
-<%@ page import="models.User" %>
-<%
-  User user = (User) session.getAttribute("user");
-%>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -30,145 +25,17 @@
 
   <!-- Custom Css file link-->
   <link rel="stylesheet" href="<%= request.getContextPath() %>/assets/css/style.css" />
+
+  <!-- Toastr Notifications -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet"/>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 </head>
+
 <body>
 <!-- header section start -->
-
-<header class="header">
-  <!-- header 1 -->
-  <div class="header-1">
-    <a href="<%= request.getContextPath() %>/home" class="logo"><i class="fas fa-book"></i> 4Book</a>
-
-    <form action="" class="search-form">
-      <input type="search" placeholder="Tìm kiếm ..." id="search-box" />
-      <label for="search-box" class="fas fa-search"></label>
-    </form>
-
-    <div class="icons">
-      <div id="search-btn" class="fas fa-search"></div>
-      <a href="#" class="fas fa-heart"></a>
-      <a href="<%= request.getContextPath() %>/cart.jsp" class="fas fa-shopping-cart"></a>
-
-      <div class="dropdown">
-        <% if (user != null) { %>
-        <!-- Đã đăng nhập -->
-        <div class="fas fa-user dropbtn"></div>
-        <div class="dropdown-content" style="padding: 8px 0; min-width: 180px;">
-          <div class="drop-content" style="font-weight: 600; font-size: 14px; padding: 6px 14px; cursor: default; line-height: 1.4;">
-            Xin chào,<br />
-            <%= user.getName() %>
-          </div>
-
-          <div style="height: 1px; background-color: #e0e0e0; margin: 6px 0;"></div>
-
-          <a class="drop-content" href="<%= request.getContextPath() %>/profile.jsp" style="padding: 6px 14px; display: block; text-decoration: none; color: #333; font-size: 13px;">
-            Thông tin
-          </a>
-          <a class="drop-content" href="<%= request.getContextPath() %>/history.jsp" style="padding: 6px 14px; display: block; text-decoration: none; color: #333; font-size: 13px;">
-            Lịch sử mua hàng
-          </a>
-          <a class="drop-content" href="<%= request.getContextPath() %>/logout" style="padding: 6px 14px; display: block; text-decoration: none; color: #333; font-size: 13px;">
-            Đăng xuất
-          </a>
-        </div>
-
-
-        <% } else { %>
-        <!-- Chưa đăng nhập -->
-        <div id="login-btn" class="fas fa-user dropbtn"></div>
-        <% } %>
-      </div>
-    </div>
-  </div>
-
-  <!-- header 2 -->
-  <div class="header-2">
-    <nav class="navbar">
-      <a class="dropbtn" href="<%= request.getContextPath() %>/books.jsp">Khám phá sách hay</a>
-      <div class="dropdown">
-        <a class="dropbtn" href="#Category">Thể loại</a>
-        <div class="dropdown-content">
-          <a class="drop-content" href="#">Kinh dị</a>
-          <a class="drop-content" href="#">Lãng mạn</a>
-          <a class="drop-content" href="#">Người lớn</a>
-        </div>
-      </div>
-      <a class="dropbtn" href="#reviews">Đánh giá</a>
-      <a class="dropbtn" href="#blogs">Blog</a>
-    </nav>
-  </div>
-</header>
+<jsp:include page="views/common/header.jsp" />
 <!-- header section end -->
-
-<!-- bottom navbar start-->
-
-<header class="mobile-header">
-  <div
-          class="mobile-header-logo"
-          style="text-align: center; padding-top: 1rem"
-  >
-    <img src="<%= request.getContextPath() %>/assets/image/book-shop.png" alt="4Book Logo" style="height: 38px" />
-  </div>
-  <div class="mobile-header-bar">
-    <a href="#" class="header-icon-left fas fa-list"></a>
-    <form class="mobile-search-form">
-      <input type="text" placeholder="Tìm Kiếm Sách..." />
-    </form>
-    <div class="header-icons">
-      <a href="<%= request.getContextPath() %>/cart.jsp" class="fas fa-shopping-cart"></a>
-      <a href="#" id="mobile-login-btn" class="fas fa-user"></a>
-    </div>
-  </div>
-</header>
-
-<div id="mobile-sidebar" class="mobile-sidebar">
-  <div class="sidebar-header">
-    <span id="close-sidebar" class="fas fa-arrow-left"></span>
-    <span class="sidebar-title">Danh Mục Sản Phẩm</span>
-  </div>
-  <ul class="sidebar-menu">
-    <li>
-      <a href="<%= request.getContextPath() %>/books.jsp"><b>Tất Cả Sản Phẩm</b></a>
-    </li>
-    <li class="has-submenu">
-      <a href="#" class="submenu-toggle">
-        <b>Thể Loại</b>
-        <span class="fas fa-chevron-down" style="float: right"></span>
-      </a>
-      <ul class="submenu">
-        <li><a href="#">Văn Học</a></li>
-        <li><a href="#">Kinh Tế</a></li>
-        <li><a href="#">Tâm Lý - Kỹ Năng Sống</a></li>
-        <li><a href="#">Thiếu Nhi</a></li>
-        <li><a href="#">Giáo Khoa - Tham Khảo</a></li>
-      </ul>
-    </li>
-  </ul>
-</div>
-<div id="sidebar-overlay" class="sidebar-overlay"></div>
-<!-- bottom navbar start-->
-
-<!-- login form start-->
-<div class="login-form-container">
-  <div id="close-login-btn" class="fas fa-times"></div>
-
-  <form method="post" action="<%= request.getContextPath() %>/login">
-    <h3>Đăng nhập</h3>
-    <span>Email</span>
-    <input type="email" class="box" name="email" placeholder="Nhập email của bạn" required />
-    <span>Mật khẩu</span>
-    <input type="password" class="box" name="password" placeholder="Nhập mật khẩu" required />
-    <div class="checkbox">
-      <input type="checkbox" id="remember-me" name="remember" />
-      <label for="remember-me"> Ghi nhớ đăng nhập</label>
-    </div>
-    <input type="submit" value="Đăng nhập" class="btn" />
-    <p><a href="#">Quên mật khẩu?</a></p>
-    <p><a href="<%= request.getContextPath() %>/register">Chưa có tài khoản?</a></p>
-  </form>
-</div>
-
-<!-- login form end-->
 
 <!-- home section start -->
 <section class="home" id="home">
@@ -191,120 +58,233 @@
 
 <!-- home section end -->
 
-<!-- service section start -->
-<section class="icons-container">
-  <div class="icons">
-    <i class="fas fa-plane"></i>
-    <div class="content">
-      <h3>Miễn phí vận chuyển</h3>
-      <p>Đơn hàng từ 2.500.000đ</p>
-    </div>
-  </div>
+<!-- featured section start -->
+<section class="featured" id="featured">
+  <h1 class="heading"><span>Sách Nổi Bật</span></h1>
 
-  <div class="icons">
-    <i class="fas fa-lock"></i>
-    <div class="content">
-      <h3>Thanh toán an toàn</h3>
-      <p>Bảo mật 100%</p>
+  <div class="featured-grid">
+    <div class="box">
+      <div class="image">
+        <img src="<%= request.getContextPath() %>/assets/image/book_1.jpg" alt="" />
+      </div>
+      <div class="content">
+        <h3>Sách Nổi Bật</h3>
+        <div class="price">369.000đ</div>
+      </div>
     </div>
-  </div>
-
-  <div class="icons">
-    <i class="fas fa-redo-alt"></i>
-    <div class="content">
-      <h3>Đổi trả dễ dàng</h3>
-      <p>Trong vòng 10 ngày</p>
+    <div class="box">
+      <div class="image">
+        <img src="<%= request.getContextPath() %>/assets/image/book_1.jpg" alt="" />
+      </div>
+      <div class="content">
+        <h3>Sách Nổi Bật</h3>
+        <div class="price">369.000đ</div>
+      </div>
     </div>
-  </div>
-
-  <div class="icons">
-    <i class="fas fa-headset"></i>
-    <div class="content">
-      <h3>Hỗ trợ 24/7</h3>
-      <p>Gọi cho chúng tôi bất cứ lúc nào</p>
+    <div class="box">
+      <div class="image">
+        <img src="<%= request.getContextPath() %>/assets/image/book_1.jpg" alt="" />
+      </div>
+      <div class="content">
+        <h3>Sách Nổi Bật</h3>
+        <div class="price">369.000đ</div>
+      </div>
     </div>
   </div>
 </section>
-<!-- service section end -->
+
+<!-- featured section end -->
+
+<!-- arrivals section start -->
+<section class="arrivals" id="arrivals">
+  <h1 class="heading"><span>Sách Mới Về</span></h1>
+
+  <div class="arrivals-grid">
+    <div class="box">
+      <div class="image">
+        <img src="<%= request.getContextPath() %>/assets/image/book_11.jpg" alt="" />
+      </div>
+      <div class="content">
+        <h3>Sách Mới Về</h3>
+        <div class="price">369.000đ</div>
+        <div class="stars">
+          <i class="fas fa-star"></i>
+          <i class="fas fa-star"></i>
+          <i class="fas fa-star"></i>
+          <i class="fas fa-star"></i>
+          <i class="fas fa-star-half-alt"></i>
+        </div>
+      </div>
+    </div>
+    <div class="box">
+      <div class="image">
+        <img src="<%= request.getContextPath() %>/assets/image/book_12.png" alt="" />
+      </div>
+      <div class="content">
+        <h3>Sách Mới Về</h3>
+        <div class="price">369.000đ</div>
+        <div class="stars">
+          <i class="fas fa-star"></i>
+          <i class="fas fa-star"></i>
+          <i class="fas fa-star"></i>
+          <i class="fas fa-star"></i>
+          <i class="fas fa-star-half-alt"></i>
+        </div>
+      </div>
+    </div>
+    <div class="box">
+      <div class="image">
+        <img src="<%= request.getContextPath() %>/assets/image/book_13.png" alt="" />
+      </div>
+      <div class="content">
+        <h3>Sách Mới Về</h3>
+        <div class="price">369.000đ</div>
+        <div class="stars">
+          <i class="fas fa-star"></i>
+          <i class="fas fa-star"></i>
+          <i class="fas fa-star"></i>
+          <i class="fas fa-star"></i>
+          <i class="fas fa-star-half-alt"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- arrivals section end -->
+
+<!-- deal section start -->
+<section class="deal">
+  <div class="content">
+    <h3>Ưu đãi trong ngày</h3>
+    <h1>Giảm giá đến 50%</h1>
+    <p>
+      Đừng bỏ lỡ cơ hội sở hữu những cuốn sách yêu thích với mức giá cực
+      sốc! Ưu đãi chỉ áp dụng trong hôm nay cho các đầu sách nổi bật, số
+      lượng có hạn. Nhanh tay chọn mua ngay để nhận thêm nhiều phần quà hấp
+      dẫn từ 4Book Store!
+    </p>
+    <a href="#" class="btn">Mua ngay</a>
+  </div>
+
+  <div class="image">
+    <img src="<%= request.getContextPath() %>/assets/image/about.png" alt="Ưu đãi trong ngày" />
+  </div>
+</section>
+<!-- deal section end -->
+
+<!-- review section start -->
+<section class="reviews" id="reviews">
+  <h1 class="heading"><span>Đánh Giá</span></h1>
+
+  <div class="reviews-grid">
+    <div class="box">
+      <img
+              src="https://scontent.fsgn2-4.fna.fbcdn.net/v/t39.30808-6/433010090_1874555349648586_4650447987992120796_n.jpg?_nc_cat=101&ccb=1-7&_nc_sid=6ee11a&_nc_eui2=AeEr0XJfh5_BvQYnHfmsbuoRpfQGyIgh3Bql9AbIiCHcGrPUpJkjBLqXKiR8g1ZrqkwcNLOUweUnTkQ0_aTMlZr0&_nc_ohc=9UW9zyudsUAQ7kNvwG_yk6p&_nc_oc=AdlWtYeCJmuCSGjYN7e7LYIwKPNN5jnq3vhJ5a5DtgfXD7QRUvvSFV7B-cAiPfGbY6Y&_nc_zt=23&_nc_ht=scontent.fsgn2-4.fna&_nc_gid=28VdL7yM3uz3aHDmXw64Tg&oh=00_AfLv4QWQyvqa6c-7L-40lBVKlgmK7CMNBNzhxsncRNlKgA&oe=683DB608"
+              alt="Ảnh người dùng 1"
+      />
+      <h3>Tôn Thất Duy</h3>
+      <p>
+        Sách giao nhanh, đóng gói cẩn thận. Nội dung rất hay và bổ ích, sẽ
+        tiếp tục ủng hộ shop!
+      </p>
+      <div class="stars">
+        <i class="fas fa-star"></i><i class="fas fa-star"></i
+      ><i class="fas fa-star"></i><i class="fas fa-star"></i
+      ><i class="fas fa-star-half-alt"></i>
+      </div>
+    </div>
+
+    <div class="box">
+      <img
+              src="https://scontent.fsgn2-9.fna.fbcdn.net/v/t39.30808-1/416373411_1426075498255549_6395391885592279694_n.jpg?stp=dst-jpg_s200x200_tt6&_nc_cat=103&ccb=1-7&_nc_sid=e99d92&_nc_eui2=AeEOcV38z9rt8W20hAXAFQ_ZJPrl3QtZ3JMk-uXdC1nckzYLFgcMtqCr18yDfF8facw81opFO0lAG_1GMYluzBrq&_nc_ohc=E9oyveCQJCAQ7kNvwFElwTY&_nc_oc=Admdgb6DVa7YV5wnv12HRDF8zc4F-0yeeu4qqmzYZssKDySKqnVmS254dhf9qWZgKbU&_nc_zt=24&_nc_ht=scontent.fsgn2-9.fna&_nc_gid=Crkf-U9NxHW0Xf9qSXz2pw&oh=00_AfIaCfJYur1DM1FXffMODxCa_EsClaBuO9-b9j0Z0Guulg&oe=683D9C4F"
+              alt="Ảnh người dùng 2"
+      />
+      <h3>Huỳnh Minh Huy</h3>
+      <p>
+        Shop tư vấn nhiệt tình, sách mới nguyên, giá tốt. Rất hài lòng với
+        dịch vụ!
+      </p>
+      <div class="stars">
+        <i class="fas fa-star"></i><i class="fas fa-star"></i
+      ><i class="fas fa-star"></i><i class="fas fa-star"></i
+      ><i class="fas fa-star-half-alt"></i>
+      </div>
+    </div>
+
+    <div class="box">
+      <img
+              src="https://scontent.fsgn2-6.fna.fbcdn.net/v/t39.30808-1/480577595_2285369648529429_1739447377459775153_n.jpg?stp=dst-jpg_s200x200_tt6&_nc_cat=111&ccb=1-7&_nc_sid=e99d92&_nc_eui2=AeEqOOK8PPnJyxP0PAAI1A5eGD8rN7pxfhcYPys3unF-FxwnC3fXgI6OCAv4Ej1CEG4MauD6XV2Y_T3v6zm7Tytq&_nc_ohc=-pXN07Gni4UQ7kNvwENkyMt&_nc_oc=AdknH14rfL_uUvwJVk46qlgXmA9kUjSxWFbNFKa7tiLv2sbYmYqRHUrBGM1AwgMM_W0&_nc_zt=24&_nc_ht=scontent.fsgn2-6.fna&_nc_gid=YJUrPdTZqdb4jIJVho4MrA&oh=00_AfL2O-a0YHpRky_w6ARh4ladM8WENLwiwnxN5AQauWkc5w&oe=683DB249"
+              alt="Ảnh người dùng 3"
+      />
+      <h3>Phan Tá Anh Vương</h3>
+      <p>
+        Đa dạng đầu sách, chất lượng in tốt. Mình đã giới thiệu cho bạn bè
+        cùng mua.
+      </p>
+      <div class="stars">
+        <i class="fas fa-star"></i><i class="fas fa-star"></i
+      ><i class="fas fa-star"></i><i class="fas fa-star"></i
+      ><i class="fas fa-star-half-alt"></i>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- review section end -->
+
+<!-- blog section start -->
+<section class="blogs" id="blogs">
+  <h1 class="heading"><span>Blog</span></h1>
+
+  <div class="blogs-grid">
+    <div class="box">
+      <div class="image">
+        <img src="<%= request.getContextPath() %>/assets/image/blog_1.jpg" alt="Blog 1" />
+      </div>
+      <div class="content">
+        <h3>Cách chọn một cuốn sách hay</h3>
+        <p>
+          Khám phá bí quyết lựa chọn sách phù hợp với sở thích và mục tiêu
+          của bạn. Đừng bỏ lỡ những gợi ý hữu ích từ chuyên gia!
+        </p>
+        <a href="#" class="btn">Đọc thêm</a>
+      </div>
+    </div>
+
+    <div class="box">
+      <div class="image">
+        <img src="<%= request.getContextPath() %>/assets/image/blog_2.jpg" alt="Blog 2" />
+      </div>
+      <div class="content">
+        <h3>Top 10 tiểu thuyết nên đọc</h3>
+        <p>
+          Danh sách những cuốn tiểu thuyết nổi bật, được yêu thích nhất mọi
+          thời đại mà bạn không nên bỏ qua.
+        </p>
+        <a href="#" class="btn">Đọc thêm</a>
+      </div>
+    </div>
+
+    <div class="box">
+      <div class="image">
+        <img src="<%= request.getContextPath() %>/assets/image/blog_3.jpg" alt="Blog 3" />
+      </div>
+      <div class="content">
+        <h3>Lợi ích của việc đọc sách mỗi ngày</h3>
+        <p>
+          Đọc sách mỗi ngày giúp phát triển tư duy, mở rộng kiến thức và cải
+          thiện kỹ năng sống của bạn như thế nào?
+        </p>
+        <a href="#" class="btn">Đọc thêm</a>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- blog section end -->
 
 <!-- footer section start -->
-<section class="footer">
-  <div class="box-container">
-    <div class="box">
-      <h3>Địa chỉ của chúng tôi</h3>
-      <a href="#"><i class="fas fa-map-marker-alt"></i> Việt Nam </a>
-      <a href="#"><i class="fas fa-map-marker-alt"></i> Nhật Bản </a>
-      <a href="#"><i class="fas fa-map-marker-alt"></i> Hàn Quốc </a>
-      <a href="#"><i class="fas fa-map-marker-alt"></i> Hoa Kỳ </a>
-      <a href="#"><i class="fas fa-map-marker-alt"></i> Ấn Độ </a>
-      <a href="#"><i class="fas fa-map-marker-alt"></i> Pháp </a>
-    </div>
-
-    <div class="box">
-      <h3>Liên kết nhanh</h3>
-      <a href="#"><i class="fas fa-arrow-right"></i> Trang chủ </a>
-      <a href="#"><i class="fas fa-arrow-right"></i> Nổi bật </a>
-      <a href="#"><i class="fas fa-arrow-right"></i> Sách mới </a>
-      <a href="#"><i class="fas fa-arrow-right"></i> Đánh giá </a>
-      <a href="#"><i class="fas fa-arrow-right"></i> Blog </a>
-    </div>
-
-    <div class="box">
-      <h3>Liên kết khác</h3>
-      <a href="#"
-      ><i class="fas fa-arrow-right"></i> Thông tin tài khoản
-      </a>
-      <a href="#"><i class="fas fa-arrow-right"></i> Đơn hàng đã đặt </a>
-      <a href="#"><i class="fas fa-arrow-right"></i> Chính sách bảo mật </a>
-      <a href="#"
-      ><i class="fas fa-arrow-right"></i> Phương thức thanh toán
-      </a>
-      <a href="#"
-      ><i class="fas fa-arrow-right"></i> Dịch vụ của chúng tôi
-      </a>
-    </div>
-
-    <div class="box">
-      <h3>Thông tin liên hệ</h3>
-      <a href="#"><i class="fas fa-phone"></i> +123-456-7890 </a>
-      <a href="#"><i class="fas fa-phone"></i> +111-222-3333 </a>
-      <a href="#"><i class="fas fa-envelope"></i> 4bookstore@gmail.com </a>
-      <iframe
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3833.751890135277!2d108.20973629999999!3d16.078359799999998!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x314219a486b7f699%3A0xae6269b629a63e82!2zQ29kZUd5bSDEkMOgIE7hurVuZw!5e0!3m2!1svi!2s!4v1748497453775!5m2!1svi!2s"
-              width="100%"
-              height="220"
-              style="border: 0; border-radius: 8px; margin-top: 10px"
-              allowfullscreen=""
-              loading="lazy"
-              referrerpolicy="no-referrer-when-downgrade"
-              title="Bản đồ CodeGym Đà Nẵng"
-      ></iframe>
-    </div>
-  </div>
-  <div class="share">
-    <a href="#" class="fab fa-facebook-f"></a>
-    <a href="#" class="fab fa-twitter"></a>
-    <a href="#" class="fab fa-instagram"></a>
-    <a href="#" class="fab fa-linkedin"></a>
-    <a href="#" class="fab fa-github"></a>
-  </div>
-
-  <div class="credit">
-    Được tạo ra bởi <span> 4B Corporation</span> | Đã đăng ký bản quyền
-  </div>
-  <div class="gov-cert">
-    <img
-            src="<%= request.getContextPath() %>/assets/image/bo-cong-thuong.png"
-            alt="Đã thông báo Bộ Công Thương"
-            style="height: 65px; margin-right: 5px"
-    />
-    <img
-            src="<%= request.getContextPath() %>/assets/image/chung-nhan.png"
-            alt="Chứng nhận"
-            style="height: 65px"
-    />
-  </div>
-</section>
+<jsp:include page="views/common/footer.jsp" />
 <!-- footer section end -->
 
 <!-- Popup Overlay -->
@@ -331,6 +311,7 @@
   const openBtn = document.querySelector(".header-icon-left");
   const closeBtn = document.getElementById("close-sidebar");
   const mobileLoginBtn = document.querySelector("#mobile-login-btn");
+  // Dropdown for bottom-navbar Featured
   document.addEventListener("DOMContentLoaded", function () {
     var btn = document.getElementById("featured-btn");
     var dropdown = document.querySelector(".bottom-dropdown");
@@ -338,6 +319,7 @@
       e.preventDefault();
       dropdown.classList.toggle("open");
     });
+    // Đóng dropdown khi bấm ra ngoài
     document.addEventListener("click", function (e) {
       if (!dropdown.contains(e.target)) {
         dropdown.classList.remove("open");
@@ -373,17 +355,47 @@
   }
 
   document.addEventListener("DOMContentLoaded", function () {
-    const loginBtn = document.getElementById("login-btn");
-    const loginForm = document.querySelector(".login-form-container");
-
-    if (loginBtn && loginForm) {
-      loginBtn.addEventListener("click", function () {
-        loginForm.classList.add("active");
-      });
+    // Hiển thị thông báo lỗi (nếu có)
+    const errorText = "<%= request.getAttribute("error") != null ? request.getAttribute("error").toString().replace("\"", "\\\"") : "" %>";
+    if (errorText.trim() !== "") {
+      document.querySelector(".login-form-container").classList.add("active");
+      toastr.error(errorText);
     }
   });
 </script>
+
 <script src="<%= request.getContextPath() %>/assets/js/app.js"></script>
-<script src="<%= request.getContextPath() %>/assets/js/script.js"></script>
+<script src="<%= request.getContextPath() %>/assets/js/script.js"></script><%
+  // Lấy thông báo success từ session và xóa sau khi lấy
+  String successMsg = (String) session.getAttribute("success");
+  if (successMsg != null) {
+    session.removeAttribute("success");
+%>
+<script>
+  $(document).ready(function() {
+    toastr.options = {
+      "closeButton": false,
+      "debug": false,
+      "newestOnTop": false,
+      "progressBar": true,
+      "positionClass": "toast-top-right",
+      "preventDuplicates": false,
+      "onclick": null,
+      "showDuration": "300",
+      "hideDuration": "300",
+      "timeOut": "3000",          // Thời gian thông báo hiển thị (1 giây)
+      "extendedTimeOut": "500",   // Thời gian biến mất nhanh sau khi hover
+      "showEasing": "swing",
+      "hideEasing": "linear",
+      "showMethod": "fadeIn",
+      "hideMethod": "fadeOut"
+    };
+    toastr.success("<%= successMsg.replace("\"", "\\\"") %>");
+  });
+</script>
+<%
+  }
+%>
+
 </body>
 </html>
