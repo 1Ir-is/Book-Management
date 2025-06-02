@@ -372,10 +372,11 @@
         <div class="page-header">
             <h1 class="title">Quản lý sách</h1>
             <ul class="breadcrumbs">
-                <li><a href="<%= request.getContextPath() %>/admin/dashboard">Dashboard</a></li>
+                <li><a href="<%= request.getContextPath() %>/admin/dashboard">Home</a></li>
                 <li class="divider">/</li>
                 <li><a href="#" class="active">Quản lý sách</a></li>
             </ul>
+
             <div class="actions">
                 <a href="<%= request.getContextPath() %>/admin/books?action=add" class="btn-create">
                     <i class="bx bxs-plus-circle"></i> Tạo sách mới

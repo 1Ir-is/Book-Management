@@ -238,10 +238,13 @@
     <div class="page-header">
       <h1 class="title"><%= isEdit ? "Chỉnh sửa sách" : "Thêm sách" %></h1>
       <ul class="breadcrumbs">
-        <li><a href="<%= request.getContextPath() %>/admin/dashboard">Dashboard</a></li>
+        <li><a href="<%= request.getContextPath() %>/admin/dashboard">Home</a></li>
+        <li class="divider">/</li>
+        <li><a href="<%= request.getContextPath() %>/admin/books">Quản lý sách</a></li>
         <li class="divider">/</li>
         <li><a href="#" class="active"><%= isEdit ? "Chỉnh sửa sách" : "Thêm sách" %></a></li>
       </ul>
+
       <div class="actions">
         <a href="<%= request.getContextPath() %>/admin/books" class="btn-back">
           <i class="bx bxs-home"></i> Quay lại danh sách
