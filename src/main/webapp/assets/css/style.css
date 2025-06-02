@@ -1461,6 +1461,27 @@ section {
   transform: translateY(0);
 }
 
+.form-tabs {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+
+.tab-btn {
+  flex: 1;
+  padding: 10px;
+  background: #eee;
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.tab-btn.active {
+  background: #ff6f61;
+  color: white;
+}
+
+
 
 /* Ẩn header cũ trên mobile */
 @media (max-width: 768px) {

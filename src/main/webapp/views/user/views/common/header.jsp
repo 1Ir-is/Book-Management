@@ -157,9 +157,9 @@
 <div class="login-form-container">
   <div id="close-login-btn" class="fas fa-times"></div>
 
-  <form method="post" action="<%= request.getContextPath() %>/login">
+  <!-- Login Form -->
+  <form id="login-form" method="post" action="<%= request.getContextPath() %>/login">
     <h3>Đăng nhập</h3>
-
     <span>Email</span>
     <input type="email" class="box" name="email" placeholder="Nhập email của bạn" required />
     <span>Mật khẩu</span>
@@ -170,12 +170,108 @@
     </div>
     <input type="submit" value="Đăng nhập" class="btn" />
     <p><a href="#">Quên mật khẩu?</a></p>
-    <p><a href="<%= request.getContextPath() %>/register">Chưa có tài khoản?</a></p>
+    <p><a href="javascript:void(0)" onclick="showForm('register')">Chưa có tài khoản?</a></p>
+  </form>
+
+  <!-- Register Form -->
+  <form id="register-form" method="post" action="<%= request.getContextPath() %>/register" style="display: none;" onsubmit="return validateRegisterForm()">
+    <h3>Đăng ký</h3>
+    <span>Tên</span>
+    <input type="text" class="box" id="register-ten" name="ten" placeholder="Nhập tên của bạn" required />
+
+    <span>Email</span>
+    <input type="email" class="box" id="register-email" name="email" placeholder="Nhập email" required />
+
+    <span>Mật khẩu</span>
+    <input type="password" class="box" id="register-matkhau" name="mat_khau" placeholder="Nhập mật khẩu" required />
+
+    <span>Xác nhận mật khẩu</span>
+    <input type="password" class="box" id="register-xacnhan" name="xac_nhan_mat_khau" placeholder="Xác nhận mật khẩu" required />
+
+    <input type="submit" value="Đăng ký" class="btn" />
+    <p><a href="javascript:void(0)" onclick="showForm('login')">Đã có tài khoản?</a></p>
   </form>
 
 </div>
 
+
 <!-- login form end-->
+<script>
+  function showForm(formType) {
+    document.getElementById('login-form').style.display = formType === 'login' ? 'block' : 'none';
+    document.getElementById('register-form').style.display = formType === 'register' ? 'block' : 'none';
+
+    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+    document.querySelector(`.tab-btn[onclick*="${formType}"]`).classList.add('active');
+  }
+  function validateRegisterForm() {
+    const ten = document.getElementById('register-ten').value.trim();
+    const email = document.getElementById('register-email').value.trim();
+    const matkhau = document.getElementById('register-matkhau').value;
+    const xacnhan = document.getElementById('register-xacnhan').value;
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (ten === '' || email === '' || matkhau === '' || xacnhan === '') {
+      toastr.error('Vui lòng điền đầy đủ tất cả các trường');
+      return false;
+    }
+
+    if (!emailRegex.test(email)) {
+      toastr.error('Email không hợp lệ');
+      return false;
+    }
+
+    if (matkhau.length < 6) {
+      toastr.error('Mật khẩu phải có ít nhất 6 ký tự');
+      return false;
+    }
+
+    if (matkhau !== xacnhan) {
+      toastr.error('Mật khẩu và xác nhận mật khẩu không khớp');
+      return false;
+    }
+
+    return true; // cho phép submit
+  }
+</script>
+
+<%
+  Boolean registerSuccess = (Boolean) session.getAttribute("registerSuccess");
+  String registerError = (String) session.getAttribute("registerError");
+  session.removeAttribute("registerSuccess");
+  session.removeAttribute("registerError");
+%>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const loginFormContainer = document.querySelector(".login-form-container");
+    const loginForm = document.getElementById("login-form");
+    const registerForm = document.getElementById("register-form");
+
+    <% if (user != null) { %>
+    // User is logged in, hide login and register forms
+    loginFormContainer.style.display = "none";
+    <% } else { %>
+    // User not logged in
+    // Nếu đăng ký thành công thì mở form login + show toast
+    <% if (registerSuccess != null && registerSuccess) { %>
+    toastr.success('Đăng ký thành công! Vui lòng đăng nhập.');
+    loginFormContainer.classList.add("active");
+    loginForm.style.display = "block";
+    registerForm.style.display = "none";
+    <% } else { %>
+    // Lần đầu mở web không auto mở form login
+    loginFormContainer.classList.remove("active");
+    <% } %>
+    <% } %>
+
+    // Close login form when clicking the close button
+    document.getElementById("close-login-btn").addEventListener("click", function () {
+      loginFormContainer.classList.remove("active");
+    });
+  });
+</script>
 
 </body>
 </html>
