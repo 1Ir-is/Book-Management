@@ -13,7 +13,7 @@
 %>
 <html>
 <head>
-  <meta charset="UTF-8">
+  <meta cha+rset="UTF-8">
   <title>Quản lý Danh mục</title>
 </head>
 <body>
