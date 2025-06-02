@@ -67,9 +67,10 @@
 
           <div style="height: 1px; background-color: #e0e0e0; margin: 6px 0;"></div>
 
-          <a class="drop-content" href="<%= request.getContextPath() %>/profile.jsp" style="padding: 6px 14px; display: block; text-decoration: none; color: #333; font-size: 13px;">
+          <a class="drop-content" href="<%= request.getContextPath() %>/profile" style="padding: 6px 14px; display: block; text-decoration: none; color: #333; font-size: 13px;">
             Thông tin
           </a>
+
           <a class="drop-content" href="<%= request.getContextPath() %>/history.jsp" style="padding: 6px 14px; display: block; text-decoration: none; color: #333; font-size: 13px;">
             Lịch sử mua hàng
           </a>
