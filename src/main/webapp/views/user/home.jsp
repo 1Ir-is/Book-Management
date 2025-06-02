@@ -23,12 +23,15 @@
 %>
 <p>Chào mừng, <%= user.getName() %>!</p>
 <a href="<%= request.getContextPath() %>/logout">Đăng xuất</a>
+<a href="<%= request.getContextPath() %>/books">Xem sách</a>
+
 <%
 } else {
 %>
 <p>Bạn chưa đăng nhập.</p>
 <a href="<%= request.getContextPath() %>/login">Đăng nhập</a> |
 <a href="<%= request.getContextPath() %>/register">Đăng ký</a>
+
 <%
   }
 %>
