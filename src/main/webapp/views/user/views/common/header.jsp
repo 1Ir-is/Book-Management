@@ -35,6 +35,23 @@
   <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet"/>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+  <style>
+    @media only screen and (max-width: 768px) {
+      #toast-container > div {
+        font-size: 14px !important;
+        padding: 10px 14px !important;
+        width: 90% !important;
+        margin: 8px auto !important;
+      }
+
+      #toast-container {
+        top: 10px !important;
+        right: 5% !important;
+        left: 5% !important;
+      }
+    }
+  </style>
+
 </head>
 
 <body>
@@ -53,7 +70,7 @@
     <div class="icons">
       <div id="search-btn" class="fas fa-search"></div>
       <a href="#" class="fas fa-heart"></a>
-      <a href="<%= request.getContextPath() %>/cart.jsp" class="fas fa-shopping-cart"></a>
+      <a href="#" id="cart-icon" class="fas fa-shopping-cart"></a>
 
       <div class="dropdown">
         <% if (user != null) { %>
@@ -149,7 +166,24 @@
         <li><a href="#">Giáo Khoa - Tham Khảo</a></li>
       </ul>
     </li>
+
+    <% if (user != null) { %>
+    <li>
+      <a href="<%= request.getContextPath() %>/profile"><b>Thông Tin Cá Nhân</b></a>
+    </li>
+    <li>
+      <a href="<%= request.getContextPath() %>/history.jsp"><b>Lịch Sử Mua Hàng</b></a>
+    </li>
+    <li>
+      <a href="<%= request.getContextPath() %>/logout"><b>Đăng Xuất</b></a>
+    </li>
+    <% } else { %>
+    <li>
+      <a href="javascript:void(0)" onclick="showForm('login'); loginFormContainer.classList.add('active');"><b>Đăng Nhập</b></a>
+    </li>
+    <% } %>
   </ul>
+
 </div>
 <div id="sidebar-overlay" class="sidebar-overlay"></div>
 <!-- bottom navbar start-->
@@ -198,6 +232,97 @@
 
 <!-- login form end-->
 <script>
+  const sidebar = document.getElementById("mobile-sidebar");
+  const overlay = document.getElementById("sidebar-overlay");
+  const openBtn = document.querySelector(".header-icon-left");
+  const closeBtn = document.getElementById("close-sidebar");
+  const mobileLoginBtn = document.querySelector("#mobile-login-btn");
+  // Dropdown for bottom-navbar Featured
+  document.addEventListener("DOMContentLoaded", function () {
+    var btn = document.getElementById("featured-btn");
+    var dropdown = document.querySelector(".bottom-dropdown");
+    btn.addEventListener("click", function (e) {
+      e.preventDefault();
+      dropdown.classList.toggle("open");
+    });
+    // Đóng dropdown khi bấm ra ngoài
+    document.addEventListener("click", function (e) {
+      if (!dropdown.contains(e.target)) {
+        dropdown.classList.remove("open");
+      }
+    });
+  });
+
+  openBtn.addEventListener("click", function (e) {
+    e.preventDefault();
+    sidebar.classList.add("open");
+    overlay.classList.add("show");
+  });
+  closeBtn.addEventListener("click", function () {
+    sidebar.classList.remove("open");
+    overlay.classList.remove("show");
+  });
+  overlay.addEventListener("click", function () {
+    sidebar.classList.remove("open");
+    overlay.classList.remove("show");
+  });
+  document.querySelectorAll(".submenu-toggle").forEach(function (toggle) {
+    toggle.addEventListener("click", function (e) {
+      e.preventDefault();
+      const parent = this.closest(".has-submenu");
+      parent.classList.toggle("open");
+    });
+  });
+
+  if (mobileLoginBtn) {
+    mobileLoginBtn.onclick = () => {
+      loginForm.classList.toggle("active");
+    };
+  }
+
+  document.addEventListener("DOMContentLoaded", function () {
+    // Hiển thị thông báo lỗi (nếu có)
+    const errorText = "<%= request.getAttribute("error") != null ? request.getAttribute("error").toString().replace("\"", "\\\"") : "" %>";
+    if (errorText.trim() !== "") {
+      document.querySelector(".login-form-container").classList.add("active");
+      toastr.error(errorText);
+    }
+  });
+</script>
+
+<script src="<%= request.getContextPath() %>/assets/js/app.js"></script>
+<script src="<%= request.getContextPath() %>/assets/js/script.js"></script><%
+  // Lấy thông báo success từ session và xóa sau khi lấy
+  String successMsg = (String) session.getAttribute("success");
+  if (successMsg != null) {
+    session.removeAttribute("success");
+%>
+<script>
+  $(document).ready(function() {
+    toastr.options = {
+      "closeButton": false,
+      "debug": false,
+      "newestOnTop": false,
+      "progressBar": true,
+      "positionClass": "toast-top-right",
+      "preventDuplicates": false,
+      "onclick": null,
+      "showDuration": "300",
+      "hideDuration": "300",
+      "timeOut": "3000",          // Thời gian thông báo hiển thị (1 giây)
+      "extendedTimeOut": "500",   // Thời gian biến mất nhanh sau khi hover
+      "showEasing": "swing",
+      "hideEasing": "linear",
+      "showMethod": "fadeIn",
+      "hideMethod": "fadeOut"
+    };
+    toastr.success("<%= successMsg.replace("\"", "\\\"") %>");
+  });
+</script>
+<%
+  }
+%>
+<script>
   function showForm(formType) {
     document.getElementById('login-form').style.display = formType === 'login' ? 'block' : 'none';
     document.getElementById('register-form').style.display = formType === 'register' ? 'block' : 'none';
@@ -235,6 +360,18 @@
 
     return true; // cho phép submit
   }
+
+  document.getElementById("cart-icon").addEventListener("click", function (e) {
+    e.preventDefault();
+    <% if (user == null) { %>
+    toastr.warning("Bạn cần đăng nhập để xem giỏ hàng!");
+    loginFormContainer.classList.add("active");
+    document.getElementById("login-form").style.display = "block";
+    document.getElementById("register-form").style.display = "none";
+    <% } else { %>
+    window.location.href = "<%= request.getContextPath() %>/cart.jsp";
+    <% } %>
+  });
 </script>
 
 <%
