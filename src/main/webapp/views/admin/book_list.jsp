@@ -15,6 +15,15 @@
     List<Book> books = (List<Book>) request.getAttribute("books");
     Map<Integer, String> categoryMap = (Map<Integer, String>) request.getAttribute("categoryMap");
 %>
+<%
+    String action = request.getParameter("action");
+    if (action == null) {
+        action = "";
+    } else {
+        action = action.trim();
+    }
+%>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -173,6 +182,114 @@
             border-radius: 6px;
             display: block;
             margin: 0 auto;
+        }
+
+        .modal {
+            position: fixed;
+            z-index: 1000;
+            left: 0; top: 0;
+            width: 100%; height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            display: flex; justify-content: center; align-items: center;
+        }
+
+        /* Modal Content */
+        .modal-content {
+            background-color: #fff;
+            padding: 2rem 1.5rem 1.5rem 1.5rem;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 380px;
+            text-align: center;
+            position: relative;
+            box-shadow: 0 8px 32px rgba(44,62,80,0.15);
+            animation: modalFadeIn 0.2s;
+        }
+
+        @keyframes modalFadeIn {
+            from { transform: translateY(-30px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        /* Close Button */
+        .close {
+            position: absolute;
+            top: 14px;
+            right: 18px;
+            font-size: 28px;
+            font-weight: bold;
+            color: #aaa;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+        .close:hover { color: #e74c3c; }
+
+        /* Icon */
+        .modal-icon {
+            font-size: 48px;
+            color: #e74c3c;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Title */
+        .modal-content h2 {
+            margin: 0 0 0.5rem 0;
+            color: #e74c3c;
+            font-size: 1.4rem;
+            font-weight: bold;
+        }
+
+        /* Actions */
+        .modal-actions {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .btn {
+            padding: 0.7rem 1.4rem;
+            font-size: 1rem;
+            font-weight: bold;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn-delete {
+            background: #e74c3c;
+            color: #fff;
+        }
+        .btn-delete:hover {
+            background: #c0392b;
+        }
+
+        .btn-cancel {
+            background: #bdc3c7;
+            color: #333;
+        }
+        .btn-cancel:hover {
+            background: #95a5a6;
+        }
+
+        .toast {
+            position: fixed;
+            top: 20px; /* Move to the top */
+            right: 20px; /* Align to the right */
+            background-color: #27ae60;
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 5px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            font-size: 1rem;
+            z-index: 1000;
+            animation: fadeInOut 3s ease-in-out;
+        }
+
+        @keyframes fadeInOut {
+            0%, 100% { opacity: 0; }
+            10%, 90% { opacity: 1; }
         }
 
         /* Responsive for mobile */
@@ -352,8 +469,10 @@
                     <td class="description-cell"><%= book.getDescription() %></td>
                     <td><%= categoryMap.get(book.getCategoryId()) %></td>
                     <td>
-                        <a class="btn-edit" href="books?action=edit&id=<%= book.getBookId() %>">Sửa</a>
-                        <button class="btn-delete" onclick="return confirm('Xóa sách này?')">Xóa</button>
+                        <div class="action-buttons">
+                            <a class="btn-edit" href="books?action=edit&id=<%= book.getBookId() %>">Sửa</a>
+                            <button class="btn-delete" onclick="showDeleteModal(<%= book.getBookId() %>)">Xóa</button>
+                        </div>
                     </td>
                 </tr>
                 <% } %>
@@ -364,6 +483,60 @@
     <!-- MAIN -->
 </section>
 <!-- NAVBAR -->
+
+<!-- Modal xác nhận xóa -->
+<div id="deleteModal" class="modal" style="display:none;">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal()" title="Đóng">&times;</span>
+        <div class="modal-icon">
+            <i class="bx bxs-error-circle"></i>
+        </div>
+        <h2>Xác nhận xóa</h2>
+        <p>Bạn có chắc chắn muốn xóa sách này không?</p>
+        <form id="deleteForm" method="post" action="">
+            <input type="hidden" name="action" value="delete">
+            <div class="modal-actions">
+                <button type="submit" class="btn btn-delete">Xác nhận xóa</button>
+                <button type="button" class="btn btn-cancel" onclick="closeModal()">Hủy</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div id="toast" class="toast" style="display: none;">
+    <p id="toastMessage"></p>
+</div>
+
+<script>
+    function showDeleteModal(bookId) {
+        const modal = document.getElementById('deleteModal');
+        const form = document.getElementById('deleteForm');
+        form.action = '<%= request.getContextPath() %>/admin/books?action=delete&id=' + bookId;
+        modal.style.display = 'flex';
+    }
+
+    function closeModal() {
+        document.getElementById('deleteModal').style.display = 'none';
+    }
+
+    window.onload = function () {
+        const toastMessage = '<%= session.getAttribute("toastMessage") %>';
+        if (toastMessage && toastMessage !== "null") {
+            const toast = document.getElementById('toast');
+            const toastText = document.getElementById('toastMessage');
+            toastText.textContent = toastMessage;
+            toast.style.display = 'block';
+
+            // Remove the message from the session after displaying
+            <% session.removeAttribute("toastMessage"); %>
+
+            // Hide the toast after 3 seconds
+            setTimeout(() => {
+                toast.style.display = 'none';
+            }, 3000);
+        }
+    };
+</script>
 
 <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 <script src="<%= request.getContextPath() %>/assets/js/script.js"></script>

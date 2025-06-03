@@ -1,6 +1,6 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <section id="sidebar">
-    <a href="#" class="brand"><i class="bx bxs-smile icon"></i> Admin</a>
+    <a href="<%= request.getContextPath() %>/admin/dashboard" class="brand"><i class="bx bxs-smile icon"></i> Admin</a>
     <ul class="side-menu">
         <li>
             <a href="<%= request.getContextPath() %>/admin/dashboard" class="active"

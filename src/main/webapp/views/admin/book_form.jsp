@@ -36,8 +36,6 @@
       box-sizing: border-box;
     }
 
-
-
     .form-container h1 {
       text-align: center;
       margin-bottom: 2rem;
@@ -136,6 +134,28 @@
 
     .btn-back:hover {
       background: #2980b9;
+    }
+
+    #loading-overlay {
+      position: fixed;
+      z-index: 2000;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      background: rgba(255,255,255,0.7);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .loading-spinner {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      font-size: 2rem;
+      color: #27ae60;
+      gap: 1rem;
+    }
+    .loading-spinner i {
+      font-size: 3rem;
     }
 
     @media screen and (max-width: 768px) {
@@ -281,6 +301,25 @@
     </div>
   </main>
 </section>
+
+<div id="loading-overlay" style="display:none;">
+  <div class="loading-spinner">
+    <i class='bx bx-loader-alt bx-spin'></i>
+    <span>Đang xử lý...</span>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    var form = document.querySelector('.form-container form');
+    if (form) {
+      form.addEventListener('submit', function() {
+        document.getElementById('loading-overlay').style.display = 'flex';
+      });
+    }
+  });
+</script>
+
 <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 <script src="<%= request.getContextPath() %>/assets/js/script.js"></script>
 <%
