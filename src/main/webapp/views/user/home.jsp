@@ -7,6 +7,8 @@
 --%>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ page import="models.User" %>
+
+
 <%
   User user = (User) session.getAttribute("user");
 %>
@@ -31,7 +33,7 @@
 <p>Bạn chưa đăng nhập.</p>
 <a href="<%= request.getContextPath() %>/login">Đăng nhập</a> |
 <a href="<%= request.getContextPath() %>/register">Đăng ký</a>
-
+<a href="<%= request.getContextPath() %>/books">Xem sách</a>
 <%
   }
 %>

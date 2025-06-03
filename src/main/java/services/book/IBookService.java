@@ -10,4 +10,9 @@ public interface IBookService {
     boolean addBook(Book book);
     boolean updateBook(Book book);
     boolean deleteBook(int maSach);
+    List<Book> searchBooks(String keyword, int categoryId);
+
+
+
+
 }
