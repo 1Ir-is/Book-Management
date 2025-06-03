@@ -15,7 +15,8 @@ public class LoginServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        req.getRequestDispatcher("/views/auth/login.jsp").forward(req, resp);
+        // Redirect về trang home nơi có form login
+        resp.sendRedirect(req.getContextPath() + "/");
     }
 
     @Override
@@ -27,19 +28,18 @@ public class LoginServlet extends HttpServlet {
         if (user != null) {
             HttpSession session = req.getSession();
             session.setAttribute("user", user);
-            session.setMaxInactiveInterval(30 * 60); // 30 phut
+            session.setMaxInactiveInterval(30 * 60); // 30 phút
+            session.setAttribute("success", "Đăng nhập thành công!");
 
-            // ghi nho dang nhap qua cookie neu co
             if (req.getParameter("remember") != null) {
                 Cookie emailCookie = new Cookie("email", email);
                 Cookie passCookie = new Cookie("password", password);
-                emailCookie.setMaxAge(7 * 24 * 60 * 60); // 7 ngay
+                emailCookie.setMaxAge(7 * 24 * 60 * 60);
                 passCookie.setMaxAge(7 * 24 * 60 * 60);
                 resp.addCookie(emailCookie);
                 resp.addCookie(passCookie);
             }
 
-            // phan quyen
             if (user.getRoleId() == 0) {
                 resp.sendRedirect(req.getContextPath() + "/admin/dashboard");
             } else {
@@ -47,7 +47,8 @@ public class LoginServlet extends HttpServlet {
             }
         } else {
             req.setAttribute("error", "Email hoặc mật khẩu không đúng!");
-            req.getRequestDispatcher("/views/auth/login.jsp").forward(req, resp);
+            req.getRequestDispatcher("views/user/home.jsp").forward(req, resp);
         }
     }
+
 }
