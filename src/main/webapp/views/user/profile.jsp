@@ -19,6 +19,7 @@
   <meta charset="UTF-8">
   <title>Thông tin cá nhân - 4Book</title>
   <link rel="stylesheet" href="<%= request.getContextPath() %>/assets/css/style.css" />
+  <link href="https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css" rel="stylesheet" />
   <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
@@ -129,6 +130,28 @@
       background: #219150;
     }
 
+    #loading-overlay {
+      position: fixed;
+      z-index: 2000;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      background: rgba(255,255,255,0.7);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .loading-spinner {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      font-size: 2rem;
+      color: #27ae60;
+      gap: 1rem;
+    }
+    .loading-spinner i {
+      font-size: 3rem;
+    }
+
     /* Responsive for mobile */
     @media (max-width: 600px) {
       .profile-layout {
@@ -223,6 +246,24 @@
     </div>
   </div>
 </section>
+
+<div id="loading-overlay" style="display:none;">
+  <div class="loading-spinner">
+    <i class='bx bx-loader-alt bx-spin'></i>
+    <span>Đang xử lý...</span>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    var form = document.querySelector('.profile-form'); // Correct selector for the form
+    if (form) {
+      form.addEventListener('submit', function() {
+        document.getElementById('loading-overlay').style.display = 'flex'; // Show loading spinner
+      });
+    }
+  });
+</script>
 
 <!-- footer section start -->
 <jsp:include page="views/common/footer.jsp" />

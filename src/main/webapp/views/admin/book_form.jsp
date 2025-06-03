@@ -267,6 +267,10 @@
               <label for="gia">Giá</label>
               <input type="number" id="gia" name="gia" step="0.01" value="<%= isEdit ? book.getPrice() : "" %>" placeholder="Nhập giá sách" required />
             </div>
+            <div class="form-group">
+              <label for="nam_xuat_ban">Năm xuất bản</label>
+              <input type="number" id="nam_xuat_ban" name="nam_xuat_ban" value="<%= isEdit ? book.getPublishYear() : "" %>" placeholder="Nhập năm xuất bản" required />
+            </div>
           </div>
           <div class="form-fields-col">
             <div class="form-group">
@@ -293,6 +297,7 @@
             </div>
           </div>
         </div>
+
         <div class="form-actions">
           <button type="submit" class="btn btn-submit"><%= isEdit ? "Lưu" : "Tạo sách" %></button>
           <a href="<%= request.getContextPath() %>/admin/books" class="btn btn-cancel">Hủy</a>
