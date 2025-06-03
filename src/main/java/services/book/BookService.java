@@ -33,4 +33,11 @@ public class BookService implements IBookService {
     public boolean deleteBook(int maSach) {
         return bookRepository.delete(maSach);
     }
+
+    @Override
+    public List<Book> searchBooks(String keyword, int categoryId) {
+        return bookRepository.searchBooks(keyword, categoryId);
+    }
+
+
 }

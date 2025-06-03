@@ -115,4 +115,49 @@ public class BookRepository implements IBookRepository {
         }
         return false;
     }
+    @Override
+    public List<Book> searchBooks(String keyword, int categoryId) {
+        List<Book> books = new ArrayList<>();
+        StringBuilder sql = new StringBuilder("SELECT * FROM sach WHERE 1=1 ");
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            sql.append("AND ten_sach LIKE ? ");
+        }
+        if (categoryId > 0) {
+            sql.append("AND ma_danh_muc = ? ");
+        }
+
+        try (Connection connection = JDBCUtils.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(sql.toString())) {
+
+            int paramIndex = 1;
+
+            if (keyword != null && !keyword.trim().isEmpty()) {
+                preparedStatement.setString(paramIndex++, "%" + keyword.trim() + "%");
+            }
+            if (categoryId > 0) {
+                preparedStatement.setInt(paramIndex++, categoryId);
+            }
+
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                Book book = new Book();
+                book.setBookId(resultSet.getInt("ma_sach"));
+                book.setBookName(resultSet.getString("ten_sach"));
+                book.setAuthor(resultSet.getString("tac_gia"));
+                book.setPublisher(resultSet.getString("nha_xuat_ban"));
+                book.setPrice(resultSet.getDouble("gia"));
+                book.setDescription(resultSet.getString("mo_ta"));
+                book.setCategoryId(resultSet.getInt("ma_danh_muc"));
+                book.setImgUrl(resultSet.getString("img_url"));
+                books.add(book);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return books;
+    }
+
+
+
 }
