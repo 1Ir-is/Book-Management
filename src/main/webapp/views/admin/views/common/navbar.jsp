@@ -23,8 +23,9 @@
     <span class="divider"></span>
     <div class="profile">
         <img
-                src="https://static.vecteezy.com/system/resources/previews/008/442/086/original/illustration-of-human-icon-user-symbol-icon-modern-design-on-blank-background-free-vector.jpg"
-                alt=""
+                src="<%= user != null && user.getAvatarUrl() != null ? user.getAvatarUrl() : "https://static.vecteezy.com/system/resources/previews/008/442/086/original/illustration-of-human-icon-user-symbol-icon-modern-design-on-blank-background-free-vector.jpg" %>"
+                alt="User Avatar"
+                style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;"
         />
         <ul class="profile-link">
             <li>

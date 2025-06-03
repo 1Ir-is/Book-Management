@@ -23,6 +23,7 @@ public class RegisterServlet extends HttpServlet {
         String matKhau = req.getParameter("mat_khau");
         String soDienThoai = req.getParameter("so_dien_thoai");
         String diaChi = req.getParameter("dia_chi");
+        String avatarUrl = req.getParameter("avatar_url");
 
         HttpSession session = req.getSession();
 
@@ -32,7 +33,8 @@ public class RegisterServlet extends HttpServlet {
             return;
         }
 
-        User user = new User(ten, email, matKhau, soDienThoai, diaChi, 1);
+        // Updated constructor to include avatarUrl
+        User user = new User(ten, email, matKhau, soDienThoai, diaChi, 1, avatarUrl);
         boolean success = userService.register(user);
 
         if (success) {
@@ -43,5 +45,4 @@ public class RegisterServlet extends HttpServlet {
 
         resp.sendRedirect(req.getContextPath() + "/home.jsp");
     }
-
 }

@@ -27,6 +27,7 @@ public class UserRepository implements IUserRepository {
                 user.setPhoneNumber(resultSet.getString("so_dien_thoai"));
                 user.setAddress(resultSet.getString("dia_chi"));
                 user.setRoleId(resultSet.getInt("ma_vai_tro"));
+                user.setAvatarUrl(resultSet.getString("avatar_url"));
                 return user;
             }
         } catch (SQLException e) {
@@ -51,6 +52,7 @@ public class UserRepository implements IUserRepository {
                 user.setPhoneNumber(resultSet.getString("so_dien_thoai"));
                 user.setAddress(resultSet.getString("dia_chi"));
                 user.setRoleId(resultSet.getInt("ma_vai_tro"));
+                user.setAvatarUrl(resultSet.getString("avatar_url"));
                 return user;
             }
         } catch (SQLException e) {
@@ -61,7 +63,7 @@ public class UserRepository implements IUserRepository {
 
     @Override
     public boolean save(User user) {
-        String sql = "INSERT INTO nguoi_dung (ten, email, mat_khau, so_dien_thoai, dia_chi, ma_vai_tro) VALUES (?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO nguoi_dung (ten, email, mat_khau, so_dien_thoai, dia_chi, ma_vai_tro, avatar_url) VALUES (?, ?, ?, ?, ?, ?, ?)";
         try (Connection connection = JDBCUtils.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             preparedStatement.setString(1, user.getName());
@@ -70,6 +72,7 @@ public class UserRepository implements IUserRepository {
             preparedStatement.setString(4, user.getPhoneNumber());
             preparedStatement.setString(5, user.getAddress());
             preparedStatement.setInt(6, user.getRoleId());
+            preparedStatement.setString(7, user.getAvatarUrl());
             int rows = preparedStatement.executeUpdate();
             return rows > 0;
         } catch (SQLException e) {
@@ -80,18 +83,18 @@ public class UserRepository implements IUserRepository {
 
     @Override
     public boolean update(User user) {
-        String sql = "UPDATE nguoi_dung SET ten = ?, so_dien_thoai = ?, dia_chi = ? WHERE email = ?";
+        String sql = "UPDATE nguoi_dung SET ten = ?, so_dien_thoai = ?, dia_chi = ?, avatar_url = ? WHERE email = ?";
         try (Connection connection = JDBCUtils.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             preparedStatement.setString(1, user.getName());
             preparedStatement.setString(2, user.getPhoneNumber());
             preparedStatement.setString(3, user.getAddress());
-            preparedStatement.setString(4, user.getEmail());
+            preparedStatement.setString(4, user.getAvatarUrl());
+            preparedStatement.setString(5, user.getEmail());
             return preparedStatement.executeUpdate() > 0;
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return false;
     }
-
 }

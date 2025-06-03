@@ -3,6 +3,15 @@
 <%
     User user = (User) session.getAttribute("user");
 %>
+<%
+    Boolean success = (Boolean) request.getAttribute("success");
+    Boolean error = (Boolean) request.getAttribute("error");
+%>
+<% if (success != null && success) { %>
+<p style="color: green;">Cập nhật thành công!</p>
+<% } else if (error != null && error) { %>
+<p style="color: red;">Có lỗi xảy ra khi cập nhật.</p>
+<% } %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -35,19 +44,61 @@
             margin-bottom: 1rem;
         }
 
-        .profile-name {
-            font-size: 1.5rem;
-            font-weight: bold;
-            margin-bottom: 0.5rem;
+        .profile-form .form-group {
+            margin-bottom: 1rem;
+            text-align: left;
         }
 
-        .profile-role,
-        .profile-email,
-        .profile-phone,
-        .profile-address {
+        .profile-form .form-group label {
             font-size: 1rem;
-            margin-bottom: 0.5rem;
             color: #555;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .profile-form .form-group input {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .profile-save-btn {
+            display: block;
+            width: 100%;
+            padding: 0.8rem;
+            background: #27ae60;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+
+        .profile-save-btn:hover {
+            background: #219150;
+        }
+
+        #loading-overlay {
+            position: fixed;
+            z-index: 2000;
+            top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            background: rgba(255,255,255,0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .loading-spinner {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-size: 2rem;
+            color: #27ae60;
+            gap: 1rem;
+        }
+        .loading-spinner i {
+            font-size: 3rem;
         }
     </style>
 </head>
@@ -76,19 +127,54 @@
         <div class="profile-container">
             <div class="profile-card">
                 <img
-                        src="https://static.vecteezy.com/system/resources/previews/008/442/086/original/illustration-of-human-icon-user-symbol-icon-modern-design-on-blank-background-free-vector.jpg"
+                        src="<%= user.getAvatarUrl() != null ? user.getAvatarUrl() : "https://static.vecteezy.com/system/resources/previews/008/442/086/original/illustration-of-human-icon-user-symbol-icon-modern-design-on-blank-background-free-vector.jpg" %>"
                         alt="Admin Profile Picture"
                         class="profile-picture"
                 />
-                <h2 class="profile-name"><%= user.getName() %></h2>
-                <p class="profile-role">Vai Trò: Admin</p>
-                <p class="profile-email">Email: <%= user.getEmail() %></p>
-                <p class="profile-phone">Số điện thoại: <%= user.getPhoneNumber() %></p>
-                <p class="profile-address">Địa chỉ: <%= user.getAddress() %></p>
+                <form class="profile-form" action="<%= request.getContextPath() %>/admin/update-profile" method="post" enctype="multipart/form-data">
+                <div class="form-group">
+                        <label>Họ và Tên</label>
+                        <input type="text" name="name" value="<%= user.getName() %>" required />
+                    </div>
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" name="email" value="<%= user.getEmail() %>" readonly />
+                    </div>
+                    <div class="form-group">
+                        <label>Số điện thoại</label>
+                        <input type="text" name="phone" value="<%= user.getPhoneNumber() %>" />
+                    </div>
+                    <div class="form-group">
+                        <label>Địa chỉ</label>
+                        <input type="text" name="address" value="<%= user.getAddress() %>" />
+                    </div>
+                    <div class="form-group">
+                        <label>Ảnh đại diện</label>
+                        <input type="file" name="avatar" accept="image/*" />
+                    </div>
+                    <button type="submit" class="profile-save-btn">Lưu thay đổi</button>
+                </form>
             </div>
         </div>
     </main>
 </section>
+<div id="loading-overlay" style="display:none;">
+    <div class="loading-spinner">
+        <i class='bx bx-loader-alt bx-spin'></i>
+        <span>Đang xử lý...</span>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var form = document.querySelector('.profile-form');
+        if (form) {
+            form.addEventListener('submit', function() {
+                document.getElementById('loading-overlay').style.display = 'flex';
+            });
+        }
+    });
+</script>
 <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 <script src="<%= request.getContextPath() %>/assets/js/script.js"></script>
 <%

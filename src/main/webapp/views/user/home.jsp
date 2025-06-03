@@ -180,7 +180,7 @@
   <div class="reviews-grid">
     <div class="box">
       <img
-              src="https://scontent.fsgn2-4.fna.fbcdn.net/v/t39.30808-6/433010090_1874555349648586_4650447987992120796_n.jpg?_nc_cat=101&ccb=1-7&_nc_sid=6ee11a&_nc_eui2=AeEr0XJfh5_BvQYnHfmsbuoRpfQGyIgh3Bql9AbIiCHcGrPUpJkjBLqXKiR8g1ZrqkwcNLOUweUnTkQ0_aTMlZr0&_nc_ohc=9UW9zyudsUAQ7kNvwG_yk6p&_nc_oc=AdlWtYeCJmuCSGjYN7e7LYIwKPNN5jnq3vhJ5a5DtgfXD7QRUvvSFV7B-cAiPfGbY6Y&_nc_zt=23&_nc_ht=scontent.fsgn2-4.fna&_nc_gid=28VdL7yM3uz3aHDmXw64Tg&oh=00_AfLv4QWQyvqa6c-7L-40lBVKlgmK7CMNBNzhxsncRNlKgA&oe=683DB608"
+              src="<%= request.getContextPath() %>/assets/image/duy.jpg"
               alt="Ảnh người dùng 1"
       />
       <h3>Tôn Thất Duy</h3>
@@ -197,7 +197,7 @@
 
     <div class="box">
       <img
-              src="https://scontent.fsgn2-9.fna.fbcdn.net/v/t39.30808-1/416373411_1426075498255549_6395391885592279694_n.jpg?stp=dst-jpg_s200x200_tt6&_nc_cat=103&ccb=1-7&_nc_sid=e99d92&_nc_eui2=AeEOcV38z9rt8W20hAXAFQ_ZJPrl3QtZ3JMk-uXdC1nckzYLFgcMtqCr18yDfF8facw81opFO0lAG_1GMYluzBrq&_nc_ohc=E9oyveCQJCAQ7kNvwFElwTY&_nc_oc=Admdgb6DVa7YV5wnv12HRDF8zc4F-0yeeu4qqmzYZssKDySKqnVmS254dhf9qWZgKbU&_nc_zt=24&_nc_ht=scontent.fsgn2-9.fna&_nc_gid=Crkf-U9NxHW0Xf9qSXz2pw&oh=00_AfIaCfJYur1DM1FXffMODxCa_EsClaBuO9-b9j0Z0Guulg&oe=683D9C4F"
+              src="<%= request.getContextPath() %>/assets/image/huy.jpg"
               alt="Ảnh người dùng 2"
       />
       <h3>Huỳnh Minh Huy</h3>
@@ -214,7 +214,7 @@
 
     <div class="box">
       <img
-              src="https://scontent.fsgn2-6.fna.fbcdn.net/v/t39.30808-1/480577595_2285369648529429_1739447377459775153_n.jpg?stp=dst-jpg_s200x200_tt6&_nc_cat=111&ccb=1-7&_nc_sid=e99d92&_nc_eui2=AeEqOOK8PPnJyxP0PAAI1A5eGD8rN7pxfhcYPys3unF-FxwnC3fXgI6OCAv4Ej1CEG4MauD6XV2Y_T3v6zm7Tytq&_nc_ohc=-pXN07Gni4UQ7kNvwENkyMt&_nc_oc=AdknH14rfL_uUvwJVk46qlgXmA9kUjSxWFbNFKa7tiLv2sbYmYqRHUrBGM1AwgMM_W0&_nc_zt=24&_nc_ht=scontent.fsgn2-6.fna&_nc_gid=YJUrPdTZqdb4jIJVho4MrA&oh=00_AfL2O-a0YHpRky_w6ARh4ladM8WENLwiwnxN5AQauWkc5w&oe=683DB249"
+              src="<%= request.getContextPath() %>/assets/image/vuong.jpg"
               alt="Ảnh người dùng 3"
       />
       <h3>Phan Tá Anh Vương</h3>

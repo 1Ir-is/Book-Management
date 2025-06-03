@@ -11,6 +11,7 @@ CREATE TABLE IF NOT EXISTS nguoi_dung (
     so_dien_thoai VARCHAR(20),
     dia_chi VARCHAR(255),
     ma_vai_tro INT,
+    avatar_url VARCHAR(255),
     FOREIGN KEY (ma_vai_tro) REFERENCES vai_tro(ma_vai_tro)
     );
 
