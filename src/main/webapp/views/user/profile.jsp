@@ -7,6 +7,12 @@
     return;
   }
 %>
+<%!
+  public String safe(String input) {
+    return input != null ? input : "";
+  }
+%>
+
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -201,11 +207,11 @@
         </div>
         <div class="form-group">
           <label>Số điện thoại</label>
-          <input type="text" name="phone" value="<%= user.getPhoneNumber() %>" />
+          <input type="text" name="phone" value="<%= safe(user.getPhoneNumber()) %>" />
         </div>
         <div class="form-group">
           <label>Địa chỉ</label>
-          <input type="text" name="address" value="<%= user.getAddress() %>" />
+          <input type="text" name="address" value="<%= safe(user.getAddress()) %>" />
         </div>
         <button type="submit" class="profile-save-btn">Lưu thay đổi</button>
       </form>

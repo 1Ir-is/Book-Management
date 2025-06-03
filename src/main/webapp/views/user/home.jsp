@@ -35,7 +35,6 @@
 <body>
 <!-- header section start -->
 <jsp:include page="views/common/header.jsp" />
-  <a href="<%= request.getContextPath() %>/books">Xem sách</a>
 <!-- header section end -->
 
 <!-- home section start -->
