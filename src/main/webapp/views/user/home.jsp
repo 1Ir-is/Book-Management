@@ -8,22 +8,23 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ page import="models.User" %>
 <%
-  User user = (User) session.getAttribute("user");
+    User user = (User) session.getAttribute("user");
 %>
 <html>
 <head>
-  <meta charset="UTF-8">
-  <title>Home</title>
+    <meta charset="UTF-8">
+    <title>Home</title>
 </head>
 <body>
 <h2>Trang chủ</h2>
 
 <%
-  if (user != null) {
+    if (user != null) {
 %>
 <p>Chào mừng, <%= user.getName() %>!</p>
 <a href="<%= request.getContextPath() %>/logout">Đăng xuất</a>
 <a href="<%= request.getContextPath() %>/books">Xem sách</a>
+<a href="<%= request.getContextPath() %>/cart">Giỏ hàng</a>
 
 <%
 } else {
@@ -33,7 +34,7 @@
 <a href="<%= request.getContextPath() %>/register">Đăng ký</a>
 
 <%
-  }
+    }
 %>
 
 </body>

@@ -3,14 +3,14 @@ package models;
 public class OrderDetails {
     private int id;
     private int quantity;
-    private long price;
+    private double price;
     private Order order;
     private Book book;
 
     public OrderDetails() {
     }
 
-    public OrderDetails(int id, int quantity, long price, Order order, Book book) {
+    public OrderDetails(int id, int quantity, double price, Order order, Book book) {
         this.id = id;
         this.quantity = quantity;
         this.price = price;
@@ -34,11 +34,11 @@ public class OrderDetails {
         this.quantity = quantity;
     }
 
-    public long getPrice() {
+    public double getPrice() {
         return price;
     }
 
-    public void setPrice(long price) {
+    public void setPrice(double price) {
         this.price = price;
     }
 
