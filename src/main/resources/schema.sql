@@ -29,6 +29,7 @@ CREATE TABLE IF NOT EXISTS sach (
     mo_ta TEXT,
     ma_danh_muc INT,
     img_url VARCHAR(255),
+    nam_xuat_ban INT,
     FOREIGN KEY (ma_danh_muc) REFERENCES danh_muc(ma_danh_muc)
     );
 

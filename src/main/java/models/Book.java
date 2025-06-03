@@ -9,10 +9,11 @@ public class Book {
     private String description;
     private int categoryId;
     private String imgUrl;
+    private int publishYear; // New field for publication year
 
     public Book() {}
 
-    public Book(int bookId, String bookName, String author, String publisher, double price, String description, int categoryId, String imgUrl) {
+    public Book(int bookId, String bookName, String author, String publisher, double price, String description, int categoryId, String imgUrl, int publishYear) {
         this.bookId = bookId;
         this.bookName = bookName;
         this.author = author;
@@ -21,6 +22,7 @@ public class Book {
         this.description = description;
         this.categoryId = categoryId;
         this.imgUrl = imgUrl;
+        this.publishYear = publishYear; // Initialize the new field
     }
 
     public int getBookId() {
@@ -85,5 +87,13 @@ public class Book {
 
     public void setImgUrl(String imgUrl) {
         this.imgUrl = imgUrl;
+    }
+
+    public int getPublishYear() {
+        return publishYear;
+    }
+
+    public void setPublishYear(int publishYear) {
+        this.publishYear = publishYear;
     }
 }

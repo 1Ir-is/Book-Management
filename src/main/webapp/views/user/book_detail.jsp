@@ -217,6 +217,10 @@
                     <td>Thể loại</td>
                     <td><%= categoryMap.get(book.getCategoryId()) %></td>
                 </tr>
+                <tr>
+                    <td>Năm Xuất Bản</td>
+                    <td><%= book.getPublishYear() %></td>
+                </tr>
             </table>
             <div class="book-desc-desktop">
                 <%= book.getDescription() %>

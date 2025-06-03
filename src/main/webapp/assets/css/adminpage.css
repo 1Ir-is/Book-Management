@@ -114,12 +114,13 @@ li {
   color: #3498db;
 }
 
-/* Mục menu được chọn (active) */
 .side-menu a.active {
-  background: #27ae60; /* Màu nền khi active */
-  color: #fff; /* Màu chữ khi active */
+  background-color: #27ae60;  /* Màu nền khi active */
+  color: #fff;                /* Màu chữ khi active */
   font-weight: bold;
 }
+
+/* Các style hiện có của bạn */
 #sidebar .side-menu a {
   display: flex;
   align-items: center;
@@ -131,17 +132,21 @@ li {
   margin: 4px 0;
   white-space: nowrap;
 }
+
 #sidebar .side-menu > li > a:hover {
   background: var(--grey);
 }
+
 #sidebar .side-menu > li > a.active .icon-right {
   transform: rotateZ(90deg);
 }
+
 #sidebar .side-menu > li > a.active,
 #sidebar .side-menu > li > a.active:hover {
   background: var(--blue);
-  color: var(--light);
+  color: var(--light)
 }
+
 #sidebar .divider {
   margin-top: 24px;
   font-size: 12px;
