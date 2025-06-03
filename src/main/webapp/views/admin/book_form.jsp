@@ -27,13 +27,16 @@
   <title><%= isEdit ? "Chỉnh sửa sách" : "Thêm sách" %></title>
   <style>
     .form-container {
-      max-width: 600px;
-      margin: 2rem auto;
-      padding: 2rem;
+      max-width: 1000px;      /* Giới hạn chiều ngang, bạn có thể thử 900px nếu cần gọn hơn nữa */
+      margin: 2rem auto;      /* Căn giữa form */
+      padding: 2rem 3rem;     /* Padding bên trong */
       border: 1px solid #ddd;
       border-radius: 8px;
       background: #fff;
+      box-sizing: border-box;
     }
+
+
 
     .form-container h1 {
       text-align: center;
@@ -77,6 +80,16 @@
       gap: 1.5rem; /* Tăng khoảng cách giữa các nút */
     }
 
+    .form-fields-row {
+      display: flex;
+      gap: 3rem; /* Tăng khoảng cách giữa 2 cột */
+    }
+    .form-fields-col {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
     .btn {
       padding: 0.8rem 1.5rem;
       font-size: 1rem;
@@ -173,6 +186,10 @@
         font-size: 0.9rem; /* Giảm kích thước chữ của nút */
         padding: 0.6rem 1rem; /* Giảm padding của nút */
       }
+      .form-fields-row {
+        flex-direction: column;
+        gap: 0;
+      }
     }
   </style>
 </head>
@@ -257,43 +274,49 @@
         <% if (isEdit) { %>
         <input type="hidden" name="ma_sach" value="<%= book.getBookId() %>">
         <% } %>
-        <div class="form-group">
-          <label for="ten_sach">Tên sách</label>
-          <input type="text" id="ten_sach" name="ten_sach" value="<%= isEdit ? book.getBookName() : "" %>" placeholder="Nhập tên sách" required />
-        </div>
-        <div class="form-group">
-          <label for="tac_gia">Tác giả</label>
-          <input type="text" id="tac_gia" name="tac_gia" value="<%= isEdit ? book.getAuthor() : "" %>" placeholder="Nhập tên tác giả" required />
-        </div>
-        <div class="form-group">
-          <label for="nha_xuat_ban">Nhà xuất bản</label>
-          <input type="text" id="nha_xuat_ban" name="nha_xuat_ban" value="<%= isEdit ? book.getPublisher() : "" %>" placeholder="Nhập nhà xuất bản" required />
-        </div>
-        <div class="form-group">
-          <label for="gia">Giá</label>
-          <input type="number" id="gia" name="gia" step="0.01" value="<%= isEdit ? book.getPrice() : "" %>" placeholder="Nhập giá sách" required />
-        </div>
-        <div class="form-group">
-          <label for="mo_ta">Mô tả</label>
-          <textarea id="mo_ta" name="mo_ta" placeholder="Nhập mô tả sách" required><%= isEdit ? book.getDescription() : "" %></textarea>
-        </div>
-        <div class="form-group">
-          <label for="ma_danh_muc">Danh mục</label>
-          <select id="ma_danh_muc" name="ma_danh_muc" required>
-            <option value="">-- Chọn danh mục --</option>
-            <% for (Category c : categories) { %>
-            <option value="<%= c.getCategoryId() %>" <%= isEdit && c.getCategoryId() == book.getCategoryId() ? "selected" : "" %>>
-              <%= c.getCategoryName() %>
-            </option>
-            <% } %>
-          </select>
-        </div>
-        <div class="form-group">
-          <label for="img_url">Ảnh sách</label>
-          <% if (isEdit && book.getImgUrl() != null && !book.getImgUrl().isEmpty()) { %>
-          <img src="<%= book.getImgUrl() %>" alt="Ảnh sách" width="150" /><br />
-          <% } %>
-          <input type="file" id="img_url" name="img_url" accept="image/*" />
+        <div class="form-fields-row">
+          <div class="form-fields-col">
+            <div class="form-group">
+              <label for="ten_sach">Tên sách</label>
+              <input type="text" id="ten_sach" name="ten_sach" value="<%= isEdit ? book.getBookName() : "" %>" placeholder="Nhập tên sách" required />
+            </div>
+            <div class="form-group">
+              <label for="tac_gia">Tác giả</label>
+              <input type="text" id="tac_gia" name="tac_gia" value="<%= isEdit ? book.getAuthor() : "" %>" placeholder="Nhập tên tác giả" required />
+            </div>
+            <div class="form-group">
+              <label for="nha_xuat_ban">Nhà xuất bản</label>
+              <input type="text" id="nha_xuat_ban" name="nha_xuat_ban" value="<%= isEdit ? book.getPublisher() : "" %>" placeholder="Nhập nhà xuất bản" required />
+            </div>
+            <div class="form-group">
+              <label for="gia">Giá</label>
+              <input type="number" id="gia" name="gia" step="0.01" value="<%= isEdit ? book.getPrice() : "" %>" placeholder="Nhập giá sách" required />
+            </div>
+          </div>
+          <div class="form-fields-col">
+            <div class="form-group">
+              <label for="mo_ta">Mô tả</label>
+              <textarea id="mo_ta" name="mo_ta" placeholder="Nhập mô tả sách" required><%= isEdit ? book.getDescription() : "" %></textarea>
+            </div>
+            <div class="form-group">
+              <label for="ma_danh_muc">Danh mục</label>
+              <select id="ma_danh_muc" name="ma_danh_muc" required>
+                <option value="">-- Chọn danh mục --</option>
+                <% for (Category c : categories) { %>
+                <option value="<%= c.getCategoryId() %>" <%= isEdit && c.getCategoryId() == book.getCategoryId() ? "selected" : "" %>>
+                  <%= c.getCategoryName() %>
+                </option>
+                <% } %>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="img_url">Ảnh sách</label>
+              <% if (isEdit && book.getImgUrl() != null && !book.getImgUrl().isEmpty()) { %>
+              <img src="<%= book.getImgUrl() %>" alt="Ảnh sách" width="150" /><br />
+              <% } %>
+              <input type="file" id="img_url" name="img_url" accept="image/*" />
+            </div>
+          </div>
         </div>
         <div class="form-actions">
           <button type="submit" class="btn btn-submit"><%= isEdit ? "Lưu" : "Tạo sách" %></button>
