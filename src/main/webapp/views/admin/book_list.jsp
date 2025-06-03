@@ -293,78 +293,13 @@
     if (user != null && user.getRoleId() == 0) {
 %>
 <!-- SIDEBAR -->
-<section id="sidebar">
-    <a href="#" class="brand"><i class="bx bxs-smile icon"></i> Admin</a>
-    <ul class="side-menu">
-        <li>
-            <a href="<%= request.getContextPath() %>/admin/dashboard"
-            ><i class="bx bxs-dashboard icon"></i> Dashboard</a
-            >
-        </li>
-        <li class="divider" data-text="Management">Management</li>
-        <li>
-            <a href="<%= request.getContextPath() %>/admin/books" class="active"
-            ><i class="bx bxs-book icon"></i> Quản lý sách</a
-            >
-        </li>
-        <li>
-            <a href="<%= request.getContextPath() %>/admin/categories"
-            ><i class="bx bxs-category icon"></i> Quản lý thể loại</a
-            >
-        </li>
-        <li>
-            <a href="<%= request.getContextPath() %>/admin/users"
-            ><i class="bx bxs-user icon"></i> Quản lý người dùng</a
-            >
-        </li>
-        <li>
-            <a href="<%= request.getContextPath() %>/admin/orders"
-            ><i class="bx bxs-cart icon"></i> Quản lý đơn hàng</a
-            >
-        </li>
-    </ul>
-</section>
+<jsp:include page="views/common/sidebar.jsp" />
 <!-- SIDEBAR -->
 
 <!-- NAVBAR -->
 <section id="content">
     <!-- NAVBAR -->
-    <nav>
-        <i class="bx bx-menu toggle-sidebar"></i>
-        <form action="#">
-            <div class="form-group">
-                <input type="text" placeholder="Search..." />
-                <i class="bx bx-search icon"></i>
-            </div>
-        </form>
-        <a href="#" class="nav-link">
-            <span class="hello-user">Hello, <%= user.getName() %></span>
-            <i class="bx bxs-bell icon"></i>
-            <span class="badge">5</span>
-        </a>
-        <a href="#" class="nav-link">
-            <i class="bx bxs-message-square-dots icon"></i>
-            <span class="badge">8</span>
-        </a>
-        <span class="divider"></span>
-        <div class="profile">
-            <img
-                    src="https://static.vecteezy.com/system/resources/previews/008/442/086/original/illustration-of-human-icon-user-symbol-icon-modern-design-on-blank-background-free-vector.jpg"
-                    alt=""
-            />
-            <ul class="profile-link">
-                <li>
-                    <a href="#"><i class="bx bxs-user-circle icon"></i> Profile</a>
-                </li>
-                <li>
-                    <a href="#"><i class="bx bxs-cog"></i> Settings</a>
-                </li>
-                <li>
-                    <a href="<%= request.getContextPath() %>/logout"><i class="bx bxs-log-out-circle"></i> Logout</a>
-                </li>
-            </ul>
-        </div>
-    </nav>
+    <jsp:include page="views/common/navbar.jsp" />
     <!-- NAVBAR -->
 
     <!-- MAIN -->
@@ -372,7 +307,7 @@
         <div class="page-header">
             <h1 class="title">Quản lý sách</h1>
             <ul class="breadcrumbs">
-                <li><a href="<%= request.getContextPath() %>/admin/dashboard">Home</a></li>
+                <li><a href="<%= request.getContextPath() %>/admin/dashboard">Trang Chủ</a></li>
                 <li class="divider">/</li>
                 <li><a href="#" class="active">Quản lý sách</a></li>
             </ul>
