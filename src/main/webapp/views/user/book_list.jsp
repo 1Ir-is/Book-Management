@@ -1,65 +1,57 @@
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ page import="models.Book" %>
 <%@ page import="java.util.List" %>
+<%@ page import="java.text.NumberFormat" %>
+<%@ page import="java.util.Locale" %>
 
 <%
     List<Book> books = (List<Book>) request.getAttribute("books");
 %>
-<html>
+<%
+    NumberFormat currencyFormat = NumberFormat.getInstance(new Locale("vi", "VN"));
+%>
+<!DOCTYPE html>
+<html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <title>Danh sách sách</title>
-    <!-- Bootstrap CSS CDN (v5) -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Danh Sách Sách | 4Book</title>
+    <!-- Icon -->
+    <link rel="icon" type="image/x-icon" href="<%= request.getContextPath() %>/assets/image/book-shop.png" />
 
+    <!-- Font awesome cdn link -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+    <!-- Custom Css file link -->
+    <link rel="stylesheet" href="<%= request.getContextPath() %>/assets/css/style.css" />
 </head>
-<%--<body>--%>
-<%--<h2>Danh sách Các Loại Sách</h2>--%>
-
-<%--<% if (books != null && !books.isEmpty()) { %>--%>
-<%--<ul>--%>
-<%--    <% for (Book book : books) { %>--%>
-<%--    <li>--%>
-<%--        <a href="book-detail?id=<%= book.getBookId() %>">--%>
-<%--            <% if (book.getImgUrl() != null) { %>--%>
-<%--            <img src="<%= book.getImgUrl() %>" alt="Ảnh sách" width="100"><br>--%>
-<%--            <strong><%= book.getBookName() %></strong><br>--%>
-<%--            &lt;%&ndash;        Tác giả: <%= book.getAuthor() %><br>&ndash;%&gt;--%>
-<%--            &lt;%&ndash;        Nhà Xuất Bản: <%= book.getPublisher() %><br>&ndash;%&gt;--%>
-<%--            Giá: <%= book.getPrice() %> VNĐ<br>--%>
-<%--            &lt;%&ndash;        Mô tả: <%= book.getDescription() %><br>&ndash;%&gt;--%>
-<%--            &lt;%&ndash;        Thể loại: <%= categoryMap.get(book.getCategoryId()) %><br>&ndash;%&gt;--%>
-
-<%--        </a>--%>
-
-<%--        <% } %>--%>
-<%--        <hr>--%>
-<%--    </li>--%>
-<%--    <% } %>--%>
-<%--</ul>--%>
-<%--<% } else { %>--%>
-<%--<p>Hiện chưa có sách nào.</p>--%>
-<%--<% } %>--%>
-
-<%--</body>--%>
 <body>
-<div class="container mt-4">
-    <h2 class="mb-4 text-center">Danh sách Sách</h2>
+<!-- header section start -->
+<jsp:include page="views/common/header.jsp" />
+<!-- header section end -->
 
-    <div class="row">
+<!-- Book List Section -->
+<section class="books-list" style="padding: 5rem 9%">
+    <h1 class="heading"><span>Tất cả Sách</span></h1>
+    <div class="books-grid">
         <% if (books != null && !books.isEmpty()) { %>
         <% for (Book book : books) { %>
-        <div class="col-md-4 mb-4">
-            <div class="card h-100">
-                <a href="book-detail?id=<%= book.getBookId() %>" style="text-decoration: none; color: inherit;">
+        <div class="book-box">
+            <div class="image">
+                <a href="<%= request.getContextPath() %>/book-detail?id=<%= book.getBookId() %>">
                     <% if (book.getImgUrl() != null) { %>
-                    <img src="<%= book.getImgUrl() %>" class="card-img-top" alt="Ảnh sách" style="height: 250px; object-fit: contain;">
+                    <img src="<%= book.getImgUrl() %>" alt="Ảnh sách" />
                     <% } %>
-                    <div class="card-body">
-                        <h5 class="card-title"><%= book.getBookName() %></h5>
-                        <p class="card-text text-danger fw-bold">Giá: <%= book.getPrice() %> VNĐ</p>
-                    </div>
                 </a>
+            </div>
+            <div class="content">
+                <h3>
+                    <a href="<%= request.getContextPath() %>/book-detail?id=<%= book.getBookId() %>" style="color: inherit; text-decoration: none">
+                        <%= book.getBookName() %>
+                    </a>
+                </h3>
+                <div class="price"><%= currencyFormat.format(book.getPrice()) %> đ</div>
+                <a href="#" class="btn">Thêm vào giỏ</a>
             </div>
         </div>
         <% } %>
@@ -67,10 +59,14 @@
         <p class="text-center">Hiện chưa có sách nào.</p>
         <% } %>
     </div>
-</div>
+</section>
+<!-- footer section start -->
+<jsp:include page="views/common/footer.jsp" />
+<!-- footer section end -->
 
-<!-- Bootstrap JS (nếu cần tương tác như modal, dropdown...) -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Custom JS -->
+<script src="<%= request.getContextPath() %>/assets/js/app.js"></script>
+<script src="<%= request.getContextPath() %>/assets/js/script.js"></script>
 </body>
-
 </html>

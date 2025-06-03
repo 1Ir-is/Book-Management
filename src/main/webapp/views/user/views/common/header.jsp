@@ -107,7 +107,8 @@
   <!-- header 2 -->
   <div class="header-2">
     <nav class="navbar">
-      <a class="dropbtn" href="<%= request.getContextPath() %>/books.jsp">Khám phá sách hay</a>
+      <!-- Allow all users to access this link -->
+      <a class="dropbtn" href="<%= request.getContextPath() %>/books">Khám phá sách hay</a>
       <div class="dropdown">
         <a class="dropbtn" href="#Category">Thể loại</a>
         <div class="dropdown-content">
