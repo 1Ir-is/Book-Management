@@ -1,7 +1,5 @@
 package controllers.user;
 
-
-import models.CartDetails;
 import models.User;
 import repositories.cart.CartRepository;
 import repositories.cart.ICartRepository;
@@ -20,10 +18,9 @@ import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.List;
 
-@WebServlet("/cart")
-public class CartServlet extends HttpServlet {
+@WebServlet("/add-to-cart")
+public class AddToCartServlet extends HttpServlet {
     private ICartService cartService;
 
     @Override
@@ -34,24 +31,33 @@ public class CartServlet extends HttpServlet {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        ICartRepository cartRepository = new CartRepository(conn);
-        ICartDetailsRepository cartDetailsRepository = new CartDetailsRepository(conn);
-        cartService = new CartService(cartRepository, cartDetailsRepository);
+        ICartRepository gioHangRepo = new CartRepository(conn);
+        ICartDetailsRepository chiTietRepo = new CartDetailsRepository(conn);
+        cartService = new CartService(gioHangRepo, chiTietRepo);
     }
 
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         HttpSession session = request.getSession(false);
+
         if (session == null || session.getAttribute("user") == null) {
             response.sendRedirect(request.getContextPath() + "/login");
             return;
         }
 
         User user = (User) session.getAttribute("user");
-        List<CartDetails> items = cartService.getListInCart(user.getUserId());
 
-        request.setAttribute("cartItems", items);
-        request.getRequestDispatcher("/views/user/cart.jsp").forward(request, response);
+        try {
+            int bookId = Integer.parseInt(request.getParameter("bookId"));
+            int soLuong = Integer.parseInt(request.getParameter("soLuong"));
+
+            cartService.addBookToCart(user.getUserId(), bookId, soLuong);
+
+            response.sendRedirect(request.getContextPath() + "/cart"); // hoặc trở lại trang chi tiết
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.sendRedirect(request.getContextPath() + "/error.jsp");
+        }
     }
 }
