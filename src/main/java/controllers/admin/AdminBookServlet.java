@@ -49,6 +49,7 @@ public class AdminBookServlet extends HttpServlet {
             case "delete":
                 int deleteId = Integer.parseInt(req.getParameter("id"));
                 bookService.deleteBook(deleteId);
+                req.getSession().setAttribute("toastMessage", "Xóa sách thành công!");
                 resp.sendRedirect(req.getContextPath() + "/admin/books");
                 break;
             default:
@@ -71,41 +72,53 @@ public class AdminBookServlet extends HttpServlet {
         req.setCharacterEncoding("UTF-8");
         resp.setCharacterEncoding("UTF-8");
 
-        int maSach = req.getParameter("ma_sach") != null && !req.getParameter("ma_sach").isEmpty()
-                ? Integer.parseInt(req.getParameter("ma_sach")) : 0;
+        String action = req.getParameter("action");
+        if ("delete".equals(action)) {
+            int deleteId = Integer.parseInt(req.getParameter("id"));
+            bookService.deleteBook(deleteId);
+            req.getSession().setAttribute("toastMessage", "Xóa sách thành công!");
+            resp.sendRedirect(req.getContextPath() + "/admin/books");
+        } else {
+            int maSach = req.getParameter("ma_sach") != null && !req.getParameter("ma_sach").isEmpty()
+                    ? Integer.parseInt(req.getParameter("ma_sach")) : 0;
 
-        String tenSach = req.getParameter("ten_sach");
-        String tacGia = req.getParameter("tac_gia");
-        String nhaXuatBan = req.getParameter("nha_xuat_ban");
-        double gia = Double.parseDouble(req.getParameter("gia"));
-        String moTa = req.getParameter("mo_ta");
-        int maDanhMuc = Integer.parseInt(req.getParameter("ma_danh_muc"));
+            String tenSach = req.getParameter("ten_sach");
+            String tacGia = req.getParameter("tac_gia");
+            String nhaXuatBan = req.getParameter("nha_xuat_ban");
+            double gia = Double.parseDouble(req.getParameter("gia"));
+            String moTa = req.getParameter("mo_ta");
+            int maDanhMuc = Integer.parseInt(req.getParameter("ma_danh_muc"));
 
-        // Xử lý ảnh
-        Part imgPart = req.getPart("img_url");  // name="img_url" trong form
-        String imgUrl = null;
+            // Handle image upload
+            Part imgPart = req.getPart("img_url");
+            String imgUrl = null;
 
-        if (imgPart != null && imgPart.getSize() > 0) {
-            try (InputStream is = imgPart.getInputStream()) {
-                String submittedFileName = imgPart.getSubmittedFileName(); // tên file gốc
-                imgUrl = CloudinaryUtil.uploadFile(is, submittedFileName);
-                System.out.println("Ảnh upload thành công: " + imgUrl);
-            } catch (Exception e) {
-                System.err.println("Upload ảnh thất bại:");
-                e.printStackTrace();
+            if (imgPart != null && imgPart.getSize() > 0) {
+                try (InputStream is = imgPart.getInputStream()) {
+                    String submittedFileName = imgPart.getSubmittedFileName();
+                    imgUrl = CloudinaryUtil.uploadFile(is, submittedFileName);
+                    System.out.println("Image uploaded successfully: " + imgUrl);
+                } catch (Exception e) {
+                    System.err.println("Image upload failed:");
+                    e.printStackTrace();
+                }
+            } else if (maSach != 0) {
+                // Retain the existing image URL if no new image is uploaded
+                Book existingBook = bookService.getBookById(maSach);
+                imgUrl = existingBook.getImgUrl();
             }
-        } else {
-            System.out.println("Không có ảnh được chọn hoặc ảnh rỗng.");
+
+            Book book = new Book(maSach, tenSach, tacGia, nhaXuatBan, gia, moTa, maDanhMuc, imgUrl);
+
+            if (maSach == 0) {
+                bookService.addBook(book);
+                req.getSession().setAttribute("toastMessage", "Thêm sách thành công!");
+            } else {
+                bookService.updateBook(book);
+                req.getSession().setAttribute("toastMessage", "Cập nhật sách thành công!");
+            }
+
+            resp.sendRedirect(req.getContextPath() + "/admin/books");
         }
-
-        Book book = new Book(maSach, tenSach, tacGia, nhaXuatBan, gia, moTa, maDanhMuc, imgUrl);
-
-        if (maSach == 0) {
-            bookService.addBook(book);
-        } else {
-            bookService.updateBook(book);
-        }
-
-        resp.sendRedirect(req.getContextPath() + "/admin/books");
     }
 }

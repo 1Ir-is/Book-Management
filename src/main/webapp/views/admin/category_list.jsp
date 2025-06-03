@@ -97,17 +97,14 @@
     /* Table */
     .table-container {
       width: 100%;
-      overflow-x: auto; /* Cho phép cuộn ngang */
+      overflow-x: auto;
       margin-top: 1rem;
-      border: 1px solid #ddd; /* Tùy chọn: thêm viền cho container */
-      border-radius: 5px; /* Tùy chọn: bo góc container */
-      white-space: nowrap; /* Đảm bảo bảng không bị xuống dòng */
+      border: 1px solid #ddd;
+      border-radius: 5px;
     }
-
     .data-table {
       width: 100%;
       border-collapse: collapse;
-      min-width: 800px; /* Đặt chiều rộng tối thiểu để tạo thanh cuộn nếu cần */
     }
     .data-table th,
     .data-table td {
@@ -150,6 +147,120 @@
       background: #c0392b;
     }
 
+    .modal {
+      display: none; /* Hidden by default */
+      position: fixed; /* Stay in place */
+      z-index: 1000; /* Sit on top */
+      left: 0;
+      top: 0;
+      width: 100%; /* Full width */
+      height: 100%; /* Full height */
+      overflow: auto; /* Enable scroll if needed */
+      background-color: rgba(0, 0, 0, 0.5); /* Black background with opacity */
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-content {
+      background-color: #fff;
+      margin: auto;
+      padding: 20px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      width: 90%; /* Adjust width */
+      max-width: 400px; /* Limit max width */
+      text-align: center;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .modal-icon {
+      font-size: 3rem;
+      color: #e74c3c;
+      margin-bottom: 1rem;
+    }
+
+    .modal-actions {
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    .modal-actions .btn {
+      padding: 0.8rem 1.5rem;
+      font-size: 1rem;
+      font-weight: bold;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .modal-actions .btn-delete {
+      background-color: #e74c3c;
+      color: #fff;
+    }
+
+    .modal-actions .btn-delete:hover {
+      background-color: #c0392b;
+    }
+
+    .modal-actions .btn-cancel {
+      background-color: #3498db;
+      color: #fff;
+    }
+
+    .modal-actions .btn-cancel:hover {
+      background-color: #2980b9;
+    }
+
+    .close {
+      position: absolute;
+      top: 10px;
+      right: 15px;
+      font-size: 1.5rem;
+      color: #333;
+      cursor: pointer;
+    }
+
+    .close:hover {
+      color: #e74c3c;
+    }
+    /* Toast Message */
+    #toast {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background-color: #27ae60;
+      color: white;
+      padding: 1rem 1.5rem;
+      border-radius: 5px;
+      z-index: 2000;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+      font-size: 1rem;
+      animation: fadeInOut 3s ease-in-out;
+    }
+
+    /* Animation */
+    @keyframes fadeInOut {
+      0% {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+      10% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      90% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      100% {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+    }
+
+
     /* Responsive for mobile */
     @media screen and (max-width: 768px) {
       /* Thu hẹp khoảng cách nội dung */
@@ -180,19 +291,15 @@
 
       .table-container {
         width: 100%;
-        overflow-x: auto; /* Cho phép cuộn ngang */
+        overflow-x: auto;
         margin-top: 1rem;
-        border: 1px solid #ddd; /* Tùy chọn: thêm viền cho container */
-        border-radius: 5px; /* Tùy chọn: bo góc container */
-        white-space: nowrap; /* Đảm bảo bảng không bị xuống dòng */
-        -webkit-overflow-scrolling: touch;
+        border: 1px solid #ddd;
+        border-radius: 5px;
       }
       /* Table */
       .data-table {
-        display: block;
-        overflow-x: auto;
         width: 100%;
-        min-width: 800px;
+        border-collapse: collapse;
       }
 
       .data-table th,
@@ -258,7 +365,7 @@
       section,
       #content {
         width: 100%;
-        overflow-x: visible;
+        overflow-x: hidden;
       }
     }
   </style>
@@ -311,7 +418,7 @@
           <td>
             <div class="action-buttons">
               <a class="btn-edit" href="<%= request.getContextPath() %>/admin/categories?action=edit&id=<%= c.getCategoryId() %>">Sửa</a>
-              <a class="btn-delete" href="<%= request.getContextPath() %>/admin/categories?action=delete&id=<%= c.getCategoryId() %>" onclick="return confirm('Xóa danh mục này?')">Xóa</a>
+              <button class="btn-delete" onclick="showDeleteModal(<%= c.getCategoryId() %>)">Xóa</button>
             </div>
           </td>
         </tr>
@@ -321,6 +428,62 @@
     </div>
   </main>
 </section>
+
+<!-- Modal xác nhận xóa -->
+<div id="deleteModal" class="modal" style="display:none;">
+  <div class="modal-content">
+    <span class="close" onclick="closeModal()" title="Đóng">&times;</span>
+    <div class="modal-icon">
+      <i class="bx bxs-error-circle"></i>
+    </div>
+    <h2>Xác nhận xóa</h2>
+    <p>Bạn có chắc chắn muốn xóa thể loại này không?</p>
+    <form id="deleteForm" method="post" action="">
+      <input type="hidden" name="action" value="delete">
+      <input type="hidden" name="id" id="deleteCategoryId" value="">
+      <div class="modal-actions">
+        <button type="submit" class="btn btn-delete">Xác nhận xóa</button>
+        <button type="button" class="btn btn-cancel" onclick="closeModal()">Hủy</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Toast Message -->
+<div id="toast" class="toast" style="display: none;">
+  <p id="toastMessage"></p>
+</div>
+<%
+  String toastMsg = (String) session.getAttribute("toastMessage");
+  if (toastMsg != null) {
+    session.removeAttribute("toastMessage");
+  }
+%>
+<script>
+  function showDeleteModal(categoryId) {
+    const modal = document.getElementById('deleteModal');
+    const input = document.getElementById('deleteCategoryId');
+    input.value = categoryId; // Gán ID cần xóa
+    modal.style.display = 'flex';
+  }
+
+  function closeModal() {
+    document.getElementById('deleteModal').style.display = 'none'; // Hide the modal
+  }
+
+  window.onload = function () {
+    const toastMessage = <%= toastMsg == null ? "null" : "\"" + toastMsg.replace("\"", "\\\"") + "\"" %>;
+    if (toastMessage) {
+      const toast = document.getElementById('toast');
+      const toastText = document.getElementById('toastMessage');
+      toastText.textContent = toastMessage;
+      toast.style.display = 'block';
+      setTimeout(() => {
+        toast.style.display = 'none';
+      }, 3000);
+    }
+  };
+</script>
 
 <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 <script src="<%= request.getContextPath() %>/assets/js/script.js"></script>
