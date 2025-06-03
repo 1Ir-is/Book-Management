@@ -10,4 +10,11 @@ public interface ICartDetailsRepository {
     List<CartDetails> findByCartId(int cartId);
 
     List<CartDetails> getAllByCartId(int cartId);
+
+    void updateQuantity(int cartId, int bookId, int delta);
+
+    void setQuantity(int cartId, int bookId, int quantity);
+
+    void removeBook(int cartId, int bookId);
+
 }

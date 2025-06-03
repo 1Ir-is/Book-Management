@@ -38,4 +38,30 @@ public class CartService implements ICartService {
         if (cart == null) return null;
         return cartDetailsRepository.getAllByCartId(cart.getCartId());
     }
+
+    @Override
+    public void changeQuantity(int userId, int bookId, int delta) {
+        Cart cart = cartRepository.findByUserId(userId);
+        if (cart != null) {
+            cartDetailsRepository.updateQuantity(cart.getCartId(), bookId, delta);
+        }
+
+    }
+
+    @Override
+    public void setQuantity(int userId, int bookId, int quantity) {
+        Cart cart = cartRepository.findByUserId(userId);
+        if (cart != null) {
+            cartDetailsRepository.setQuantity(cart.getCartId(), bookId, quantity);
+        }
+    }
+
+    @Override
+    public void removeBook(int userId, int bookId) {
+        Cart cart = cartRepository.findByUserId(userId);
+        if (cart != null) {
+            cartDetailsRepository.removeBook(cart.getCartId(), bookId);
+        }
+    }
+
 }

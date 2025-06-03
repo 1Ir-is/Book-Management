@@ -100,4 +100,70 @@ public class CartDetailsRepository implements ICartDetailsRepository {
         }
         return items;
     }
+
+    @Override
+    public void updateQuantity(int cartId, int bookId, int delta) {
+        String updateSql = "UPDATE chi_tiet_gio_hang SET so_luong = so_luong + ? WHERE ma_gio_hang = ? AND ma_sach = ?";
+        String selectSql = "SELECT so_luong FROM chi_tiet_gio_hang WHERE ma_gio_hang = ? AND ma_sach = ?";
+        String deleteSql = "DELETE FROM chi_tiet_gio_hang WHERE ma_gio_hang = ? AND ma_sach = ?";
+
+        try (PreparedStatement updateStmt = connection.prepareStatement(updateSql)) {
+            updateStmt.setInt(1, delta);
+            updateStmt.setInt(2, cartId);
+            updateStmt.setInt(3, bookId);
+            updateStmt.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        // Sau khi update, kiểm tra lại số lượng
+        try (PreparedStatement selectStmt = connection.prepareStatement(selectSql)) {
+            selectStmt.setInt(1, cartId);
+            selectStmt.setInt(2, bookId);
+            ResultSet rs = selectStmt.executeQuery();
+
+            if (rs.next()) {
+                int newQty = rs.getInt("so_luong");
+                if (newQty <= 0) {
+                    try (PreparedStatement deleteStmt = connection.prepareStatement(deleteSql)) {
+                        deleteStmt.setInt(1, cartId);
+                        deleteStmt.setInt(2, bookId);
+                        deleteStmt.executeUpdate();
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void setQuantity(int cartId, int bookId, int quantity) {
+        String sql = "UPDATE chi_tiet_gio_hang SET so_luong = ? WHERE ma_gio_hang = ? AND ma_sach = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setInt(1, quantity);
+            stmt.setInt(2, cartId);
+            stmt.setInt(3, bookId);
+            stmt.executeUpdate();
+
+            // Nếu số lượng <= 0 thì xóa sản phẩm
+            if (quantity <= 0) {
+                removeBook(cartId, bookId);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void removeBook(int cartId, int bookId) {
+        String sql = "DELETE FROM chi_tiet_gio_hang WHERE ma_gio_hang = ? AND ma_sach = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setInt(1, cartId);
+            stmt.setInt(2, bookId);
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 }
