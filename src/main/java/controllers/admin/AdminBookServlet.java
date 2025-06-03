@@ -34,6 +34,7 @@ public class AdminBookServlet extends HttpServlet {
 
         switch (action) {
             case "add":
+
                 List<Category> categoriesAdd = categoryService.getAll();
                 req.setAttribute("categories", categoriesAdd);
                 req.getRequestDispatcher("/views/admin/book_form.jsp").forward(req, resp);
