@@ -36,6 +36,15 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
   <style>
+    .icons {
+      display: flex;
+      align-items: center;
+      gap: 28px; /* Tăng khoảng cách giữa các icon, có thể điều chỉnh số px */
+    }
+
+    .icons > * {
+      margin-left: 0 !important; /* Xóa margin cũ nếu có */
+    }
     @media only screen and (max-width: 768px) {
       #toast-container > div {
         font-size: 14px !important;
@@ -75,19 +84,20 @@
       <div class="dropdown">
         <% if (user != null) { %>
         <!-- Đã đăng nhập -->
+        <% if (user.getAvatarUrl() != null && !user.getAvatarUrl().isEmpty()) { %>
+        <img src="<%= user.getAvatarUrl() %>" alt="Avatar" class="dropbtn" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover;" />
+        <% } else { %>
         <div class="fas fa-user dropbtn"></div>
+        <% } %>
         <div class="dropdown-content" style="padding: 8px 0; min-width: 180px;">
           <div class="drop-content" style="font-weight: 600; font-size: 14px; padding: 6px 14px; cursor: default; line-height: 1.4;">
             Xin chào,<br />
             <%= user.getName() %>
           </div>
-
           <div style="height: 1px; background-color: #e0e0e0; margin: 6px 0;"></div>
-
           <a class="drop-content" href="<%= request.getContextPath() %>/profile" style="padding: 6px 14px; display: block; text-decoration: none; color: #333; font-size: 13px;">
             Thông tin
           </a>
-
           <a class="drop-content" href="<%= request.getContextPath() %>/history.jsp" style="padding: 6px 14px; display: block; text-decoration: none; color: #333; font-size: 13px;">
             Lịch sử mua hàng
           </a>
@@ -95,7 +105,6 @@
             Đăng xuất
           </a>
         </div>
-
         <% } else { %>
         <!-- Chưa đăng nhập -->
         <div id="login-btn" class="fas fa-user dropbtn"></div>
@@ -140,7 +149,15 @@
     </form>
     <div class="header-icons">
       <a href="<%= request.getContextPath() %>/cart.jsp" class="fas fa-shopping-cart"></a>
+      <% if (user != null) { %>
+      <% if (user.getAvatarUrl() != null && !user.getAvatarUrl().isEmpty()) { %>
+      <img src="<%= user.getAvatarUrl() %>" alt="Avatar" id="mobile-avatar" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover; cursor: pointer;" />
+      <% } else { %>
       <a href="#" id="mobile-login-btn" class="fas fa-user"></a>
+      <% } %>
+      <% } else { %>
+      <a href="#" id="mobile-login-btn" class="fas fa-user"></a>
+      <% } %>
     </div>
   </div>
 </header>

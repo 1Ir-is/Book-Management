@@ -3,7 +3,7 @@
 <%
   User user = (User) session.getAttribute("user");
   if (user == null) {
-    response.sendRedirect("login.jsp"); // Chuyển hướng nếu chưa đăng nhập
+    response.sendRedirect("login.jsp"); // Redirect if not logged in
     return;
   }
 %>
@@ -27,7 +27,7 @@
     .profile-layout {
       display: flex;
       flex-direction: column;
-      max-width: 900px; /* Tăng chiều rộng */
+      max-width: 900px;
       margin: 2rem auto;
       background: #fff;
       border-radius: 10px;
@@ -78,11 +78,12 @@
       height: 100px;
       border-radius: 50%;
       border: 3px solid #27ae60;
+      object-fit: cover;
     }
 
     /* Info section */
     .profile-info-section {
-      padding: 2.5rem 2.5rem; /* Tăng padding cho form */
+      padding: 2.5rem 2.5rem;
     }
 
     .profile-info-section h2 {
@@ -152,7 +153,7 @@
       }
 
       .profile-form .form-group label {
-        font-size: 1.2rem; /* Tăng kích thước chữ của nhãn */
+        font-size: 1.2rem;
       }
 
       .profile-save-btn {
@@ -177,7 +178,7 @@
   </div>
   <div class="profile-content">
     <div class="profile-avatar-section">
-      <img src="image/avatar_default.png" alt="Avatar" class="profile-avatar" />
+      <img src="<%= safe(user.getAvatarUrl() != null ? user.getAvatarUrl() : request.getContextPath() + "/image/avatar_default.png") %>" alt="Avatar" class="profile-avatar" />
     </div>
     <div class="profile-info-section">
       <h2>Hồ sơ cá nhân</h2>
@@ -196,7 +197,7 @@
       </script>
       <% } %>
 
-      <form class="profile-form" action="<%= request.getContextPath() %>/update-profile" method="post">
+      <form class="profile-form" action="<%= request.getContextPath() %>/update-profile" method="post" enctype="multipart/form-data">
         <div class="form-group">
           <label>Họ và Tên</label>
           <input type="text" name="name" value="<%= user.getName() %>" required />
@@ -212,6 +213,10 @@
         <div class="form-group">
           <label>Địa chỉ</label>
           <input type="text" name="address" value="<%= safe(user.getAddress()) %>" />
+        </div>
+        <div class="form-group">
+          <label>Ảnh đại diện</label>
+          <input type="file" name="avatar" accept="image/*" />
         </div>
         <button type="submit" class="profile-save-btn">Lưu thay đổi</button>
       </form>

@@ -1,4 +1,4 @@
-package controllers.user;
+package controllers.admin;
 
 import models.User;
 import services.user.IUserService;
@@ -11,9 +11,9 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
 import java.io.IOException;
 
-@WebServlet("/update-profile")
-@MultipartConfig // Enable file upload handling
-public class UpdateProfileServlet extends HttpServlet {
+@WebServlet("/admin/update-profile")
+@MultipartConfig
+public class AdminUpdateProfileServlet extends HttpServlet {
     private final IUserService userService = new UserService();
 
     @Override
@@ -22,34 +22,34 @@ public class UpdateProfileServlet extends HttpServlet {
 
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute("user");
-        if (user == null) {
+        if (user == null || user.getRoleId() != 0) {
             response.sendRedirect("login.jsp");
             return;
         }
 
-        // Lấy dữ liệu từ form
         String name = request.getParameter("name");
         String phone = request.getParameter("phone");
         String address = request.getParameter("address");
 
-        // Cập nhật thông tin người dùng
         user.setName(name);
         user.setPhoneNumber(phone);
         user.setAddress(address);
 
-        // Handle avatar upload
         Part avatarPart = request.getPart("avatar");
         if (avatarPart != null && avatarPart.getSize() > 0) {
             String avatarUrl = CloudinaryUtil.uploadFile(avatarPart.getInputStream(), avatarPart.getSubmittedFileName());
-            user.setAvatarUrl(avatarUrl); // Update avatar URL
+            user.setAvatarUrl(avatarUrl);
         }
 
         boolean success = userService.updateUser(user);
         if (success) {
             session.setAttribute("user", user);
-            response.sendRedirect("views/user/profile.jsp?success=1");
+            request.setAttribute("success", true);
+            request.getRequestDispatcher("/views/admin/profile.jsp").forward(request, response);
         } else {
-            response.sendRedirect("views/user/profile.jsp?error=1");
+            request.setAttribute("error", true);
+            request.getRequestDispatcher("/views/admin/profile.jsp").forward(request, response);
         }
+
     }
 }

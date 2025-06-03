@@ -10,6 +10,8 @@
 <%@ page import="java.util.List" %>
 <%@ page import="java.util.Map" %>
 <%@ page import="models.User" %>
+<%@ page import="java.util.Locale" %>
+<%@ page import="java.text.NumberFormat" %>
 <%
     User user = (User) session.getAttribute("user");
     List<Book> books = (List<Book>) request.getAttribute("books");
@@ -22,6 +24,10 @@
     } else {
         action = action.trim();
     }
+%>
+
+<%
+    NumberFormat currencyFormat = NumberFormat.getInstance(new Locale("vi", "VN"));
 %>
 
 <!DOCTYPE html>
@@ -465,7 +471,7 @@
                     <td><%= book.getBookName() %></td>
                     <td><%= book.getAuthor() %></td>
                     <td><%= book.getPublisher() %></td>
-                    <td><%= book.getPrice() %></td>
+                    <td><%= currencyFormat.format(book.getPrice()) %> VND</td>
                     <td class="description-cell"><%= book.getDescription() %></td>
                     <td><%= categoryMap.get(book.getCategoryId()) %></td>
                     <td>
