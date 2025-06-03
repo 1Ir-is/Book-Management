@@ -35,6 +35,7 @@
 <body>
 <!-- header section start -->
 <jsp:include page="views/common/header.jsp" />
+  <a href="<%= request.getContextPath() %>/books">Xem sách</a>
 <!-- header section end -->
 
 <!-- home section start -->
@@ -303,6 +304,8 @@
     <a href="<%= request.getContextPath() %>/register" class="btn">Tham Gia Ngay</a>
   </div>
 </div>
+
+
 
 <!-- Custom JS file link -->
 </body>
