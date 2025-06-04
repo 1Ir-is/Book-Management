@@ -5,6 +5,7 @@ import services.user.IUserService;
 import services.user.UserService;
 import utils.CloudinaryUtil;
 
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
@@ -42,14 +43,11 @@ public class AdminUpdateProfileServlet extends HttpServlet {
         }
 
         boolean success = userService.updateUser(user);
-        if (success) {
-            session.setAttribute("user", user);
-            request.setAttribute("success", true);
-            request.getRequestDispatcher("/views/admin/profile.jsp").forward(request, response);
-        } else {
-            request.setAttribute("error", true);
-            request.getRequestDispatcher("/views/admin/profile.jsp").forward(request, response);
-        }
+        request.setAttribute("success", success);
+        request.setAttribute("error", !success);
 
+        // forward lại đúng controller xử lý view
+        RequestDispatcher dispatcher = request.getRequestDispatcher("/views/admin/profile.jsp");
+        dispatcher.forward(request, response);
     }
 }

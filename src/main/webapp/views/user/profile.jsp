@@ -1,15 +1,11 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
-<%@ page import="models.User" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+
 <%
-  User user = (User) session.getAttribute("user");
+  models.User user = (models.User) session.getAttribute("user");
   if (user == null) {
-    response.sendRedirect("login.jsp"); // Redirect if not logged in
+    response.sendRedirect(request.getContextPath() + "/login.jsp"); // ✅ KHÔNG dùng ${} trong Java
     return;
-  }
-%>
-<%!
-  public String safe(String input) {
-    return input != null ? input : "";
   }
 %>
 
@@ -18,7 +14,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Thông tin cá nhân - 4Book</title>
-  <link rel="stylesheet" href="<%= request.getContextPath() %>/assets/css/style.css" />
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/style.css" />
   <link href="https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css" rel="stylesheet" />
   <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
@@ -193,9 +189,8 @@
 </head>
 <body>
 
-<!-- header section start -->
+<!-- header -->
 <jsp:include page="views/common/header.jsp" />
-<!-- header section end -->
 
 <section class="profile-layout">
   <div class="profile-menu-container">
@@ -205,43 +200,54 @@
       <a href="#">Đơn hàng của tôi</a>
     </nav>
   </div>
+
   <div class="profile-content">
     <div class="profile-avatar-section">
-      <img src="<%= safe(user.getAvatarUrl() != null ? user.getAvatarUrl() : request.getContextPath() + "/image/avatar_default.png") %>" alt="Avatar" class="profile-avatar" />
+      <c:choose>
+        <c:when test="${not empty user.avatarUrl}">
+          <img src="${user.avatarUrl}" alt="Avatar" class="profile-avatar" />
+        </c:when>
+        <c:otherwise>
+          <img src="${pageContext.request.contextPath}/image/avatar_default.png" alt="Avatar" class="profile-avatar" />
+        </c:otherwise>
+      </c:choose>
     </div>
+
     <div class="profile-info-section">
       <h2>Hồ sơ cá nhân</h2>
 
-      <% if ("1".equals(request.getParameter("success"))) { %>
-      <script>
-        $(document).ready(function() {
-          toastr.success('Cập nhật thành công!');
-        });
-      </script>
-      <% } else if ("1".equals(request.getParameter("error"))) { %>
-      <script>
-        $(document).ready(function() {
-          toastr.error('Cập nhật thất bại. Vui lòng thử lại!');
-        });
-      </script>
-      <% } %>
+      <!-- Toastr alerts -->
+      <c:if test="${param.success == '1'}">
+        <script>
+          $(function () {
+            toastr.success('Cập nhật thành công!');
+          });
+        </script>
+      </c:if>
+      <c:if test="${param.error == '1'}">
+        <script>
+          $(function () {
+            toastr.error('Cập nhật thất bại. Vui lòng thử lại!');
+          });
+        </script>
+      </c:if>
 
-      <form class="profile-form" action="<%= request.getContextPath() %>/update-profile" method="post" enctype="multipart/form-data">
+      <form class="profile-form" action="${pageContext.request.contextPath}/update-profile" method="post" enctype="multipart/form-data">
         <div class="form-group">
           <label>Họ và Tên</label>
-          <input type="text" name="name" value="<%= user.getName() %>" required />
+          <input type="text" name="name" value="${user.name}" required />
         </div>
         <div class="form-group">
           <label>Email</label>
-          <input type="email" name="email" value="<%= user.getEmail() %>" readonly />
+          <input type="email" name="email" value="${user.email}" readonly />
         </div>
         <div class="form-group">
           <label>Số điện thoại</label>
-          <input type="text" name="phone" value="<%= safe(user.getPhoneNumber()) %>" />
+          <input type="text" name="phone" value="${empty user.phoneNumber ? '' : user.phoneNumber}" />
         </div>
         <div class="form-group">
           <label>Địa chỉ</label>
-          <input type="text" name="address" value="<%= safe(user.getAddress()) %>" />
+          <input type="text" name="address" value="${empty user.address ? '' : user.address}" />
         </div>
         <div class="form-group">
           <label>Ảnh đại diện</label>
@@ -253,20 +259,21 @@
   </div>
 </section>
 
-<div id="loading-overlay" style="display:none;">
+<!-- Loading overlay -->
+<div id="loading-overlay" style="display: none;">
   <div class="loading-spinner">
     <i class='bx bx-loader-alt bx-spin'></i>
-    <span>Đang xử lý...</span>
+    Đang xử lý...
   </div>
 </div>
+
 <script>
   document.addEventListener('DOMContentLoaded', function () {
-    var form = document.querySelector('.profile-form');
+    const form = document.querySelector('.profile-form');
     if (form) {
-      form.addEventListener('submit', function (event) {
-        // Prevent form submission if validation fails
+      form.addEventListener('submit', function (e) {
         if (!validateForm()) {
-          event.preventDefault();
+          e.preventDefault();
         } else {
           document.getElementById('loading-overlay').style.display = 'flex';
         }
@@ -274,30 +281,24 @@
     }
 
     function validateForm() {
-      var isValid = true;
-      var name = document.querySelector('input[name="name"]');
-      var phone = document.querySelector('input[name="phone"]');
-      var address = document.querySelector('input[name="address"]');
+      let isValid = true;
+      const name = document.querySelector('input[name="name"]');
+      const phone = document.querySelector('input[name="phone"]');
+      const address = document.querySelector('input[name="address"]');
 
-      // Clear previous error messages
-      document.querySelectorAll('.error-message').forEach(function (el) {
-        el.remove();
-      });
+      document.querySelectorAll('.error-message').forEach(el => el.remove());
 
-      // Validate name
       if (!name.value.trim()) {
         showError(name, 'Họ và Tên không được để trống.');
         isValid = false;
       }
 
-      // Validate phone (must be numeric and 10-15 digits)
-      var phoneRegex = /^[0-9]{10,15}$/;
+      const phoneRegex = /^[0-9]{10,15}$/;
       if (!phone.value.trim() || !phoneRegex.test(phone.value)) {
         showError(phone, 'Số điện thoại phải là số và có từ 10 đến 15 chữ số.');
         isValid = false;
       }
 
-      // Validate address
       if (!address.value.trim()) {
         showError(address, 'Địa chỉ không được để trống.');
         isValid = false;
@@ -307,19 +308,16 @@
     }
 
     function showError(input, message) {
-      var error = document.createElement('div');
+      const error = document.createElement('div');
       error.className = 'error-message';
-      error.style.color = 'red';
-      error.style.fontSize = '0.9rem';
       error.textContent = message;
       input.parentElement.appendChild(error);
     }
   });
 </script>
 
-<!-- footer section start -->
+<!-- footer -->
 <jsp:include page="views/common/footer.jsp" />
-<!-- footer section end -->
 
 </body>
 </html>

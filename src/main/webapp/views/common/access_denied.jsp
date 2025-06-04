@@ -90,7 +90,7 @@
     Trang bạn đang cố truy cập bị hạn chế quyền truy cập.<br />
     Vui lòng liên hệ với quản trị viên hệ thống.
   </div>
-  <a style="text-decoration: none" href="<%= request.getContextPath() %>/" class="access-denied-btn">
+  <a style="text-decoration: none" href="${pageContext.request.contextPath}/" class="access-denied-btn">
     Quay về trang chủ
   </a>
 </div>

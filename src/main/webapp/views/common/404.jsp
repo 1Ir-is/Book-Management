@@ -74,7 +74,7 @@
   Trang bạn đang tìm kiếm có thể đã bị xóa<br />
   đổi tên hoặc tạm thời không khả dụng.
 </div>
-<a href="<%= request.getContextPath() %>/" class="error-btn">
+<a href="${pageContext.request.contextPath}/" class="error-btn">
   Quay về trang chủ
 </a>
 </body>

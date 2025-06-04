@@ -29,7 +29,7 @@ public class RegisterServlet extends HttpServlet {
 
         if (userService.isEmailExists(email)) {
             session.setAttribute("registerError", "Email đã được sử dụng!");
-            resp.sendRedirect(req.getContextPath() + "/home.jsp");
+            resp.sendRedirect(req.getContextPath() + "views/user/home.jsp");
             return;
         }
 
@@ -43,6 +43,6 @@ public class RegisterServlet extends HttpServlet {
             session.setAttribute("registerError", "Đăng ký thất bại. Vui lòng thử lại!");
         }
 
-        resp.sendRedirect(req.getContextPath() + "/home.jsp");
+        resp.sendRedirect(req.getContextPath() + "views/user/home.jsp");
     }
 }
