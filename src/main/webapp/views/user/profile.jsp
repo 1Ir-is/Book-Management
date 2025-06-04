@@ -45,7 +45,7 @@
     }
 
     .profile-menu a {
-      font-size: 1.2rem;
+      font-size: 1.4rem; /* Increased font size */
       color: #444;
       text-decoration: none;
       padding: 0.5rem 1rem;
@@ -84,7 +84,7 @@
     }
 
     .profile-info-section h2 {
-      font-size: 1.8rem;
+      font-size: 2rem; /* Increased font size */
       color: #27ae60;
       margin-bottom: 1.5rem;
     }
@@ -94,7 +94,7 @@
     }
 
     .profile-form .form-group label {
-      font-size: 1.2rem;
+      font-size: 1.4rem; /* Increased font size */
       color: #444;
       margin-bottom: 0.5rem;
       display: block;
@@ -105,7 +105,7 @@
       padding: 0.8rem;
       border: 1px solid #ddd;
       border-radius: 5px;
-      font-size: 1.1rem;
+      font-size: 1.3rem; /* Increased font size */
     }
 
     .profile-save-btn {
@@ -116,7 +116,7 @@
       color: #fff;
       border: none;
       border-radius: 5px;
-      font-size: 1.2rem;
+      font-size: 1.4rem; /* Increased font size */
       font-weight: bold;
       cursor: pointer;
       transition: background 0.2s;
@@ -126,32 +126,10 @@
       background: #219150;
     }
 
-    #loading-overlay {
-      position: fixed;
-      z-index: 2000;
-      top: 0; left: 0;
-      width: 100vw; height: 100vh;
-      background: rgba(255,255,255,0.7);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .loading-spinner {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      font-size: 2rem;
-      color: #27ae60;
-      gap: 1rem;
-    }
-    .loading-spinner i {
-      font-size: 3rem;
-    }
-
     .error-message {
       margin-top: 0.5rem;
       color: red;
-      font-size: 0.9rem;
+      font-size: 1.1rem; /* Increased font size */
     }
 
     /* Responsive for mobile */
@@ -161,7 +139,7 @@
       }
 
       .profile-menu a {
-        font-size: 1.1rem;
+        font-size: 1.3rem; /* Increased font size */
       }
 
       .profile-avatar {
@@ -170,19 +148,19 @@
       }
 
       .profile-info-section h2 {
-        font-size: 1.5rem;
+        font-size: 1.8rem; /* Increased font size */
       }
 
       .profile-form .form-group input {
-        font-size: 1.1rem;
+        font-size: 1.3rem; /* Increased font size */
       }
 
       .profile-form .form-group label {
-        font-size: 1.2rem;
+        font-size: 1.4rem; /* Increased font size */
       }
 
       .profile-save-btn {
-        font-size: 1.2rem;
+        font-size: 1.4rem; /* Increased font size */
       }
     }
   </style>

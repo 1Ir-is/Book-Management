@@ -42,7 +42,7 @@
         nổi bật, từ tiểu thuyết, kỹ năng sống đến sách học tập đang chờ bạn
         với mức giá ưu đãi chưa từng có. Mua ngay hôm nay!
       </p>
-      <a href="#" class="btn">Mua ngay</a>
+      <a href="${pageContext.request.contextPath}/books" class="btn">Mua ngay</a>
     </div>
 
     <div class="books-slider">
@@ -62,26 +62,26 @@
         <img src="${ctx}/assets/image/book_1.jpg" alt="" />
       </div>
       <div class="content">
-        <h3>Sách Nổi Bật</h3>
+        <h3>Cocogoose</h3>
         <div class="price">369.000đ</div>
       </div>
     </div>
     <!-- 2 box giống nhau -->
     <div class="box">
       <div class="image">
-        <img src="${ctx}/assets/image/book_1.jpg" alt="" />
+        <img src="${ctx}/assets/image/book_15.png" alt="" />
       </div>
       <div class="content">
-        <h3>Sách Nổi Bật</h3>
+        <h3>Black History Month</h3>
         <div class="price">369.000đ</div>
       </div>
     </div>
     <div class="box">
       <div class="image">
-        <img src="${ctx}/assets/image/book_1.jpg" alt="" />
+        <img src="${ctx}/assets/image/book_8.png" alt="" />
       </div>
       <div class="content">
-        <h3>Sách Nổi Bật</h3>
+        <h3>Music Rock</h3>
         <div class="price">369.000đ</div>
       </div>
     </div>
@@ -97,7 +97,7 @@
         <img src="${ctx}/assets/image/book_11.jpg" alt="" />
       </div>
       <div class="content">
-        <h3>Sách Mới Về</h3>
+        <h3>Boring Girls A Novel Sara Taylor</h3>
         <div class="price">369.000đ</div>
         <div class="stars">
           <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
@@ -110,7 +110,7 @@
         <img src="${ctx}/assets/image/book_12.png" alt="" />
       </div>
       <div class="content">
-        <h3>Sách Mới Về</h3>
+        <h3>Thanks Everything</h3>
         <div class="price">369.000đ</div>
         <div class="stars">
           <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
@@ -123,7 +123,7 @@
         <img src="${ctx}/assets/image/book_13.png" alt="" />
       </div>
       <div class="content">
-        <h3>Sách Mới Về</h3>
+        <h3>Andy Son</h3>
         <div class="price">369.000đ</div>
         <div class="stars">
           <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
@@ -143,7 +143,7 @@
       Đừng bỏ lỡ cơ hội sở hữu những cuốn sách yêu thích với mức giá cực sốc!
       Ưu đãi chỉ áp dụng trong hôm nay cho các đầu sách nổi bật, số lượng có hạn.
     </p>
-    <a href="#" class="btn">Mua ngay</a>
+    <a href="${pageContext.request.contextPath}/books" class="btn">Mua ngay</a>
   </div>
   <div class="image">
     <img src="${ctx}/assets/image/about.png" alt="Ưu đãi trong ngày" />
