@@ -152,6 +152,12 @@
       font-size: 3rem;
     }
 
+    .error-message {
+      margin-top: 0.5rem;
+      color: red;
+      font-size: 0.9rem;
+    }
+
     /* Responsive for mobile */
     @media (max-width: 600px) {
       .profile-layout {
@@ -253,14 +259,60 @@
     <span>Đang xử lý...</span>
   </div>
 </div>
-
 <script>
-  document.addEventListener('DOMContentLoaded', function() {
-    var form = document.querySelector('.profile-form'); // Correct selector for the form
+  document.addEventListener('DOMContentLoaded', function () {
+    var form = document.querySelector('.profile-form');
     if (form) {
-      form.addEventListener('submit', function() {
-        document.getElementById('loading-overlay').style.display = 'flex'; // Show loading spinner
+      form.addEventListener('submit', function (event) {
+        // Prevent form submission if validation fails
+        if (!validateForm()) {
+          event.preventDefault();
+        } else {
+          document.getElementById('loading-overlay').style.display = 'flex';
+        }
       });
+    }
+
+    function validateForm() {
+      var isValid = true;
+      var name = document.querySelector('input[name="name"]');
+      var phone = document.querySelector('input[name="phone"]');
+      var address = document.querySelector('input[name="address"]');
+
+      // Clear previous error messages
+      document.querySelectorAll('.error-message').forEach(function (el) {
+        el.remove();
+      });
+
+      // Validate name
+      if (!name.value.trim()) {
+        showError(name, 'Họ và Tên không được để trống.');
+        isValid = false;
+      }
+
+      // Validate phone (must be numeric and 10-15 digits)
+      var phoneRegex = /^[0-9]{10,15}$/;
+      if (!phone.value.trim() || !phoneRegex.test(phone.value)) {
+        showError(phone, 'Số điện thoại phải là số và có từ 10 đến 15 chữ số.');
+        isValid = false;
+      }
+
+      // Validate address
+      if (!address.value.trim()) {
+        showError(address, 'Địa chỉ không được để trống.');
+        isValid = false;
+      }
+
+      return isValid;
+    }
+
+    function showError(input, message) {
+      var error = document.createElement('div');
+      error.className = 'error-message';
+      error.style.color = 'red';
+      error.style.fontSize = '0.9rem';
+      error.textContent = message;
+      input.parentElement.appendChild(error);
     }
   });
 </script>

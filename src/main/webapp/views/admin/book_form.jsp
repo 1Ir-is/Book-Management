@@ -158,6 +158,12 @@
       font-size: 3rem;
     }
 
+    .error-message {
+      margin-top: 0.5rem;
+      color: red;
+      font-size: 0.9rem;
+    }
+
     @media screen and (max-width: 768px) {
       /* Form Container */
       .form-container {
@@ -315,12 +321,81 @@
 </div>
 
 <script>
-  document.addEventListener('DOMContentLoaded', function() {
+  document.addEventListener('DOMContentLoaded', function () {
     var form = document.querySelector('.form-container form');
     if (form) {
-      form.addEventListener('submit', function() {
-        document.getElementById('loading-overlay').style.display = 'flex';
+      form.addEventListener('submit', function (event) {
+        // ngan chan submit neu nhap sai
+        if (!validateForm()) {
+          event.preventDefault();
+        } else {
+          document.getElementById('loading-overlay').style.display = 'flex';
+        }
       });
+    }
+
+    function validateForm() {
+      var isValid = true;
+
+      var tenSach = document.getElementById('ten_sach');
+      var tacGia = document.getElementById('tac_gia');
+      var nhaXuatBan = document.getElementById('nha_xuat_ban');
+      var gia = document.getElementById('gia');
+      var namXuatBan = document.getElementById('nam_xuat_ban');
+      var moTa = document.getElementById('mo_ta');
+      var maDanhMuc = document.getElementById('ma_danh_muc');
+
+      // xoa error truoc do
+      document.querySelectorAll('.error-message').forEach(function (el) {
+        el.remove();
+      });
+
+      if (!tenSach.value.trim()) {
+        showError(tenSach, 'Tên sách không được để trống.');
+        isValid = false;
+      }
+
+      if (!tacGia.value.trim()) {
+        showError(tacGia, 'Tác giả không được để trống.');
+        isValid = false;
+      }
+
+      if (!nhaXuatBan.value.trim()) {
+        showError(nhaXuatBan, 'Nhà xuất bản không được để trống.');
+        isValid = false;
+      }
+
+      if (!gia.value.trim() || parseFloat(gia.value) <= 0) {
+        showError(gia, 'Giá phải là một số dương.');
+        isValid = false;
+      }
+
+      var currentYear = new Date().getFullYear();
+      if (!namXuatBan.value.trim() || parseInt(namXuatBan.value) < 1900 || parseInt(namXuatBan.value) > currentYear) {
+        showError(namXuatBan, 'Năm xuất bản phải từ 1900 đến ' + currentYear + '.');
+        isValid = false;
+      }
+
+      if (!moTa.value.trim()) {
+        showError(moTa, 'Mô tả không được để trống.');
+        isValid = false;
+      }
+
+      if (!maDanhMuc.value.trim()) {
+        showError(maDanhMuc, 'Vui lòng chọn danh mục.');
+        isValid = false;
+      }
+
+      return isValid;
+    }
+
+    function showError(input, message) {
+      var error = document.createElement('div');
+      error.className = 'error-message';
+      error.style.color = 'red';
+      error.style.fontSize = '0.9rem';
+      error.textContent = message;
+      input.parentElement.appendChild(error);
     }
   });
 </script>

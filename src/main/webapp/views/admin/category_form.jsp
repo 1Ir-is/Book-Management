@@ -118,6 +118,12 @@
             background: #2980b9;
         }
 
+        .error-message {
+            margin-top: 0.5rem;
+            color: red;
+            font-size: 0.9rem;
+        }
+
         @media screen and (max-width: 768px) {
             /* Form Container */
             .form-container {
@@ -219,5 +225,40 @@
         </div>
     </main>
 </section>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const form = document.querySelector('form');
+        const tenDanhMucInput = document.getElementById('ten_danh_muc');
+
+        form.addEventListener('submit', function (event) {
+            // xoa error truoc
+            clearErrors();
+
+            //
+            if (!tenDanhMucInput.value.trim()) {
+                showError(tenDanhMucInput, 'Tên danh mục không được để trống.');
+                event.preventDefault(); // ngan chan submit neu nhap sai
+            } else if (tenDanhMucInput.value.length > 100) {
+                showError(tenDanhMucInput, 'Tên danh mục không được vượt quá 100 ký tự.');
+                event.preventDefault(); // ngan chan submit neu nhap sai
+            }
+        });
+
+        function showError(input, message) {
+            const error = document.createElement('div');
+            error.className = 'error-message';
+            error.style.color = 'red';
+            error.style.fontSize = '0.9rem';
+            error.textContent = message;
+            input.parentElement.appendChild(error);
+        }
+
+        function clearErrors() {
+            document.querySelectorAll('.error-message').forEach(function (el) {
+                el.remove();
+            });
+        }
+    });
+</script>
 </body>
 </html>

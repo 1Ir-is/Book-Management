@@ -1,64 +1,81 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
-<%!
-    // Hàm tiện lợi: nếu currentPath (vd. "/admin/dashboard") bắt đầu bằng path (vd. "/admin/dashboard") thì trả về "active"
-    public String isActive(String path, String currentPath) {
-        return currentPath.startsWith(path) ? "active" : "";
+<%
+    String contextPath = request.getContextPath();
+    String uri = request.getRequestURI();
+    String path = uri.substring(contextPath.length());
+
+    if (path.endsWith("/")) {
+        path = path.substring(0, path.length() - 1);
     }
 %>
 
-<section id="sidebar">
-    <%
-        String contextPath = request.getContextPath();
-        String uri = request.getRequestURI();           // Ví dụ "/YourAppName/admin/dashboard"
-        String path = uri.substring(contextPath.length());
-        // Sau khi tách contextPath, path = "/admin/dashboard" (hoặc "/admin/dashboard/" nếu có dấu slash cuối)
-    %>
+<%= "ContextPath: " + contextPath + "<br>" %>
+<%= "URI: " + uri + "<br>" %>
+<%= "Path: " + path + "<br>" %>
 
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+            href="https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css"
+            rel="stylesheet"
+    />
+    <link rel="stylesheet" href="<%= request.getContextPath() %>/assets/css/adminpage.css" />
+    <title>Admin Dashboard</title>
+</head>
+<body>
+<section id="sidebar">
     <a href="<%= contextPath %>/admin/dashboard" class="brand">
         <i class="bx bxs-smile icon"></i> Admin
     </a>
 
     <ul class="side-menu">
-        <!-- Dashboard -->
         <li>
             <a href="<%= contextPath %>/admin/dashboard"
-               class="<%= isActive("/admin/dashboard", path) %>">
+                    <%= path.contains("dashboard.jsp") ? "class='active'" : "" %>>
                 <i class="bx bxs-dashboard icon"></i> Dashboard
             </a>
         </li>
 
         <li class="divider" data-text="Management">Management</li>
 
-        <!-- Quản lý sách -->
         <li>
             <a href="<%= contextPath %>/admin/books"
-               class="<%= isActive("/admin/books", path) %>">
+                    <%= path.contains("book_list.jsp") ? "class='active'" : "" %>>
                 <i class="bx bxs-book icon"></i> Quản lý sách
             </a>
         </li>
 
-        <!-- Quản lý thể loại -->
+
         <li>
             <a href="<%= contextPath %>/admin/categories"
-               class="<%= isActive("/admin/categories", path) %>">
+                    <%= path.contains("category_list.jsp") ? "class='active'" : "" %>>
                 <i class="bx bxs-category icon"></i> Quản lý thể loại
             </a>
         </li>
 
-        <!-- Quản lý người dùng -->
         <li>
             <a href="<%= contextPath %>/admin/users"
-               class="<%= isActive("/admin/users", path) %>">
+                    <%= path.startsWith("/admin/users") ? "class='active'" : "" %>>
                 <i class="bx bxs-user icon"></i> Quản lý người dùng
             </a>
         </li>
 
-        <!-- Quản lý đơn hàng -->
         <li>
             <a href="<%= contextPath %>/admin/orders"
-               class="<%= isActive("/admin/orders", path) %>">
+                    <%= path.startsWith("/admin/orders") ? "class='active'" : "" %>>
                 <i class="bx bxs-cart icon"></i> Quản lý đơn hàng
             </a>
         </li>
     </ul>
 </section>
+
+
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+<script src="<%= request.getContextPath() %>/assets/js/script.js"></script>
+
+</body>
+</html>
