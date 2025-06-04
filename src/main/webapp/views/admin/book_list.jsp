@@ -557,7 +557,11 @@
                     <td><%= book.getPublisher() %></td>
                     <td><%= book.getPublishYear() %></td> <!-- Display publication year -->
                     <td><%= currencyFormat.format(book.getPrice()) %> VND</td>
-                    <td class="description-cell"><%= book.getDescription() %></td>
+                    <td class="description-cell">
+                        <%= book.getDescription().length() > 100
+                                ? book.getDescription().substring(0, 100) + "..."
+                                : book.getDescription() %>
+                    </td>
                     <td><%= categoryMap.get(book.getCategoryId()) %></td>
                     <td>
                         <div class="action-buttons">

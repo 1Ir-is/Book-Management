@@ -12,7 +12,7 @@ import javax.servlet.http.*;
 import java.io.IOException;
 
 @WebServlet("/update-profile")
-@MultipartConfig // Enable file upload handling
+@MultipartConfig
 public class UpdateProfileServlet extends HttpServlet {
     private final IUserService userService = new UserService();
 
@@ -27,21 +27,29 @@ public class UpdateProfileServlet extends HttpServlet {
             return;
         }
 
-        // Lấy dữ liệu từ form
+        // lay du lieu
         String name = request.getParameter("name");
         String phone = request.getParameter("phone");
         String address = request.getParameter("address");
 
-        // Cập nhật thông tin người dùng
+        // validate
+        if (name == null || name.trim().isEmpty() ||
+                phone == null || !phone.matches("\\d{10,15}") ||
+                address == null || address.trim().isEmpty()) {
+            response.sendRedirect("views/user/profile.jsp?error=1");
+            return;
+        }
+
+        // update thong tin
         user.setName(name);
         user.setPhoneNumber(phone);
         user.setAddress(address);
 
-        // Handle avatar upload
+        // upload anh avatar
         Part avatarPart = request.getPart("avatar");
         if (avatarPart != null && avatarPart.getSize() > 0) {
             String avatarUrl = CloudinaryUtil.uploadFile(avatarPart.getInputStream(), avatarPart.getSubmittedFileName());
-            user.setAvatarUrl(avatarUrl); // Update avatar URL
+            user.setAvatarUrl(avatarUrl);
         }
 
         boolean success = userService.updateUser(user);
