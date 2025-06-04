@@ -43,6 +43,111 @@
       .icons > * {
         margin-left: 0 !important;
       }
+      /* Modal Overlay */
+      .modal {
+        display: none;
+        position: fixed;
+        z-index: 9999;
+        inset: 0;
+        width: 100vw;
+        height: 100vh;
+        background: rgba(30, 41, 59, 0.45);
+        justify-content: center;
+        align-items: center;
+        transition: background 0.2s;
+      }
+
+      /* Modal Content */
+      .modal-content {
+        background: #fff;
+        padding: 32px 32px 28px 32px;
+        border-radius: 18px;
+        box-shadow: 0 8px 32px rgba(44, 62, 80, 0.18);
+        text-align: center;
+        min-width: 320px;
+        max-width: 95vw;
+        animation: modalFadeIn 0.25s;
+        position: relative;
+      }
+
+      @keyframes modalFadeIn {
+        from { transform: translateY(-40px) scale(0.95); opacity: 0; }
+        to   { transform: translateY(0) scale(1); opacity: 1; }
+      }
+
+      .modal-content h3 {
+        margin: 0 0 16px 0;
+        font-size: 1.7rem; /* Tăng kích thước tiêu đề */
+        font-weight: 700;
+        color: #222;
+        letter-spacing: 0.5px;
+      }
+
+      .modal-content p {
+        margin: 0 0 28px 0;
+        color: #444;
+        font-size: 1.3rem; /* Tăng kích thước nội dung */
+        font-weight: 500;
+      }
+
+      .modal-actions {
+        margin-top: 10px;
+        display: flex;
+        gap: 18px;
+        justify-content: center;
+      }
+
+      .modal-actions .btn {
+        min-width: 120px;
+        padding: 0.75rem 0;
+        font-size: 1.2rem;
+        border: none;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.18s, box-shadow 0.18s, color 0.18s;
+        box-shadow: 0 2px 8px #2563eb22;
+        outline: none;
+      }
+
+      #confirm-logout {
+        background: linear-gradient(90deg, #27ae60 60%, #219150 100%);
+        color: #fff;
+      }
+
+      #confirm-logout:hover {
+        background: linear-gradient(90deg, #219150 60%, #27ae60 100%);
+      }
+
+      #cancel-logout {
+        background: #f3f4f6;
+        color: #222;
+        border: 1px solid #d1d5db;
+      }
+
+      #cancel-logout:hover {
+        background: #e5e7eb;
+        color: #111;
+      }
+
+      .modal-icon {
+        font-size: 6rem; /* Tăng kích thước icon */
+        color: #27ae60;
+        margin-bottom: 16px;
+      }
+
+      /* Responsive */
+      @media (max-width: 480px) {
+        .modal-content {
+          padding: 18px 8px 14px 8px;
+          min-width: 0;
+          width: 98vw;
+        }
+        .modal-actions {
+          flex-direction: column;
+          gap: 10px;
+        }
+      }
       @media only screen and (max-width: 768px) {
         #toast-container > div {
           font-size: 14px !important;
@@ -101,9 +206,25 @@
               <a class="drop-content" href="${pageContext.request.contextPath}/history.jsp" style="padding: 6px 14px; display: block; text-decoration: none; color: #333; font-size: 13px;">
                 Lịch sử mua hàng
               </a>
-              <a class="drop-content" href="${pageContext.request.contextPath}/logout" style="padding: 6px 14px; display: block; text-decoration: none; color: #333; font-size: 13px;">
-                Đăng xuất
-              </a>
+              <c:if test="${user != null}">
+                <a href="javascript:void(0)" id="logout-link" class="drop-content" style="padding: 6px 14px; display: block; text-decoration: none; color: #333; font-size: 13px;">
+                  Đăng xuất
+                </a>
+
+                <div id="logout-modal" class="modal">
+                  <div class="modal-content">
+                    <div class="modal-icon">
+                      <i class="fa-solid fa-circle-question"></i>
+                    </div>
+                    <h3>Xác nhận</h3>
+                    <p>Bạn có chắc chắn muốn đăng xuất không?</p>
+                    <div class="modal-actions">
+                      <button id="confirm-logout" class="btn">Đăng xuất</button>
+                      <button id="cancel-logout" class="btn">Hủy</button>
+                    </div>
+                  </div>
+                </div>
+              </c:if>
             </div>
           </c:if>
           <c:if test="${user == null}">
@@ -309,6 +430,36 @@
         document.querySelector(".login-form-container").classList.add("active");
         toastr.error(errorText);
       }
+    });
+    document.addEventListener("DOMContentLoaded", function () {
+      const logoutLink = document.getElementById("logout-link");
+      const logoutModal = document.getElementById("logout-modal");
+      const confirmLogout = document.getElementById("confirm-logout");
+      const cancelLogout = document.getElementById("cancel-logout");
+
+      if (logoutLink) {
+        logoutLink.addEventListener("click", function () {
+          logoutModal.style.display = "flex";
+        });
+      }
+
+      if (confirmLogout) {
+        confirmLogout.addEventListener("click", function () {
+          window.location.href = "${pageContext.request.contextPath}/logout";
+        });
+      }
+
+      if (cancelLogout) {
+        cancelLogout.addEventListener("click", function () {
+          logoutModal.style.display = "none";
+        });
+      }
+
+      window.addEventListener("click", function (e) {
+        if (e.target === logoutModal) {
+          logoutModal.style.display = "none";
+        }
+      });
     });
   </script>
 
