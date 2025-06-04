@@ -1,23 +1,14 @@
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
-<%@ page import="models.Category" %>
-<%@ page import="models.User" %>
-<%
-    User user = (User) session.getAttribute("user");
-    Category category = (Category) request.getAttribute("category");
-    boolean isEdit = category != null;
-%>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-    <link
-            href="https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css"
-            rel="stylesheet"
-    />
-    <link rel="stylesheet" href="<%= request.getContextPath() %>/assets/css/adminpage.css" />
-    <title><%= isEdit ? "Chỉnh sửa Danh mục" : "Thêm Danh mục" %></title>
+    <link href="https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/adminpage.css" />
+    <title>${category != null ? "Chỉnh sửa Danh mục" : "Thêm Danh mục"}</title>
     <style>
         .form-container {
             max-width: 600px;
@@ -186,40 +177,40 @@
     <!-- NAVBAR -->
     <main>
         <div class="page-header">
-            <h1 class="title"><%= isEdit ? "Chỉnh sửa Danh mục" : "Thêm Danh mục" %></h1>
+            <h1 class="title">${category != null ? "Chỉnh sửa Danh mục" : "Thêm Danh mục"}</h1>
             <ul class="breadcrumbs">
-                <li><a href="<%= request.getContextPath() %>/admin/dashboard">Trang Chủ</a></li>
+                <li><a href="${pageContext.request.contextPath}/admin/dashboard">Trang Chủ</a></li>
                 <li class="divider">/</li>
-                <li><a href="<%= request.getContextPath() %>/admin/categories">Quản lý Danh Mục</a></li>
+                <li><a href="${pageContext.request.contextPath}/admin/categories">Quản lý Danh Mục</a></li>
                 <li class="divider">/</li>
-                <li><a href="#" class="active"><%= isEdit ? "Chỉnh sửa Danh mục" : "Thêm Danh mục" %></a></li>
+                <li><a href="#" class="active">${category != null ? "Chỉnh sửa Danh mục" : "Thêm Danh mục"}</a></li>
             </ul>
             <div class="actions">
-                <a href="<%= request.getContextPath() %>/admin/categories" class="btn-back">
+                <a href="${pageContext.request.contextPath}/admin/categories" class="btn-back">
                     <i class="bx bxs-home"></i> Quay lại danh sách
                 </a>
             </div>
         </div>
         <div class="form-container">
-            <h1><%= isEdit ? "Chỉnh sửa Danh mục" : "Thêm Danh mục" %></h1>
-            <form method="post" action="<%= request.getContextPath() %>/admin/categories">
-                <% if (isEdit) { %>
-                <input type="hidden" name="ma_danh_muc" value="<%= category.getCategoryId() %>" />
-                <% } %>
+            <h1>${category != null ? "Chỉnh sửa Danh mục" : "Thêm Danh mục"}</h1>
+            <form method="post" action="${pageContext.request.contextPath}/admin/categories">
+                <c:if test="${category != null}">
+                    <input type="hidden" name="ma_danh_muc" value="${category.categoryId}" />
+                </c:if>
                 <div class="form-group">
                     <label for="ten_danh_muc">Tên danh mục</label>
                     <input
                             type="text"
                             id="ten_danh_muc"
                             name="ten_danh_muc"
-                            value="<%= isEdit ? category.getCategoryName() : "" %>"
+                            value="${category != null ? category.categoryName : ''}"
                             placeholder="Nhập tên danh mục"
                             required
                     />
                 </div>
                 <div class="form-actions">
-                    <button type="submit" class="btn btn-submit"><%= isEdit ? "Cập nhật" : "Thêm mới" %></button>
-                    <a href="<%= request.getContextPath() %>/admin/categories" class="btn btn-cancel">Hủy</a>
+                    <button type="submit" class="btn btn-submit">${category != null ? "Cập nhật" : "Thêm mới"}</button>
+                    <a href="${pageContext.request.contextPath}/admin/categories" class="btn btn-cancel">Hủy</a>
                 </div>
             </form>
         </div>
@@ -231,16 +222,14 @@
         const tenDanhMucInput = document.getElementById('ten_danh_muc');
 
         form.addEventListener('submit', function (event) {
-            // xoa error truoc
             clearErrors();
 
-            //
             if (!tenDanhMucInput.value.trim()) {
                 showError(tenDanhMucInput, 'Tên danh mục không được để trống.');
-                event.preventDefault(); // ngan chan submit neu nhap sai
+                event.preventDefault();
             } else if (tenDanhMucInput.value.length > 100) {
                 showError(tenDanhMucInput, 'Tên danh mục không được vượt quá 100 ký tự.');
-                event.preventDefault(); // ngan chan submit neu nhap sai
+                event.preventDefault();
             }
         });
 

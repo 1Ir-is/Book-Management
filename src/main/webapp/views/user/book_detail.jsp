@@ -1,20 +1,13 @@
 <%@ page contentType="text/html; charset=UTF-8" %>
-<%@ page import="models.Book" %>
-<%@ page import="java.util.Map" %>
-<%@ page import="java.text.NumberFormat" %>
-<%@ page import="java.util.Locale" %>
-<%
-    Book book = (Book) request.getAttribute("book");
-    Map<Integer, String> categoryMap = (Map<Integer, String>) request.getAttribute("categoryMap");
-    NumberFormat currencyFormat = NumberFormat.getInstance(new Locale("vi", "VN"));
-%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <!DOCTYPE html>
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chi Tiết Sách | 4Book</title>
-    <link rel="stylesheet" href="<%= request.getContextPath() %>/assets/css/style.css" />
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/style.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
     <style>
         /* Fahasa style desktop detail */
@@ -191,50 +184,51 @@
 <section class="book-detail-fahasa-desktop">
     <div class="book-detail-main">
         <div class="book-detail-left">
-            <% if (book != null && book.getImgUrl() != null) { %>
-            <img src="<%= book.getImgUrl() %>" alt="<%= book.getBookName() %>" class="book-main-img" />
-            <% } %>
+            <c:if test="${not empty book and not empty book.imgUrl}">
+                <img src="${book.imgUrl}" alt="${book.bookName}" class="book-main-img" />
+            </c:if>
             <button class="add-cart-btn-desktop">
                 <i class="fas fa-shopping-cart"></i> Thêm vào giỏ hàng
             </button>
         </div>
         <div class="book-detail-right">
-            <% if (book != null) { %>
-            <h2 class="book-title-desktop"><%= book.getBookName() %></h2>
-            <div class="book-price-desktop">
-                <span><%= currencyFormat.format(book.getPrice()) %></span> <span class="book-currency">VND</span>
-            </div>
-            <table class="book-table-desktop">
-                <tr>
-                    <td>Nhà Cung Cấp</td>
-                    <td><%= book.getPublisher() %></td>
-                </tr>
-                <tr>
-                    <td>Tác giả</td>
-                    <td><%= book.getAuthor() %></td>
-                </tr>
-                <tr>
-                    <td>Thể loại</td>
-                    <td><%= categoryMap.get(book.getCategoryId()) %></td>
-                </tr>
-                <tr>
-                    <td>Năm Xuất Bản</td>
-                    <td><%= book.getPublishYear() %></td>
-                </tr>
-            </table>
-            <div class="book-desc-desktop">
-                <%= book.getDescription() %>
-            </div>
-            <% } else { %>
-            <p>Không tìm thấy thông tin sách.</p>
-            <% } %>
+            <c:if test="${not empty book}">
+                <h2 class="book-title-desktop">${book.bookName}</h2>
+                <div class="book-price-desktop">
+                    <span><fmt:formatNumber value="${book.price}" type="number" groupingUsed="true" /></span> <span class="book-currency">VND</span>
+                </div>
+                <table class="book-table-desktop">
+                    <tr>
+                        <td>Nhà Cung Cấp</td>
+                        <td>${book.publisher}</td>
+                    </tr>
+                    <tr>
+                        <td>Tác giả</td>
+                        <td>${book.author}</td>
+                    </tr>
+                    <tr>
+                        <td>Thể loại</td>
+                        <td>${categoryMap[book.categoryId]}</td>
+                    </tr>
+                    <tr>
+                        <td>Năm Xuất Bản</td>
+                        <td>${book.publishYear}</td>
+                    </tr>
+                </table>
+                <div class="book-desc-desktop">
+                        ${book.description}
+                </div>
+            </c:if>
+            <c:if test="${empty book}">
+                <p>Không tìm thấy thông tin sách.</p>
+            </c:if>
         </div>
     </div>
 </section>
 
 <jsp:include page="views/common/footer.jsp" />
 
-<script src="<%= request.getContextPath() %>/assets/js/app.js"></script>
-<script src="<%= request.getContextPath() %>/assets/js/script.js"></script>
+<script src="${pageContext.request.contextPath}/assets/js/app.js"></script>
+<script src="${pageContext.request.contextPath}/assets/js/script.js"></script>
 </body>
 </html>
