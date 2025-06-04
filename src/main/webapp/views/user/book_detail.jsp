@@ -4,6 +4,7 @@
 <%@ page import="java.util.Map" %>
 <%
     Book book = (Book) request.getAttribute("book");
+
     Map<Integer, String> categoryMap = (Map<Integer, String>) request.getAttribute("categoryMap");
 %>
 <html>
