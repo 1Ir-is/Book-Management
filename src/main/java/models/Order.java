@@ -1,37 +1,48 @@
 package models;
 
+import jdk.vm.ci.meta.Local;
+
+import java.time.LocalDate;
 import java.util.Date;
 
 public class Order {
-    private int id;
-    private Date buyDate;
-    private String status;
-    private User customer;
+  private int orderId;
+  private int userId;
+  private LocalDate orderDate;
+  private String status;
 
     public Order() {
     }
 
-    public Order(int id, Date buyDate, String status, User customer) {
-        this.id = id;
-        this.buyDate = buyDate;
+    public Order(int orderId, int userId, LocalDate orderDate, String status) {
+        this.orderId = orderId;
+        this.userId = userId;
+        this.orderDate = orderDate;
         this.status = status;
-        this.customer = customer;
     }
 
-    public int getId() {
-        return id;
+    public int getOrderId() {
+        return orderId;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setOrderId(int orderId) {
+        this.orderId = orderId;
     }
 
-    public Date getBuyDate() {
-        return buyDate;
+    public int getUserId() {
+        return userId;
     }
 
-    public void setBuyDate(Date buyDate) {
-        this.buyDate = buyDate;
+    public void setUserId(int userId) {
+        this.userId = userId;
+    }
+
+    public LocalDate getOrderDate() {
+        return orderDate;
+    }
+
+    public void setOrderDate(LocalDate orderDate) {
+        this.orderDate = orderDate;
     }
 
     public String getStatus() {
@@ -40,14 +51,6 @@ public class Order {
 
     public void setStatus(String status) {
         this.status = status;
-    }
-
-    public User getCustomer() {
-        return customer;
-    }
-
-    public void setCustomer(User customer) {
-        this.customer = customer;
     }
 }
 

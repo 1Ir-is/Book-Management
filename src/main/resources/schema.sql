@@ -39,6 +39,7 @@ CREATE TABLE IF NOT EXISTS gio_hang (
     );
 
 CREATE TABLE IF NOT EXISTS chi_tiet_gio_hang (
+                                                 ma_chi_tiet_gio_hang INT,
                                                  ma_gio_hang INT,
                                                  ma_sach INT,
                                                  so_luong INT,

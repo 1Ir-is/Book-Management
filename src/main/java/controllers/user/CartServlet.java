@@ -3,6 +3,8 @@ package controllers.user;
 
 import models.CartDetails;
 import models.User;
+import repositories.book.BookRepository;
+import repositories.book.IBookRepository;
 import repositories.cart.CartRepository;
 import repositories.cart.ICartRepository;
 import repositories.cartdetails.CartDetailsRepository;
@@ -36,7 +38,8 @@ public class CartServlet extends HttpServlet {
         }
         ICartRepository cartRepository = new CartRepository(conn);
         ICartDetailsRepository cartDetailsRepository = new CartDetailsRepository(conn);
-        cartService = new CartService(cartRepository, cartDetailsRepository);
+        IBookRepository bookRepository = new BookRepository();
+        cartService = new CartService(cartRepository, cartDetailsRepository, bookRepository);
     }
 
     @Override

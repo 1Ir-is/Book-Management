@@ -4,27 +4,34 @@
 <%
     List<CartDetails> cartItems = (List<CartDetails>) request.getAttribute("cartItems");
 %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
+
+
 <html>
 <head>
     <title>Giỏ Hàng</title>
     <style>
+        /* CSS giữ nguyên như trước */
         .cart-container {
             max-width: 1000px;
             margin: auto;
             font-family: Arial, sans-serif;
         }
 
-        .cart-header {
+        .cart-header, .cart-item {
             display: flex;
             align-items: center;
+        }
+
+        .cart-header {
             background: #f5f5f5;
             padding: 10px;
             font-weight: bold;
         }
 
         .cart-item {
-            display: flex;
-            align-items: center;
             border-bottom: 1px solid #ddd;
             padding: 15px 0;
         }
@@ -112,90 +119,87 @@
 <div class="cart-container">
     <h2>Giỏ hàng của bạn</h2>
     <form action="${pageContext.request.contextPath}/cart/batch" method="post">
-        <% if (cartItems != null && !cartItems.isEmpty()) { %>
 
-        <div class="select-all">
-            <input type="checkbox" id="selectAll" onclick="toggleAll(this)">
-            <label for="selectAll">Chọn tất cả (<%= cartItems.size() %> sản phẩm)</label>
-        </div>
+        <c:if test="${not empty cartItems}">
+            <div class="select-all">
+                <input type="checkbox" id="selectAll" onclick="toggleAll(this)">
+                <label for="selectAll">Chọn tất cả (${fn:length(cartItems)} sản phẩm)</label>
+            </div>
 
-        <% double total = 0; %>
-        <% for (CartDetails item : cartItems) {
-            double itemTotal = item.getQuantity() * item.getBook().getPrice();
-            total += itemTotal;
-        %>
-        <div class="cart-item">
-            <input type="checkbox" name="selectedBooks" value="<%= item.getBookId() %>">
-            <img src="<%= item.getBook().getImgUrl() %>" alt="book">
-            <div class="item-info">
-                <div><strong><%= item.getBook().getBookName() %>
-                </strong></div>
-                <div>
-                    <span class="price"><%= String.format("%,.0f", item.getBook().getPrice()) %> đ</span>
-                    <span class="original-price"><%= item.getBook().getPrice() + 20000 %> đ</span>
+            <c:set var="grandTotal" value="0"/>
+            <c:forEach var="item" items="${cartItems}">
+                <c:set var="itemTotal" value="${item.quantity * item.book.price}"/>
+                <c:set var="grandTotal" value="${grandTotal + itemTotal}"/>
+
+                <div class="cart-item">
+                    <input type="checkbox" name="selectedBooks" value="${item.bookId}">
+                    <img src="${item.book.imgUrl}" alt="book">
+                    <div class="item-info">
+                        <div><strong>${item.book.bookName}</strong></div>
+                        <div>
+            <span class="price">
+                <fmt:formatNumber value="${item.book.price}" type="number" groupingUsed="true"/> đ
+            </span>
+                            <span class="original-price">
+                <fmt:formatNumber value="${item.book.price + 20000}" type="number" groupingUsed="true"/> đ
+            </span>
+                        </div>
+                    </div>
+
+                    <div class="quantity-wrapper">
+                        <button type="button" onclick="updateQuantity(${item.bookId}, 'decrease')">−</button>
+                        <input
+                                type="number"
+                                name="quantity_${item.bookId}"
+                                value="${item.quantity}"
+                                min="1"
+                                class="quantity-input"
+                                data-book-id="${item.bookId}"
+                                data-price="${item.book.price}"
+                                style="width: 50px; text-align: center;"
+                        >
+                        <button type="button" onclick="updateQuantity(${item.bookId}, 'increase')">+</button>
+                    </div>
+
+                    <div class="total-price" id="total-price-${item.bookId}">
+                        <fmt:formatNumber value="${itemTotal}" type="number" groupingUsed="true"/> đ
+                    </div>
+
+                    <div class="delete-btn-wrapper">
+                        <button type="button" onclick="deleteItem(${item.bookId})">Xóa</button>
+                    </div>
                 </div>
+            </c:forEach>
+
+            <div style="text-align:right; margin-top:10px;">
+                <strong>Tổng cộng: <span id="grand-total">
+                    <fmt:formatNumber value="${grandTotal}" type="number" groupingUsed="true"/> đ
+                </span></strong>
             </div>
 
-            <div class="quantity-wrapper">
-                <button class="quantity-btn" type="button"
-                        onclick="updateQuantity(<%= item.getBookId() %>, 'decrease')">−
-                </button>
-                <input
-                        type="number"
-                        name="quantity_<%= item.getBookId() %>"
-                        value="<%= item.getQuantity() %>"
-                        min="1"
-                        class="quantity-input"
-                        data-book-id="<%= item.getBookId() %>"
-                        data-price="<%= item.getBook().getPrice() %>"
-                        style="width: 50px; text-align: center;"
-                >
-                <button class="quantity-btn" type="button"
-                        onclick="updateQuantity(<%= item.getBookId() %>, 'increase')">+
-                </button>
+            <div class="cart-controls">
+                <button type="submit" name="action" value="checkout" class="btn btn-success">Đặt hàng</button>
+                <button type="submit" name="action" value="delete"> Xóa đã chọn</button>
             </div>
+        </c:if>
 
-
-            <div class="total-price" id="total-price-<%= item.getBookId() %>">
-                <%= String.format("%,.0f", itemTotal) %> đ
-            </div>
-
-            <div class="delete-btn-wrapper">
-                <form action="${pageContext.request.contextPath}/cart/remove" method="post">
-                    <input type="hidden" name="bookId" value="<%= item.getBookId() %>">
-                    <button type="submit" class="delete-btn" title="Xóa">🗑</button>
-                </form>
-            </div>
-        </div>
-        <% } %>
-
-        <div style="text-align:right; margin-top:10px;">
-            <strong>Tổng cộng: <span id="grand-total"><%= String.format("%,.0f", total) %> đ</span></strong>
-        </div>
-
-
-        <div class="cart-controls">
-            <button type="submit" name="action" value="checkout">Thanh toán</button>
-            <button type="submit" name="action" value="delete">Xóa đã chọn</button>
-        </div>
-
-        <% } else { %>
-        <p>Giỏ hàng của bạn đang trống.</p>
-        <% } %>
+        <c:if test="${empty cartItems}">
+            <p>Giỏ hàng của bạn đang trống.</p>
+        </c:if>
     </form>
+
     <br>
     <a href="books">← Tiếp tục mua sắm</a>
 </div>
 
 <script>
+
     function toggleAll(source) {
         const checkboxes = document.querySelectorAll('input[name="selectedBooks"]');
         checkboxes.forEach(cb => cb.checked = source.checked);
     }
 
-    // Hàm để cập nhật số lượng sách
     function updateQuantity(bookId, action) {
-        // Tạo form ẩn để gửi yêu cầu cập nhật số lượng
         const form = document.createElement('form');
         form.method = 'post';
         form.action = '${pageContext.request.contextPath}/cart/update';
@@ -216,20 +220,14 @@
         form.submit();
     }
 
-    // Cập nhật thành tiền và tổng cộng khi nhập số lượng
     const quantityInputs = document.querySelectorAll('.quantity-input');
-
     quantityInputs.forEach(input => {
         input.addEventListener('input', () => {
             const bookId = input.dataset.bookId;
             const price = parseFloat(input.dataset.price);
             const quantity = parseInt(input.value) || 0;
-
-            // Tính lại thành tiền từng sản phẩm
             const itemTotal = price * quantity;
             document.getElementById('total-price-' + bookId).innerText = itemTotal.toLocaleString('vi-VN') + ' đ';
-
-            // Cập nhật tổng cộng
             updateTotalAll();
         });
     });
@@ -244,8 +242,21 @@
         document.getElementById('grand-total').innerText = total.toLocaleString('vi-VN') + ' đ';
     }
 
+    function deleteItem(bookId) {
+        const form = document.createElement('form');
+        form.method = 'post';
+        form.action = '${pageContext.request.contextPath}/cart/delete';
 
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = 'bookId';
+        input.value = bookId;
 
+        form.appendChild(input);
+        document.body.appendChild(form);
+        form.submit();
+    }
 </script>
+
 </body>
 </html>

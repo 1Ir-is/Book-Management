@@ -17,4 +17,10 @@ public interface ICartDetailsRepository {
 
     void removeBook(int cartId, int bookId);
 
+    List<CartDetails> getCartDetailsByUserId(int userId);
+
+    void clearCart(int userId);
+
+    void removeItems(int userId, List<Integer> bookIds);
+
 }

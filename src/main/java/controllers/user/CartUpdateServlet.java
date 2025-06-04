@@ -1,6 +1,7 @@
 package controllers.user;
 
 import models.User;
+import repositories.book.BookRepository;
 import repositories.cart.CartRepository;
 import repositories.cartdetails.CartDetailsRepository;
 import services.cart.CartService;
@@ -31,7 +32,8 @@ public class CartUpdateServlet extends HttpServlet {
         }
         cartService = new CartService(
                 new CartRepository(conn),
-                new CartDetailsRepository(conn)
+                new CartDetailsRepository(conn),
+                new BookRepository()
         );
     }
 

@@ -2,6 +2,7 @@ package repositories.cartdetails;
 
 import models.Book;
 import models.CartDetails;
+import utils.JDBCUtils;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -9,6 +10,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class CartDetailsRepository implements ICartDetailsRepository {
     private Connection connection;
@@ -166,4 +168,72 @@ public class CartDetailsRepository implements ICartDetailsRepository {
             e.printStackTrace();
         }
     }
+
+    @Override
+    public List<CartDetails> getCartDetailsByUserId(int userId) {
+        List<CartDetails> list = new ArrayList<>();
+        String sql =
+                "SELECT cd.ma_sach, cd.so_luong, s.ten_sach, s.gia " +
+                        "FROM chi_tiet_gio_hang cd " +
+                        "JOIN gio_hang gh ON cd.ma_gio_hang = gh.ma_gio_hang " +
+                        "JOIN sach s ON cd.ma_sach = s.ma_sach " +
+                        "WHERE gh.ma_nguoi_dung = ?";
+
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setInt(1, userId);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                Book book = new Book();
+                book.setBookId(rs.getInt("ma_sach"));
+                book.setBookName(rs.getString("ten_sach"));
+                book.setPrice(rs.getDouble("gia"));
+
+                CartDetails detail = new CartDetails();
+                detail.setBook(book);
+                detail.setQuantity(rs.getInt("so_luong"));
+                list.add(detail);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    @Override
+    public void clearCart(int userId) {
+        String sql =
+                "DELETE cd " +
+                        "FROM chi_tiet_gio_hang cd " +
+                        "JOIN gio_hang gh ON cd.ma_gio_hang = gh.ma_gio_hang " +
+                        "WHERE gh.ma_nguoi_dung = ?";
+
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setInt(1, userId);
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void removeItems(int userId, List<Integer> bookIds) {
+        if (bookIds == null || bookIds.isEmpty()) return;
+
+        String inSql = bookIds.stream().map(id -> "?").collect(Collectors.joining(", "));
+        String sql =
+                "DELETE cd FROM chi_tiet_gio_hang cd " +
+                        "JOIN gio_hang gh ON cd.ma_gio_hang = gh.ma_gio_hang " +
+                        "WHERE gh.ma_nguoi_dung = ? AND cd.ma_sach IN (" + inSql + ")";
+
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setInt(1, userId);
+            for (int i = 0; i < bookIds.size(); i++) {
+                stmt.setInt(i + 2, bookIds.get(i));
+            }
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 }
+
