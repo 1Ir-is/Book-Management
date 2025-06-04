@@ -14,4 +14,7 @@ public interface ICartService {
     void setQuantity(int userId, int bookId, int quantity);
 
     void removeBook(int userId, int bookId);
+
+    void updateQuantity(int userId, int bookId, int quantity);
+
 }

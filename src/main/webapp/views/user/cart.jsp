@@ -128,7 +128,8 @@
             <input type="checkbox" name="selectedBooks" value="<%= item.getBookId() %>">
             <img src="<%= item.getBook().getImgUrl() %>" alt="book">
             <div class="item-info">
-                <div><strong><%= item.getBook().getBookName() %></strong></div>
+                <div><strong><%= item.getBook().getBookName() %>
+                </strong></div>
                 <div>
                     <span class="price"><%= String.format("%,.0f", item.getBook().getPrice()) %> đ</span>
                     <span class="original-price"><%= item.getBook().getPrice() + 20000 %> đ</span>
@@ -136,13 +137,26 @@
             </div>
 
             <div class="quantity-wrapper">
-                <!-- Các nút tăng/giảm số lượng -->
-                <button class="quantity-btn" type="button" onclick="updateQuantity(<%= item.getBookId() %>, 'decrease')">−</button>
-                <span><%= item.getQuantity() %></span>
-                <button class="quantity-btn" type="button" onclick="updateQuantity(<%= item.getBookId() %>, 'increase')">+</button>
+                <button class="quantity-btn" type="button"
+                        onclick="updateQuantity(<%= item.getBookId() %>, 'decrease')">−
+                </button>
+                <input
+                        type="number"
+                        name="quantity_<%= item.getBookId() %>"
+                        value="<%= item.getQuantity() %>"
+                        min="1"
+                        class="quantity-input"
+                        data-book-id="<%= item.getBookId() %>"
+                        data-price="<%= item.getBook().getPrice() %>"
+                        style="width: 50px; text-align: center;"
+                >
+                <button class="quantity-btn" type="button"
+                        onclick="updateQuantity(<%= item.getBookId() %>, 'increase')">+
+                </button>
             </div>
 
-            <div class="total-price">
+
+            <div class="total-price" id="total-price-<%= item.getBookId() %>">
                 <%= String.format("%,.0f", itemTotal) %> đ
             </div>
 
@@ -156,8 +170,9 @@
         <% } %>
 
         <div style="text-align:right; margin-top:10px;">
-            <strong>Tổng cộng: <%= String.format("%,.0f", total) %> đ</strong>
+            <strong>Tổng cộng: <span id="grand-total"><%= String.format("%,.0f", total) %> đ</span></strong>
         </div>
+
 
         <div class="cart-controls">
             <button type="submit" name="action" value="checkout">Thanh toán</button>
@@ -200,6 +215,37 @@
         document.body.appendChild(form);
         form.submit();
     }
+
+    // Cập nhật thành tiền và tổng cộng khi nhập số lượng
+    const quantityInputs = document.querySelectorAll('.quantity-input');
+
+    quantityInputs.forEach(input => {
+        input.addEventListener('input', () => {
+            const bookId = input.dataset.bookId;
+            const price = parseFloat(input.dataset.price);
+            const quantity = parseInt(input.value) || 0;
+
+            // Tính lại thành tiền từng sản phẩm
+            const itemTotal = price * quantity;
+            document.getElementById('total-price-' + bookId).innerText = itemTotal.toLocaleString('vi-VN') + ' đ';
+
+            // Cập nhật tổng cộng
+            updateTotalAll();
+        });
+    });
+
+    function updateTotalAll() {
+        let total = 0;
+        document.querySelectorAll('.quantity-input').forEach(input => {
+            const price = parseFloat(input.dataset.price);
+            const quantity = parseInt(input.value) || 0;
+            total += price * quantity;
+        });
+        document.getElementById('grand-total').innerText = total.toLocaleString('vi-VN') + ' đ';
+    }
+
+
+
 </script>
 </body>
 </html>

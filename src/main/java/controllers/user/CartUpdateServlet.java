@@ -45,16 +45,41 @@ public class CartUpdateServlet extends HttpServlet {
         }
 
         User user = (User) session.getAttribute("user");
+        int userId = user.getUserId();
         int bookId = Integer.parseInt(request.getParameter("bookId"));
         String action = request.getParameter("action");
 
-        if (action.equals("increase")) {
-            cartService.changeQuantity(user.getUserId(), bookId, 1);
-        } else if (action.equals("decrease")) {
-            cartService.changeQuantity(user.getUserId(), bookId, -1);
+        if (action != null) {
+            // Nếu là "increase" hoặc "decrease"
+            if (action.equals("increase")) {
+                cartService.changeQuantity(userId, bookId, 1);
+            } else if (action.equals("decrease")) {
+                cartService.changeQuantity(userId, bookId, -1);
+            }
+        } else {
+            // Trường hợp nhập số lượng thủ công
+            String quantityStr = request.getParameter("quantity");
+            try {
+                int quantity = Integer.parseInt(quantityStr);
+                if (quantity > 0) {
+                    cartService.updateQuantity(userId, bookId, quantity);
+                } else {
+                    // Nếu nhập 0 hoặc âm thì bạn có thể chọn xóa khỏi giỏ luôn nếu muốn
+                    cartService.removeBook(userId, bookId); // nếu bạn có hàm này
+                }
+            } catch (NumberFormatException e) {
+                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                return;
+            }
         }
 
-        response.sendRedirect(request.getContextPath() + "/cart");
+        // Kiểm tra nếu request đến từ fetch(), trả JSON; nếu không thì redirect
+        String requestedWith = request.getHeader("X-Requested-With");
+        if ("XMLHttpRequest".equals(requestedWith)) {
+            response.setStatus(HttpServletResponse.SC_OK);
+        } else {
+            response.sendRedirect(request.getContextPath() + "/cart");
+        }
     }
 }
 

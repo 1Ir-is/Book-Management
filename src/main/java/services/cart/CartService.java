@@ -64,4 +64,16 @@ public class CartService implements ICartService {
         }
     }
 
+    @Override
+    public void updateQuantity(int userId, int bookId, int quantity) {
+        Cart cart = cartRepository.findByUserId(userId);
+        if (cart != null) {
+            if (quantity > 0) {
+                cartDetailsRepository.setQuantity(cart.getCartId(), bookId, quantity);
+            } else {
+                cartDetailsRepository.removeBook(cart.getCartId(), bookId);
+            }
+        }
+    }
+
 }
