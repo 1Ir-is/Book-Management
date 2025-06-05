@@ -26,6 +26,8 @@
             href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
     />
 
+    <link href="https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css" rel="stylesheet" />
+
     <!-- Custom Css file link-->
     <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/style.css" />
 
@@ -177,6 +179,7 @@
           border-radius: 10px;
         }
       }
+
 
       @media only screen and (max-width: 768px) {
         .mobile-search-form {
@@ -456,6 +459,80 @@
           <button id="cancel-logout" class="btn">Hủy</button>
         </div>
       </div>
+    </div>
+  </c:if>
+
+  <c:if test="${not empty accountBlocked}">
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const modal = document.getElementById("blocked-account-modal");
+        modal.style.display = "flex";
+      });
+      function closeModal() {
+        document.getElementById("blocked-account-modal").style.display = "none";
+      }
+    </script>
+    <div id="blocked-account-modal" style="
+    display:none;position:fixed;z-index:9999;inset:0;width:100vw;height:100vh;
+    background:rgba(30,41,59,0.45);justify-content:center;align-items:center;">
+      <div style="
+      background:#fff;padding:32px 28px 28px 28px;border-radius:22px;
+      box-shadow:0 8px 24px rgba(0,0,0,0.15);text-align:center;width:92vw;
+      max-width:420px;animation:modalFadeIn 0.25s ease;position:relative;">
+        <div style="font-size:5rem;color:#e74c3c;margin-bottom:1.2rem;">
+          <i class='bx bxs-lock-alt'></i>
+        </div>
+        <h2 style="
+        font-size:2rem;
+        font-weight:800;
+        color:#2c3e50;
+        margin-bottom:1rem;
+        margin-top:0;
+        letter-spacing:0.5px;
+      ">
+          Tài Khoản Bị Khóa
+        </h2>
+        <p style="
+        font-size:1.25rem;
+        color:#444;
+        margin-bottom:1.5rem;
+        line-height:1.6;
+        font-weight:500;
+      ">
+          Tài Khoản Của Bạn Đã Bị Khóa.<br>
+          Thông Tin Chi Tiết Vui Lòng Liên Hệ Đến Admin.
+        </p>
+        <button onclick="closeModal()" style="
+        background:#27ae60;color:#fff;font-size:1.2rem;font-weight:700;
+        border:none;border-radius:12px;padding:0.9rem 0;width:100%;cursor:pointer;
+        transition:background 0.2s;box-shadow:0 4px 12px rgba(39,174,96,0.13);">
+          Đóng
+        </button>
+      </div>
+      <style>
+        @keyframes modalFadeIn {
+          from { transform: translateY(20px) scale(0.95); opacity: 0; }
+          to { transform: translateY(0) scale(1); opacity: 1; }
+        }
+        @media (max-width: 480px) {
+          #blocked-account-modal > div {
+            width:98vw !important;max-width:98vw !important;
+            padding:18px 7px 14px 7px !important;border-radius:14px !important;
+          }
+          #blocked-account-modal i {
+            font-size:3.2rem !important;margin-bottom:0.7rem !important;
+          }
+          #blocked-account-modal h2 {
+            font-size:1.3rem !important;margin-bottom:0.5rem !important;
+          }
+          #blocked-account-modal p {
+            font-size:1.05rem !important;margin-bottom:1rem !important;
+          }
+          #blocked-account-modal button {
+            font-size:1.05rem !important;padding:0.7rem 0 !important;border-radius:8px !important;
+          }
+        }
+      </style>
     </div>
   </c:if>
 

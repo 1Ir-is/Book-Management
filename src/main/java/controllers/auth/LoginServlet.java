@@ -26,8 +26,9 @@ public class LoginServlet extends HttpServlet {
 
         User user = userService.login(email, password);
         if (user != null) {
-            if (!user.isStatus()) { // Check if the account is blocked
-                req.setAttribute("error", "Tài khoản của bạn đã bị khóa!");
+            // Check if the account is blocked
+            if (!user.isStatus()) {
+                req.setAttribute("accountBlocked", true); // Set flag for modal
                 req.getRequestDispatcher("views/user/home.jsp").forward(req, resp);
                 return;
             }
