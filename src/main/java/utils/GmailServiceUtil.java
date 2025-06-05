@@ -18,7 +18,6 @@ import javax.mail.Session;
 import javax.mail.internet.*;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.security.GeneralSecurityException;
 import java.util.*;
 
 public class GmailServiceUtil {
@@ -28,8 +27,8 @@ public class GmailServiceUtil {
     private static final List<String> SCOPES = Collections.singletonList(GmailScopes.GMAIL_SEND);
 
     private static Credential getCredentials(final NetHttpTransport HTTP_TRANSPORT) throws Exception {
-        String clientId = "344746815565-dh4qidue75img7761kori8euokthj2p8.apps.googleusercontent.com";
-        String clientSecret = "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";
+        String clientId = ConfigReader.get("gmail.client_id");
+        String clientSecret = ConfigReader.get("gmail.client_secret");
 
         GoogleClientSecrets clientSecrets = new GoogleClientSecrets()
                 .setInstalled(new GoogleClientSecrets.Details()
@@ -70,7 +69,6 @@ public class GmailServiceUtil {
         email.addRecipient(javax.mail.Message.RecipientType.TO, new InternetAddress(to));
         email.setSubject(subject, "UTF-8");
 
-        // Plain text fallback
         String plainText = "This is an automated message.";
 
         String htmlContent = loadHtmlTemplate(templatePath, placeholders);
@@ -111,8 +109,6 @@ public class GmailServiceUtil {
 
         return html;
     }
-
-
 
     private static Message createMessageWithEmail(MimeMessage email)
             throws IOException, MessagingException {
