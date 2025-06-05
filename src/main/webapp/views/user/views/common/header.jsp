@@ -80,6 +80,24 @@
         }
       }
 
+      @media (max-width: 480px) {
+        #blocked-account-modal > div {
+          width:98vw !important;max-width:98vw !important;
+          padding:18px 7px 14px 7px !important;border-radius:14px !important;
+        }
+        #blocked-account-modal i {
+          font-size:3.2rem !important;margin-bottom:0.7rem !important;
+        }
+        #blocked-account-modal h2 {
+          font-size:1.3rem !important;margin-bottom:0.5rem !important;
+        }
+        #blocked-account-modal p {
+          font-size:1.05rem !important;margin-bottom:1rem !important;
+        }
+        #blocked-account-modal button {
+          font-size:1.05rem !important;padding:0.7rem 0 !important;border-radius:8px !important;
+        }
+      }
       .modal-icon {
         font-size: 4.5rem;
         color: #27ae60;
@@ -150,6 +168,8 @@
         font-size: 1.2rem;
         padding: 0;
       }
+
+
 
       /* Đặt ở cuối file <style> hoặc sau phần modal */
       @media (max-width: 480px) {
@@ -493,14 +513,17 @@
           Tài Khoản Bị Khóa
         </h2>
         <p style="
-        font-size:1.25rem;
-        color:#444;
-        margin-bottom:1.5rem;
-        line-height:1.6;
-        font-weight:500;
-      ">
+  font-size:1.25rem;
+  color:#444;
+  margin-bottom:1.5rem;
+  line-height:1.6;
+  font-weight:500;
+">
           Tài Khoản Của Bạn Đã Bị Khóa.<br>
-          Thông Tin Chi Tiết Vui Lòng Liên Hệ Đến Admin.
+          Thông Tin Chi Tiết Vui Lòng Liên Hệ Đến
+          <a href="${pageContext.request.contextPath}/contact-admin" style="color:#3498db; text-decoration:underline; font-weight:bold;">
+            Admin
+          </a>.
         </p>
         <button onclick="closeModal()" style="
         background:#27ae60;color:#fff;font-size:1.2rem;font-weight:700;
@@ -509,30 +532,6 @@
           Đóng
         </button>
       </div>
-      <style>
-        @keyframes modalFadeIn {
-          from { transform: translateY(20px) scale(0.95); opacity: 0; }
-          to { transform: translateY(0) scale(1); opacity: 1; }
-        }
-        @media (max-width: 480px) {
-          #blocked-account-modal > div {
-            width:98vw !important;max-width:98vw !important;
-            padding:18px 7px 14px 7px !important;border-radius:14px !important;
-          }
-          #blocked-account-modal i {
-            font-size:3.2rem !important;margin-bottom:0.7rem !important;
-          }
-          #blocked-account-modal h2 {
-            font-size:1.3rem !important;margin-bottom:0.5rem !important;
-          }
-          #blocked-account-modal p {
-            font-size:1.05rem !important;margin-bottom:1rem !important;
-          }
-          #blocked-account-modal button {
-            font-size:1.05rem !important;padding:0.7rem 0 !important;border-radius:8px !important;
-          }
-        }
-      </style>
     </div>
   </c:if>
 
