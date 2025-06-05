@@ -27,6 +27,7 @@ dependencies {
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${junitVersion}")
     implementation 'mysql:mysql-connector-java:8.0.33'
     implementation 'com.cloudinary:cloudinary-http44:1.29.0'
+    implementation("javax.servlet:jstl:1.2")
 }
 
 
