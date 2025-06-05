@@ -66,7 +66,9 @@
     </c:if>
     <form method="post" action="${pageContext.request.contextPath}/contact-admin">
         <label for="email">Email của bạn:</label>
-        <input type="email" id="email" name="email" placeholder="Nhập email của bạn" required>
+        <input type="email" id="email" name="email" placeholder="Nhập email của bạn"
+               required autocapitalize="none" autocomplete="email" style="text-transform: none;">
+
 
         <label for="message">Nội dung:</label>
         <textarea id="message" name="message" placeholder="Nhập nội dung liên hệ..." rows="5" required></textarea>
