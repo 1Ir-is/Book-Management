@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8" />
+    <title>Yêu Cầu Liên Hệ Mới</title>
+</head>
+<body
+        style="
+      font-family: Arial, sans-serif;
+      background-color: #f6f8fb;
+      margin: 0;
+      padding: 20px;
+    "
+>
+<table
+        width="100%"
+        cellpadding="0"
+        cellspacing="0"
+        style="
+        max-width: 600px;
+        margin: auto;
+        background-color: #ffffff;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      "
+>
+    <tr>
+        <td style="padding: 20px 30px">
+            <h2 style="color: #2d3748; font-size: 24px; margin-top: 0">
+                📬 Yêu Cầu Liên Hệ Mới
+            </h2>
+            <p style="font-size: 16px; color: #4a5568">
+                Bạn vừa nhận được một tin nhắn mới từ biểu mẫu liên hệ trên website.
+            </p>
+            <hr
+                    style="border: none; border-top: 1px solid #e2e8f0; margin: 20px 0"
+            />
+            <p style="margin: 0; font-weight: bold; color: #2d3748">Từ:</p>
+            <p style="margin: 5px 0 15px">
+                <a href="mailto:{{senderEmail}}" style="color: #3182ce"
+                >{{senderEmail}}</a
+                >
+            </p>
+            <p style="margin: 0; font-weight: bold; color: #2d3748">
+                Nội dung tin nhắn:
+            </p>
+            <div
+                    style="
+              background-color: #f7fafc;
+              border-left: 4px solid #3182ce;
+              padding: 12px 16px;
+              border-radius: 4px;
+              color: #2d3748;
+              margin-top: 5px;
+            "
+            >
+                {{messageText}}
+            </div>
+            <p style="font-size: 13px; color: #a0aec0; margin-top: 30px">
+                Thông điệp này được gửi từ biểu mẫu liên hệ trên website của bạn.<br />
+                Nếu bạn cho rằng đây là một nhầm lẫn, vui lòng bỏ qua email này.
+            </p>
+        </td>
+    </tr>
+</table>
+</body>
+</html>

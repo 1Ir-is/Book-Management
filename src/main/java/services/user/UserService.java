@@ -4,6 +4,8 @@ import models.User;
 import repositories.user.IUserRepository;
 import repositories.user.UserRepository;
 
+import java.util.List;
+
 public class UserService implements IUserService {
 
     private final IUserRepository userRepository = new UserRepository();
@@ -31,4 +33,18 @@ public class UserService implements IUserService {
         return userRepository.update(user);
     }
 
+    @Override
+    public List<User> getAllUsers() {
+        return userRepository.findAll();
+    }
+
+    @Override
+    public boolean blockUser(int userId) {
+        return userRepository.updateStatus(userId, false);
+    }
+
+    @Override
+    public boolean unblockUser(int userId) {
+        return userRepository.updateStatus(userId, true);
+    }
 }
