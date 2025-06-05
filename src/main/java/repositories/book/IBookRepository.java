@@ -10,4 +10,6 @@ public interface IBookRepository {
     boolean save(Book book);
     boolean update(Book book);
     boolean delete(int maSach);
+    List<Book> searchBooks(String keyword, int categoryId);
+
 }

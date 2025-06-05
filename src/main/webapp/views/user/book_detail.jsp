@@ -1,6 +1,10 @@
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ page import="java.util.Map" %>
+<%
+    request.setAttribute("categoryMap", request.getAttribute("categoryMap"));
+%>
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -9,7 +13,7 @@
     <title>Chi Tiết Sách | 4Book</title>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/style.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
-    <style>
+     <style>
         /* Fahasa style desktop detail */
         .book-detail-fahasa-desktop {
             background: #f5f5f7;
@@ -216,7 +220,7 @@
                     </tr>
                 </table>
                 <div class="book-desc-desktop">
-                        ${book.description}
+                    ${book.description}
                 </div>
             </c:if>
             <c:if test="${empty book}">

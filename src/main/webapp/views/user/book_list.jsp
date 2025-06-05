@@ -7,19 +7,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Danh Sách Sách | 4Book</title>
-    <!-- Icon -->
+    
+    <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="${pageContext.request.contextPath}/assets/image/book-shop.png" />
 
-    <!-- Font awesome cdn link -->
+    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 
-    <!-- Custom Css file link -->
+    <!-- Custom CSS -->
     <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/style.css" />
+
+    <!-- Bootstrap (optional if you're mixing it in) -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
-<!-- header section start -->
+
+<!-- Header -->
 <jsp:include page="views/common/header.jsp" />
-<!-- header section end -->
 
 <!-- Book List Section -->
 <section class="books-list" style="padding: 5rem 9%">
@@ -39,7 +43,7 @@
                         <div class="content">
                             <h3>
                                 <a href="${pageContext.request.contextPath}/book-detail?id=${book.bookId}" style="color: inherit; text-decoration: none">
-                                        ${book.bookName}
+                                    ${book.bookName}
                                 </a>
                             </h3>
                             <div class="price">
@@ -56,12 +60,14 @@
         </c:choose>
     </div>
 </section>
-<!-- footer section start -->
-<jsp:include page="views/common/footer.jsp" />
-<!-- footer section end -->
 
-<!-- Custom JS -->
+<!-- Footer -->
+<jsp:include page="views/common/footer.jsp" />
+
+<!-- Scripts -->
 <script src="${pageContext.request.contextPath}/assets/js/app.js"></script>
 <script src="${pageContext.request.contextPath}/assets/js/script.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
+

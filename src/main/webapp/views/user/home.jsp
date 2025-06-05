@@ -8,29 +8,35 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>4Book - Nhà sách trực tuyến</title>
-
-  <!-- Icon -->
-  <link rel="icon" type="image/x-icon" href="${pageContext.request.contextPath}/assets/image/book-shop.png" />
-
-  <!-- Font awesome cdn link -->
-  <link
-          rel="stylesheet"
-          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-  />
-
-  <!-- Custom Css file link-->
-  <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/style.css" />
-
-  <!-- Toastr Notifications -->
+  <link rel="icon" type="image/x-icon" href="${ctx}/assets/image/book-shop.png" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+  <link rel="stylesheet" href="${ctx}/assets/css/style.css" />
   <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet"/>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 </head>
-
 <body>
+  
+
 <!-- header section start -->
 <jsp:include page="views/common/header.jsp" />
 <!-- header section end -->
+
+<!-- Thanh tìm kiếm sách -->
+<section class="search-bar">
+  <form method="get" action="${ctx}/books" class="search-form">
+    <input type="text" name="keyword" placeholder="Tìm theo tên sách..." value="${param.keyword}" />
+    <select name="category">
+      <option value="">-- Chọn thể loại --</option>
+      <c:forEach items="${categories}" var="category">
+        <option value="${category.categoryId}" ${param.category == category.categoryId ? 'selected' : ''}>
+          ${category.categoryName}
+        </option>
+      </c:forEach>
+    </select>
+    <button type="submit" class="btn">Tìm kiếm</button>
+  </form>
+</section>
 
 <!-- home section start -->
 <section class="home" id="home">
