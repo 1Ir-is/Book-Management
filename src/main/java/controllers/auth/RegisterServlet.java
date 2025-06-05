@@ -23,16 +23,18 @@ public class RegisterServlet extends HttpServlet {
         String matKhau = req.getParameter("mat_khau");
         String soDienThoai = req.getParameter("so_dien_thoai");
         String diaChi = req.getParameter("dia_chi");
+        String avatarUrl = req.getParameter("avatar_url");
 
         HttpSession session = req.getSession();
 
         if (userService.isEmailExists(email)) {
             session.setAttribute("registerError", "Email đã được sử dụng!");
-            resp.sendRedirect(req.getContextPath() + "/home.jsp");
+            resp.sendRedirect(req.getContextPath() + "views/user/home.jsp");
             return;
         }
 
-        User user = new User(ten, email, matKhau, soDienThoai, diaChi, 1);
+        // Updated constructor to include avatarUrl
+        User user = new User(ten, email, matKhau, soDienThoai, diaChi, 1, avatarUrl);
         boolean success = userService.register(user);
 
         if (success) {
@@ -41,7 +43,6 @@ public class RegisterServlet extends HttpServlet {
             session.setAttribute("registerError", "Đăng ký thất bại. Vui lòng thử lại!");
         }
 
-        resp.sendRedirect(req.getContextPath() + "/home.jsp");
+        resp.sendRedirect(req.getContextPath() + "views/user/home.jsp");
     }
-
 }

@@ -25,8 +25,12 @@ public class AuthFilter implements Filter {
         boolean isPublic = uri.equals(req.getContextPath() + "/") ||
                 uri.endsWith("/login") ||
                 uri.endsWith("/register") ||
+                uri.endsWith("/books") ||
+                uri.endsWith("/book-detail") ||
                 uri.contains("/css") || uri.contains("/js") ||
-                uri.endsWith(".png") || uri.endsWith(".jpg");
+                uri.endsWith(".png") || uri.endsWith(".jpg") ||
+                uri.endsWith("/access-denied");
+
 
         // tu dong dang nhap bang cookie neu co session
         if (user == null && !isPublic) {

@@ -5,35 +5,16 @@
   Time: 9:02 AM
   To change this template use File | Settings | File Templates.
 --%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
-<%@ page import="models.Book" %>
-<%@ page import="java.util.List" %>
-<%@ page import="java.util.Map" %>
-<%@ page import="models.User" %>
-<%
-    User user = (User) session.getAttribute("user");
-    List<Book> books = (List<Book>) request.getAttribute("books");
-    Map<Integer, String> categoryMap = (Map<Integer, String>) request.getAttribute("categoryMap");
-%>
-<%
-    String action = request.getParameter("action");
-    if (action == null) {
-        action = "";
-    } else {
-        action = action.trim();
-    }
-%>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link
-            href="https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css"
-            rel="stylesheet"
-    />
-    <link rel="stylesheet" href="<%= request.getContextPath() %>/assets/css/adminpage.css" />
+    <link href="https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/adminpage.css" />
     <title>Quản lý sách</title>
     <style>
         /* Page Header */
@@ -292,6 +273,72 @@
             10%, 90% { opacity: 1; }
         }
 
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 32px;
+            gap: 0;
+            background: #fff;
+            border-radius: 14px;
+            box-shadow: 0 2px 12px #0001;
+            padding: 18px 0;
+            min-width: 340px;
+        }
+
+        .pagination a,
+        .pagination span {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 42px;
+            height: 42px;
+            margin: 0 4px;
+            border-radius: 8px;
+            font-size: 1.25rem;
+            font-weight: 500;
+            color: #6c63ff;
+            background: transparent;
+            text-decoration: none;
+            border: none;
+            transition: background 0.2s, color 0.2s;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .pagination a:hover:not(.active):not(.disabled) {
+            background: #f3f3fa;
+        }
+
+        .pagination .active,
+        .pagination a.active {
+            color: #222;
+            font-weight: bold;
+            border-bottom: 2px solid #6c63ff;
+            background: transparent;
+            pointer-events: none;
+        }
+
+        .pagination .disabled {
+            color: #ccc;
+            cursor: default;
+            pointer-events: none;
+            background: transparent;
+        }
+
+        .pagination .arrow {
+            font-size: 1.4rem;
+            color: #6c63ff;
+            background: transparent;
+            border: none;
+            transition: color 0.2s;
+            padding: 0;
+        }
+
+        .pagination .arrow.disabled {
+            color: #e0e0e0;
+            cursor: default;
+        }
         /* Responsive for mobile */
         @media screen and (max-width: 768px) {
             /* Thu hẹp khoảng cách nội dung */
@@ -406,146 +453,155 @@
     </style>
 </head>
 <body>
-<%
-    if (user != null && user.getRoleId() == 0) {
-%>
-<!-- SIDEBAR -->
-<jsp:include page="views/common/sidebar.jsp" />
-<!-- SIDEBAR -->
-
-<!-- NAVBAR -->
-<section id="content">
+<c:if test="${user != null && user.roleId == 0}">
+    <!-- SIDEBAR -->
+    <jsp:include page="views/common/sidebar.jsp" />
     <!-- NAVBAR -->
-    <jsp:include page="views/common/navbar.jsp" />
-    <!-- NAVBAR -->
-
-    <!-- MAIN -->
-    <main>
-        <div class="page-header">
-            <h1 class="title">Quản lý sách</h1>
-            <ul class="breadcrumbs">
-                <li><a href="<%= request.getContextPath() %>/admin/dashboard">Trang Chủ</a></li>
-                <li class="divider">/</li>
-                <li><a href="#" class="active">Quản lý sách</a></li>
-            </ul>
-
-            <div class="actions">
-                <a href="<%= request.getContextPath() %>/admin/books?action=add" class="btn-create">
-                    <i class="bx bxs-plus-circle"></i> Tạo sách mới
-                </a>
-                <a href="<%= request.getContextPath() %>/admin/dashboard" class="btn-back">
-                    <i class="bx bxs-home"></i> Quay lại trang chính
-                </a>
+    <section id="content">
+        <jsp:include page="views/common/navbar.jsp" />
+        <main>
+            <div class="page-header">
+                <h1 class="title">Quản lý sách</h1>
+                <ul class="breadcrumbs">
+                    <li><a href="${pageContext.request.contextPath}/admin/dashboard">Trang Chủ</a></li>
+                    <li class="divider">/</li>
+                    <li><a href="#" class="active">Quản lý sách</a></li>
+                </ul>
+                <div class="actions">
+                    <a href="${pageContext.request.contextPath}/admin/books?action=add" class="btn-create">
+                        <i class="bx bxs-plus-circle"></i> Tạo sách mới
+                    </a>
+                    <a href="${pageContext.request.contextPath}/admin/dashboard" class="btn-back">
+                        <i class="bx bxs-home"></i> Quay lại trang chính
+                    </a>
+                </div>
             </div>
-        </div>
-        <div class="table-container">
-            <table class="data-table">
-                <thead>
-                <tr>
-                    <th>Ảnh sách</th>
-                    <th>Tên sách</th>
-                    <th>Tác giả</th>
-                    <th>NXB</th>
-                    <th>Giá</th>
-                    <th>Mô tả</th>
-                    <th>Danh mục</th>
-                    <th>Hành động</th>
-                </tr>
-                </thead>
-                <tbody>
-                <% for (Book book : books) { %>
-                <tr>
-                    <td>
-                        <% if (book.getImgUrl() != null && !book.getImgUrl().isEmpty()) { %>
-                        <img class="book-img" src="<%= book.getImgUrl() %>" alt="Ảnh sách">
-                        <% } else { %>
-                        <span>Chưa có ảnh</span>
-                        <% } %>
-                    </td>
-                    <td><%= book.getBookName() %></td>
-                    <td><%= book.getAuthor() %></td>
-                    <td><%= book.getPublisher() %></td>
-                    <td><%= book.getPrice() %></td>
-                    <td class="description-cell"><%= book.getDescription() %></td>
-                    <td><%= categoryMap.get(book.getCategoryId()) %></td>
-                    <td>
-                        <div class="action-buttons">
-                            <a class="btn-edit" href="books?action=edit&id=<%= book.getBookId() %>">Sửa</a>
-                            <button class="btn-delete" onclick="showDeleteModal(<%= book.getBookId() %>)">Xóa</button>
-                        </div>
-                    </td>
-                </tr>
-                <% } %>
-                </tbody>
-            </table>
-        </div>
-    </main>
-    <!-- MAIN -->
-</section>
-<!-- NAVBAR -->
-
-<!-- Modal xác nhận xóa -->
-<div id="deleteModal" class="modal" style="display:none;">
-    <div class="modal-content">
-        <span class="close" onclick="closeModal()" title="Đóng">&times;</span>
-        <div class="modal-icon">
-            <i class="bx bxs-error-circle"></i>
-        </div>
-        <h2>Xác nhận xóa</h2>
-        <p>Bạn có chắc chắn muốn xóa sách này không?</p>
-        <form id="deleteForm" method="post" action="">
-            <input type="hidden" name="action" value="delete">
-            <div class="modal-actions">
-                <button type="submit" class="btn btn-delete">Xác nhận xóa</button>
-                <button type="button" class="btn btn-cancel" onclick="closeModal()">Hủy</button>
+            <c:set var="booksPerPage" value="5" />
+            <c:set var="currentPage" value="${param.page != null ? param.page : 1}" />
+            <c:set var="totalBooks" value="${fn:length(books)}" />
+            <c:set var="totalPages" value="${(totalBooks / booksPerPage) + (totalBooks % booksPerPage > 0 ? 1 : 0)}" />
+            <c:set var="startIndex" value="${(currentPage - 1) * booksPerPage}" />
+            <c:set var="endIndex" value="${startIndex + booksPerPage > totalBooks ? totalBooks : startIndex + booksPerPage}" />
+            <c:set var="paginatedBooks" value="${books.subList(startIndex, endIndex)}" />
+            <div class="table-container">
+                <table class="data-table">
+                    <thead>
+                    <tr>
+                        <th>Ảnh sách</th>
+                        <th>Tên sách</th>
+                        <th>Tác giả</th>
+                        <th>NXB</th>
+                        <th>Năm XB</th>
+                        <th>Giá</th>
+                        <th>Mô tả</th>
+                        <th>Danh mục</th>
+                        <th>Hành động</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <c:forEach var="book" items="${paginatedBooks}">
+                        <tr>
+                            <td>
+                                <c:choose>
+                                    <c:when test="${not empty book.imgUrl}">
+                                        <img class="book-img" src="${book.imgUrl}" alt="Ảnh sách" />
+                                    </c:when>
+                                    <c:otherwise>Chưa có ảnh</c:otherwise>
+                                </c:choose>
+                            </td>
+                            <td>${book.bookName}</td>
+                            <td>${book.author}</td>
+                            <td>${book.publisher}</td>
+                            <td>${book.publishYear}</td>
+                            <td>${book.price} VND</td>
+                            <td class="description-cell">
+                                <c:choose>
+                                    <c:when test="${fn:length(book.description) > 100}">
+                                        ${fn:substring(book.description, 0, 100)}...
+                                    </c:when>
+                                    <c:otherwise>${book.description}</c:otherwise>
+                                </c:choose>
+                            </td>
+                            <td>${categoryMap[book.categoryId]}</td>
+                            <td>
+                                <div class="action-buttons">
+                                    <a class="btn-edit" href="books?action=edit&id=${book.bookId}">Sửa</a>
+                                    <button class="btn-delete" onclick="showDeleteModal(${book.bookId})">Xóa</button>
+                                </div>
+                            </td>
+                        </tr>
+                    </c:forEach>
+                    </tbody>
+                </table>
             </div>
-        </form>
+            <div class="pagination">
+                <c:if test="${currentPage > 1}">
+                    <a href="?page=${currentPage - 1}" class="arrow" title="Trang trước">&#60;</a>
+                </c:if>
+                <c:forEach var="i" begin="1" end="${totalPages}">
+                    <c:choose>
+                        <c:when test="${i == currentPage}">
+                            <span class="active">${i}</span>
+                        </c:when>
+                        <c:otherwise>
+                            <a href="?page=${i}">${i}</a>
+                        </c:otherwise>
+                    </c:choose>
+                </c:forEach>
+                <c:if test="${currentPage < totalPages}">
+                    <a href="?page=${currentPage + 1}" class="arrow" title="Trang sau">&#62;</a>
+                </c:if>
+            </div>
+        </main>
+    </section>
+    <div id="deleteModal" class="modal" style="display:none;">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()" title="Đóng">&times;</span>
+            <div class="modal-icon">
+                <i class="bx bxs-error-circle"></i>
+            </div>
+            <h2>Xác nhận xóa</h2>
+            <p>Bạn có chắc chắn muốn xóa sách này không?</p>
+            <form id="deleteForm" method="post" action="">
+                <input type="hidden" name="action" value="delete" />
+                <div class="modal-actions">
+                    <button type="submit" class="btn btn-delete">Xác nhận xóa</button>
+                    <button type="button" class="btn btn-cancel" onclick="closeModal()">Hủy</button>
+                </div>
+            </form>
+        </div>
     </div>
-</div>
-
-<div id="toast" class="toast" style="display: none;">
-    <p id="toastMessage"></p>
-</div>
-
-<script>
-    function showDeleteModal(bookId) {
-        const modal = document.getElementById('deleteModal');
-        const form = document.getElementById('deleteForm');
-        form.action = '<%= request.getContextPath() %>/admin/books?action=delete&id=' + bookId;
-        modal.style.display = 'flex';
-    }
-
-    function closeModal() {
-        document.getElementById('deleteModal').style.display = 'none';
-    }
-
-    window.onload = function () {
-        const toastMessage = '<%= session.getAttribute("toastMessage") %>';
-        if (toastMessage && toastMessage !== "null") {
-            const toast = document.getElementById('toast');
-            const toastText = document.getElementById('toastMessage');
-            toastText.textContent = toastMessage;
-            toast.style.display = 'block';
-
-            // Remove the message from the session after displaying
-            <% session.removeAttribute("toastMessage"); %>
-
-            // Hide the toast after 3 seconds
-            setTimeout(() => {
-                toast.style.display = 'none';
-            }, 3000);
+    <div id="toast" class="toast" style="display: none;">
+        <p id="toastMessage"></p>
+    </div>
+    <script>
+        function showDeleteModal(bookId) {
+            const modal = document.getElementById('deleteModal');
+            const form = document.getElementById('deleteForm');
+            form.action = '${pageContext.request.contextPath}/admin/books?action=delete&id=' + bookId;
+            modal.style.display = 'flex';
         }
-    };
-</script>
-
-<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
-<script src="<%= request.getContextPath() %>/assets/js/script.js"></script>
-<%
-} else {
-%>
-<p>Bạn không có quyền truy cập vào trang này.</p>
-<%
-    }
-%>
+        function closeModal() {
+            document.getElementById('deleteModal').style.display = 'none';
+        }
+        window.onload = function () {
+            const toastMessage = '${sessionScope.toastMessage}';
+            if (toastMessage) {
+                const toast = document.getElementById('toast');
+                const toastText = document.getElementById('toastMessage');
+                toastText.textContent = toastMessage;
+                toast.style.display = 'block';
+                setTimeout(() => {
+                    toast.style.display = 'none';
+                }, 3000);
+            }
+        };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <script src="${pageContext.request.contextPath}/assets/js/script.js"></script>
+</c:if>
+<c:if test="${user == null || user.roleId != 0}">
+    <p>Bạn không có quyền truy cập vào trang này.</p>
+</c:if>
 </body>
 </html>

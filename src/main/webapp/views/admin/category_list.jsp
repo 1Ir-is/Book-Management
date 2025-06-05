@@ -1,22 +1,13 @@
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
-<%@ page import="java.util.List" %>
-<%@ page import="models.Category" %>
-<%@ page import="models.User" %>
-<%
-  User user = (User) session.getAttribute("user");
-  List<Category> categories = (List<Category>) request.getAttribute("categories");
-%>
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-  <link
-          href="https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css"
-          rel="stylesheet"
-  />
-  <link rel="stylesheet" href="<%= request.getContextPath() %>/assets/css/adminpage.css" />
+  <link href="https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/adminpage.css" />
   <style>
     /* Page Header */
     .page-header {
@@ -369,7 +360,6 @@
       }
     }
   </style>
-
   <title>Quản lý thể loại</title>
 </head>
 <body>
@@ -378,8 +368,6 @@
 <jsp:include page="views/common/sidebar.jsp" />
 <!-- SIDEBAR -->
 
-
-<!-- NAVBAR -->
 <section id="content">
   <!-- NAVBAR -->
   <jsp:include page="views/common/navbar.jsp" />
@@ -388,15 +376,15 @@
     <div class="page-header">
       <h1 class="title">Quản lý thể loại</h1>
       <ul class="breadcrumbs">
-        <li><a href="<%= request.getContextPath() %>/admin/dashboard">Trang Chủ</a></li>
+        <li><a href="${pageContext.request.contextPath}/admin/dashboard">Trang Chủ</a></li>
         <li class="divider">/</li>
         <li><a href="#" class="active">Quản lý thể loại</a></li>
       </ul>
       <div class="actions">
-        <a href="<%= request.getContextPath() %>/admin/categories?action=add" class="btn-create">
+        <a href="${pageContext.request.contextPath}/admin/categories?action=add" class="btn-create">
           <i class="bx bxs-plus-circle"></i> Thêm thể loại mới
         </a>
-        <a href="<%= request.getContextPath() %>/admin/dashboard" class="btn-back">
+        <a href="${pageContext.request.contextPath}/admin/dashboard" class="btn-back">
           <i class="bx bxs-home"></i> Quay lại trang chính
         </a>
       </div>
@@ -411,18 +399,18 @@
         </tr>
         </thead>
         <tbody>
-        <% for (Category c : categories) { %>
-        <tr>
-          <td><%= c.getCategoryId() %></td>
-          <td><%= c.getCategoryName() %></td>
-          <td>
-            <div class="action-buttons">
-              <a class="btn-edit" href="<%= request.getContextPath() %>/admin/categories?action=edit&id=<%= c.getCategoryId() %>">Sửa</a>
-              <button class="btn-delete" onclick="showDeleteModal(<%= c.getCategoryId() %>)">Xóa</button>
-            </div>
-          </td>
-        </tr>
-        <% } %>
+        <c:forEach var="category" items="${categories}">
+          <tr>
+            <td>${category.categoryId}</td>
+            <td>${category.categoryName}</td>
+            <td>
+              <div class="action-buttons">
+                <a class="btn-edit" href="${pageContext.request.contextPath}/admin/categories?action=edit&id=${category.categoryId}">Sửa</a>
+                <button class="btn-delete" onclick="showDeleteModal(${category.categoryId})">Xóa</button>
+              </div>
+            </td>
+          </tr>
+        </c:forEach>
         </tbody>
       </table>
     </div>
@@ -453,27 +441,10 @@
 <div id="toast" class="toast" style="display: none;">
   <p id="toastMessage"></p>
 </div>
-<%
-  String toastMsg = (String) session.getAttribute("toastMessage");
-  if (toastMsg != null) {
-    session.removeAttribute("toastMessage");
-  }
-%>
-<script>
-  function showDeleteModal(categoryId) {
-    const modal = document.getElementById('deleteModal');
-    const input = document.getElementById('deleteCategoryId');
-    input.value = categoryId; // Gán ID cần xóa
-    modal.style.display = 'flex';
-  }
-
-  function closeModal() {
-    document.getElementById('deleteModal').style.display = 'none'; // Hide the modal
-  }
-
-  window.onload = function () {
-    const toastMessage = <%= toastMsg == null ? "null" : "\"" + toastMsg.replace("\"", "\\\"") + "\"" %>;
-    if (toastMessage) {
+<c:if test="${not empty toastMessage}">
+  <script>
+    window.onload = function () {
+      const toastMessage = "${toastMessage}";
       const toast = document.getElementById('toast');
       const toastText = document.getElementById('toastMessage');
       toastText.textContent = toastMessage;
@@ -481,11 +452,24 @@
       setTimeout(() => {
         toast.style.display = 'none';
       }, 3000);
-    }
-  };
+    };
+  </script>
+</c:if>
+
+<script>
+  function showDeleteModal(categoryId) {
+    const modal = document.getElementById('deleteModal');
+    const input = document.getElementById('deleteCategoryId');
+    input.value = categoryId;
+    modal.style.display = 'flex';
+  }
+
+  function closeModal() {
+    document.getElementById('deleteModal').style.display = 'none';
+  }
 </script>
 
 <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
-<script src="<%= request.getContextPath() %>/assets/js/script.js"></script>
+<script src="${pageContext.request.contextPath}/assets/js/script.js"></script>
 </body>
 </html>

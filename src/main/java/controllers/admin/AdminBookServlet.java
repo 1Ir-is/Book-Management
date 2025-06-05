@@ -89,6 +89,7 @@ public class AdminBookServlet extends HttpServlet {
             double gia = Double.parseDouble(req.getParameter("gia"));
             String moTa = req.getParameter("mo_ta");
             int maDanhMuc = Integer.parseInt(req.getParameter("ma_danh_muc"));
+            int namXuatBan = Integer.parseInt(req.getParameter("nam_xuat_ban"));
 
             // Handle image upload
             Part imgPart = req.getPart("img_url");
@@ -109,7 +110,7 @@ public class AdminBookServlet extends HttpServlet {
                 imgUrl = existingBook.getImgUrl();
             }
 
-            Book book = new Book(maSach, tenSach, tacGia, nhaXuatBan, gia, moTa, maDanhMuc, imgUrl);
+            Book book = new Book(maSach, tenSach, tacGia, nhaXuatBan, gia, moTa, maDanhMuc, imgUrl, namXuatBan);
 
             if (maSach == 0) {
                 bookService.addBook(book);

@@ -11,6 +11,7 @@ CREATE TABLE IF NOT EXISTS nguoi_dung (
     so_dien_thoai VARCHAR(20),
     dia_chi VARCHAR(255),
     ma_vai_tro INT,
+    avatar_url VARCHAR(255),
     FOREIGN KEY (ma_vai_tro) REFERENCES vai_tro(ma_vai_tro)
     );
 
@@ -28,6 +29,7 @@ CREATE TABLE IF NOT EXISTS sach (
     mo_ta TEXT,
     ma_danh_muc INT,
     img_url VARCHAR(255),
+    nam_xuat_ban INT,
     FOREIGN KEY (ma_danh_muc) REFERENCES danh_muc(ma_danh_muc)
     );
 

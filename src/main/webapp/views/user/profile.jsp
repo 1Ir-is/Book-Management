@@ -1,18 +1,21 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
-<%@ page import="models.User" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+
 <%
-  User user = (User) session.getAttribute("user");
+  models.User user = (models.User) session.getAttribute("user");
   if (user == null) {
-    response.sendRedirect("login.jsp"); // Chuyển hướng nếu chưa đăng nhập
+    response.sendRedirect(request.getContextPath() + "/login.jsp"); // ✅ KHÔNG dùng ${} trong Java
     return;
   }
 %>
+
 <!DOCTYPE html>
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
   <title>Thông tin cá nhân - 4Book</title>
-  <link rel="stylesheet" href="<%= request.getContextPath() %>/assets/css/style.css" />
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/style.css" />
+  <link href="https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css" rel="stylesheet" />
   <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
@@ -21,7 +24,7 @@
     .profile-layout {
       display: flex;
       flex-direction: column;
-      max-width: 900px; /* Tăng chiều rộng */
+      max-width: 900px;
       margin: 2rem auto;
       background: #fff;
       border-radius: 10px;
@@ -42,7 +45,7 @@
     }
 
     .profile-menu a {
-      font-size: 1.2rem;
+      font-size: 1.4rem; /* Increased font size */
       color: #444;
       text-decoration: none;
       padding: 0.5rem 1rem;
@@ -72,15 +75,16 @@
       height: 100px;
       border-radius: 50%;
       border: 3px solid #27ae60;
+      object-fit: cover;
     }
 
     /* Info section */
     .profile-info-section {
-      padding: 2.5rem 2.5rem; /* Tăng padding cho form */
+      padding: 2.5rem 2.5rem;
     }
 
     .profile-info-section h2 {
-      font-size: 1.8rem;
+      font-size: 2rem; /* Increased font size */
       color: #27ae60;
       margin-bottom: 1.5rem;
     }
@@ -90,7 +94,7 @@
     }
 
     .profile-form .form-group label {
-      font-size: 1.2rem;
+      font-size: 1.4rem; /* Increased font size */
       color: #444;
       margin-bottom: 0.5rem;
       display: block;
@@ -101,7 +105,7 @@
       padding: 0.8rem;
       border: 1px solid #ddd;
       border-radius: 5px;
-      font-size: 1.1rem;
+      font-size: 1.3rem; /* Increased font size */
     }
 
     .profile-save-btn {
@@ -112,7 +116,7 @@
       color: #fff;
       border: none;
       border-radius: 5px;
-      font-size: 1.2rem;
+      font-size: 1.4rem; /* Increased font size */
       font-weight: bold;
       cursor: pointer;
       transition: background 0.2s;
@@ -122,6 +126,12 @@
       background: #219150;
     }
 
+    .error-message {
+      margin-top: 0.5rem;
+      color: red;
+      font-size: 1.1rem; /* Increased font size */
+    }
+
     /* Responsive for mobile */
     @media (max-width: 600px) {
       .profile-layout {
@@ -129,7 +139,7 @@
       }
 
       .profile-menu a {
-        font-size: 1.1rem;
+        font-size: 1.3rem; /* Increased font size */
       }
 
       .profile-avatar {
@@ -138,28 +148,27 @@
       }
 
       .profile-info-section h2 {
-        font-size: 1.5rem;
+        font-size: 1.8rem; /* Increased font size */
       }
 
       .profile-form .form-group input {
-        font-size: 1.1rem;
+        font-size: 1.3rem; /* Increased font size */
       }
 
       .profile-form .form-group label {
-        font-size: 1.2rem; /* Tăng kích thước chữ của nhãn */
+        font-size: 1.4rem; /* Increased font size */
       }
 
       .profile-save-btn {
-        font-size: 1.2rem;
+        font-size: 1.4rem; /* Increased font size */
       }
     }
   </style>
 </head>
 <body>
 
-<!-- header section start -->
+<!-- header -->
 <jsp:include page="views/common/header.jsp" />
-<!-- header section end -->
 
 <section class="profile-layout">
   <div class="profile-menu-container">
@@ -169,43 +178,58 @@
       <a href="#">Đơn hàng của tôi</a>
     </nav>
   </div>
+
   <div class="profile-content">
     <div class="profile-avatar-section">
-      <img src="image/avatar_default.png" alt="Avatar" class="profile-avatar" />
+      <c:choose>
+        <c:when test="${not empty user.avatarUrl}">
+          <img src="${user.avatarUrl}" alt="Avatar" class="profile-avatar" />
+        </c:when>
+        <c:otherwise>
+          <img src="${pageContext.request.contextPath}/image/avatar_default.png" alt="Avatar" class="profile-avatar" />
+        </c:otherwise>
+      </c:choose>
     </div>
+
     <div class="profile-info-section">
       <h2>Hồ sơ cá nhân</h2>
 
-      <% if ("1".equals(request.getParameter("success"))) { %>
-      <script>
-        $(document).ready(function() {
-          toastr.success('Cập nhật thành công!');
-        });
-      </script>
-      <% } else if ("1".equals(request.getParameter("error"))) { %>
-      <script>
-        $(document).ready(function() {
-          toastr.error('Cập nhật thất bại. Vui lòng thử lại!');
-        });
-      </script>
-      <% } %>
+      <!-- Toastr alerts -->
+      <c:if test="${param.success == '1'}">
+        <script>
+          $(function () {
+            toastr.success('Cập nhật thành công!');
+          });
+        </script>
+      </c:if>
+      <c:if test="${param.error == '1'}">
+        <script>
+          $(function () {
+            toastr.error('Cập nhật thất bại. Vui lòng thử lại!');
+          });
+        </script>
+      </c:if>
 
-      <form class="profile-form" action="<%= request.getContextPath() %>/update-profile" method="post">
+      <form class="profile-form" action="${pageContext.request.contextPath}/update-profile" method="post" enctype="multipart/form-data">
         <div class="form-group">
           <label>Họ và Tên</label>
-          <input type="text" name="name" value="<%= user.getName() %>" required />
+          <input type="text" name="name" value="${user.name}" required />
         </div>
         <div class="form-group">
           <label>Email</label>
-          <input type="email" name="email" value="<%= user.getEmail() %>" readonly />
+          <input type="email" name="email" value="${user.email}" readonly />
         </div>
         <div class="form-group">
           <label>Số điện thoại</label>
-          <input type="text" name="phone" value="<%= user.getPhoneNumber() %>" />
+          <input type="text" name="phone" value="${empty user.phoneNumber ? '' : user.phoneNumber}" />
         </div>
         <div class="form-group">
           <label>Địa chỉ</label>
-          <input type="text" name="address" value="<%= user.getAddress() %>" />
+          <input type="text" name="address" value="${empty user.address ? '' : user.address}" />
+        </div>
+        <div class="form-group">
+          <label>Ảnh đại diện</label>
+          <input type="file" name="avatar" accept="image/*" />
         </div>
         <button type="submit" class="profile-save-btn">Lưu thay đổi</button>
       </form>
@@ -213,9 +237,65 @@
   </div>
 </section>
 
-<!-- footer section start -->
+<!-- Loading overlay -->
+<div id="loading-overlay" style="display: none;">
+  <div class="loading-spinner">
+    <i class='bx bx-loader-alt bx-spin'></i>
+    Đang xử lý...
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const form = document.querySelector('.profile-form');
+    if (form) {
+      form.addEventListener('submit', function (e) {
+        if (!validateForm()) {
+          e.preventDefault();
+        } else {
+          document.getElementById('loading-overlay').style.display = 'flex';
+        }
+      });
+    }
+
+    function validateForm() {
+      let isValid = true;
+      const name = document.querySelector('input[name="name"]');
+      const phone = document.querySelector('input[name="phone"]');
+      const address = document.querySelector('input[name="address"]');
+
+      document.querySelectorAll('.error-message').forEach(el => el.remove());
+
+      if (!name.value.trim()) {
+        showError(name, 'Họ và Tên không được để trống.');
+        isValid = false;
+      }
+
+      const phoneRegex = /^[0-9]{10,15}$/;
+      if (!phone.value.trim() || !phoneRegex.test(phone.value)) {
+        showError(phone, 'Số điện thoại phải là số và có từ 10 đến 15 chữ số.');
+        isValid = false;
+      }
+
+      if (!address.value.trim()) {
+        showError(address, 'Địa chỉ không được để trống.');
+        isValid = false;
+      }
+
+      return isValid;
+    }
+
+    function showError(input, message) {
+      const error = document.createElement('div');
+      error.className = 'error-message';
+      error.textContent = message;
+      input.parentElement.appendChild(error);
+    }
+  });
+</script>
+
+<!-- footer -->
 <jsp:include page="views/common/footer.jsp" />
-<!-- footer section end -->
 
 </body>
 </html>
