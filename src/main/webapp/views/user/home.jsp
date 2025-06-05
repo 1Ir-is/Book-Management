@@ -22,21 +22,6 @@
 <jsp:include page="views/common/header.jsp" />
 <!-- header section end -->
 
-<!-- Thanh tìm kiếm sách -->
-<section class="search-bar">
-  <form method="get" action="${ctx}/books" class="search-form">
-    <input type="text" name="keyword" placeholder="Tìm theo tên sách..." value="${param.keyword}" />
-    <select name="category">
-      <option value="">-- Chọn thể loại --</option>
-      <c:forEach items="${categories}" var="category">
-        <option value="${category.categoryId}" ${param.category == category.categoryId ? 'selected' : ''}>
-          ${category.categoryName}
-        </option>
-      </c:forEach>
-    </select>
-    <button type="submit" class="btn">Tìm kiếm</button>
-  </form>
-</section>
 
 <!-- home section start -->
 <section class="home" id="home">

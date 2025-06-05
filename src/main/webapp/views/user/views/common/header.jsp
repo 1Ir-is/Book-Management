@@ -133,6 +133,21 @@
         background: #e0e0e0;
       }
 
+      .search-form button {
+        background: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
+        padding: 0 !important;
+      }
+      .search-form button:focus {
+        outline: none !important;
+      }
+      .search-form .fa-search {
+        background: none !important;
+        color: #333; /* hoặc màu bạn muốn */
+        font-size: 1.2rem;
+        padding: 0;
+      }
 
       /* Đặt ở cuối file <style> hoặc sau phần modal */
       @media (max-width: 480px) {
@@ -164,6 +179,44 @@
       }
 
       @media only screen and (max-width: 768px) {
+        .mobile-search-form {
+          display: flex;
+          align-items: center;
+          background: #fff;
+          border-radius: 8px;
+          box-shadow: 0 2px 8px #0001;
+          padding: 0.2rem 0.7rem;
+          width: 100%;
+          max-width: 400px;
+          margin: 0 auto;
+        }
+
+        .mobile-search-form input[type="text"] {
+          flex: 1;
+          border: none;
+          outline: none;
+          padding: 0.7rem 0.8rem;
+          font-size: 1.1rem;
+          border-radius: 8px;
+          background: transparent;
+        }
+
+        .mobile-search-form button {
+          background: none;
+          border: none;
+          outline: none;
+          padding: 0 0.3rem;
+          display: flex;
+          align-items: center;
+          cursor: pointer;
+        }
+
+        .mobile-search-form .fa-search {
+          font-size: 1.5rem;
+          color: #222;
+          background: none;
+          margin-left: 0.2rem;
+        }
         #toast-container > div {
           font-size: 14px !important;
           padding: 10px 14px !important;
@@ -186,12 +239,17 @@
   <header class="header">
     <!-- header 1 -->
     <div class="header-1">
-      <a href="${pageContext.request.contextPath}/" class="logo"><i class="fas fa-book"></i> 4Book</a>
+      <a href="${pageContext.request.contextPath}/" class="logo">
+        <i class="fas fa-book"></i> 4Book
+      </a>
 
-      <form action="" class="search-form">
-        <input type="search" placeholder="Tìm kiếm ..." id="search-box" />
-        <label for="search-box" class="fas fa-search"></label>
+      <form method="get" action="${pageContext.request.contextPath}/books" class="search-form">
+        <input type="text" name="keyword" placeholder="Tìm kiếm ..." value="${param.keyword}" id="search-box" />
+        <button type="submit">
+          <label for="search-box" class="fas fa-search" style="cursor: pointer;"></label>
+        </button>
       </form>
+
 
       <div class="icons">
         <div id="search-btn" class="fas fa-search"></div>
@@ -203,26 +261,31 @@
             <!-- Đã đăng nhập -->
             <c:choose>
               <c:when test="${not empty user.avatarUrl}">
-                <img src="${user.avatarUrl}" alt="Avatar" class="dropbtn" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover;" />
+                <img src="${user.avatarUrl}" alt="Avatar" class="dropbtn"
+                     style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover;" />
               </c:when>
               <c:otherwise>
                 <div class="fas fa-user dropbtn"></div>
               </c:otherwise>
             </c:choose>
             <div class="dropdown-content" style="padding: 8px 0; min-width: 180px;">
-              <div class="drop-content" style="font-weight: 600; font-size: 14px; padding: 6px 14px; cursor: default; line-height: 1.4;">
+              <div class="drop-content"
+                   style="font-weight: 600; font-size: 14px; padding: 6px 14px; cursor: default; line-height: 1.4;">
                 Xin chào,<br />
                   ${user.name}
               </div>
               <div style="height: 1px; background-color: #e0e0e0; margin: 6px 0;"></div>
-              <a class="drop-content" href="${pageContext.request.contextPath}/profile" style="padding: 6px 14px; display: block; text-decoration: none; color: #333; font-size: 13px;">
+              <a class="drop-content" href="${pageContext.request.contextPath}/profile"
+                 style="padding: 6px 14px; display: block; text-decoration: none; color: #333; font-size: 13px;">
                 Thông tin
               </a>
-              <a class="drop-content" href="${pageContext.request.contextPath}/history.jsp" style="padding: 6px 14px; display: block; text-decoration: none; color: #333; font-size: 13px;">
+              <a class="drop-content" href="${pageContext.request.contextPath}/history.jsp"
+                 style="padding: 6px 14px; display: block; text-decoration: none; color: #333; font-size: 13px;">
                 Lịch sử mua hàng
               </a>
               <c:if test="${user != null}">
-                <a href="javascript:void(0)" id="logout-link" class="drop-content" style="padding: 6px 14px; display: block; text-decoration: none; color: #333; font-size: 13px;">
+                <a href="javascript:void(0)" id="logout-link" class="drop-content"
+                   style="padding: 6px 14px; display: block; text-decoration: none; color: #333; font-size: 13px;">
                   Đăng xuất
                 </a>
               </c:if>
@@ -243,9 +306,12 @@
         <div class="dropdown">
           <a class="dropbtn" href="#Category">Thể loại</a>
           <div class="dropdown-content">
-            <a class="drop-content" href="#">Kinh dị</a>
-            <a class="drop-content" href="#">Lãng mạn</a>
-            <a class="drop-content" href="#">Người lớn</a>
+            <c:forEach items="${categories}" var="category">
+              <a class="drop-content"
+                 href="${pageContext.request.contextPath}/books?category=${category.categoryId}">
+                  ${category.categoryName}
+              </a>
+            </c:forEach>
           </div>
         </div>
         <a class="dropbtn" href="#reviews">Đánh giá</a>
@@ -253,18 +319,20 @@
       </nav>
     </div>
   </header>
-  <!-- header section end -->
-
-  <!-- bottom navbar start -->
 
   <header class="mobile-header">
-    <div class="mobile-header-logo" style="text-align: center; padding-top: 1rem">
-      <img src="${pageContext.request.contextPath}/assets/image/book-shop.png" alt="4Book Logo" style="height: 38px" />
-    </div>
+    <a href="${pageContext.request.contextPath}/">
+      <div class="mobile-header-logo" style="text-align: center; padding-top: 1rem">
+        <img src="${pageContext.request.contextPath}/assets/image/book-shop.png" alt="4Book Logo" style="height: 38px" />
+      </div>
+    </a>
     <div class="mobile-header-bar">
       <a href="#" class="header-icon-left fas fa-list"></a>
-      <form class="mobile-search-form">
-        <input type="text" placeholder="Tìm Kiếm Sách..." />
+      <form method="get" action="${pageContext.request.contextPath}/books" class="mobile-search-form">
+        <input type="text" name="keyword" placeholder="Tìm Kiếm Sách..." value="${param.keyword}" id="mobile-search-box" />
+        <button type="submit">
+          <i class="fas fa-search"></i>
+        </button>
       </form>
       <div class="header-icons">
         <a href="${pageContext.request.contextPath}/cart.jsp" class="fas fa-shopping-cart"></a>
@@ -300,11 +368,13 @@
           <span class="fas fa-chevron-down" style="float: right"></span>
         </a>
         <ul class="submenu">
-          <li><a href="#">Văn Học</a></li>
-          <li><a href="#">Kinh Tế</a></li>
-          <li><a href="#">Tâm Lý - Kỹ Năng Sống</a></li>
-          <li><a href="#">Thiếu Nhi</a></li>
-          <li><a href="#">Giáo Khoa - Tham Khảo</a></li>
+          <c:forEach items="${categories}" var="category">
+            <li>
+              <a href="${pageContext.request.contextPath}/books?category=${category.categoryId}">
+                  ${category.categoryName}
+              </a>
+            </li>
+          </c:forEach>
         </ul>
       </li>
 
