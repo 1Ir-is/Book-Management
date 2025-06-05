@@ -29,12 +29,11 @@ public class RegisterServlet extends HttpServlet {
 
         if (userService.isEmailExists(email)) {
             session.setAttribute("registerError", "Email đã được sử dụng!");
-            resp.sendRedirect(req.getContextPath() + "views/user/home.jsp");
+            resp.sendRedirect(req.getContextPath() + "/views/user/home.jsp");
             return;
         }
 
-        // Updated constructor to include avatarUrl
-        User user = new User(ten, email, matKhau, soDienThoai, diaChi, 1, avatarUrl);
+        User user = new User(ten, email, matKhau, soDienThoai, diaChi, 1, avatarUrl, true);
         boolean success = userService.register(user);
 
         if (success) {
@@ -43,6 +42,6 @@ public class RegisterServlet extends HttpServlet {
             session.setAttribute("registerError", "Đăng ký thất bại. Vui lòng thử lại!");
         }
 
-        resp.sendRedirect(req.getContextPath() + "views/user/home.jsp");
+        resp.sendRedirect(req.getContextPath() + "/views/user/home.jsp");
     }
 }

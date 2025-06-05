@@ -12,6 +12,7 @@ CREATE TABLE IF NOT EXISTS nguoi_dung (
     dia_chi VARCHAR(255),
     ma_vai_tro INT,
     avatar_url VARCHAR(255),
+    trang_thai BOOLEAN DEFAULT TRUE,
     FOREIGN KEY (ma_vai_tro) REFERENCES vai_tro(ma_vai_tro)
     );
 
@@ -66,5 +67,3 @@ CREATE TABLE IF NOT EXISTS chi_tiet_don_hang (
     FOREIGN KEY (ma_don_hang) REFERENCES don_hang(ma_don_hang),
     FOREIGN KEY (ma_sach) REFERENCES sach(ma_sach)
     );
-
-

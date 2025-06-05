@@ -9,10 +9,11 @@ public class User {
     private String address;
     private int roleId;
     private String avatarUrl;
+    private boolean status;
 
     public User() {}
 
-    public User(int userId, String name, String email, String password, String phoneNumber, String address, int roleId, String avatarUrl) {
+    public User(int userId, String name, String email, String password, String phoneNumber, String address, int roleId, String avatarUrl, boolean status) {
         this.userId = userId;
         this.name = name;
         this.email = email;
@@ -21,9 +22,10 @@ public class User {
         this.address = address;
         this.roleId = roleId;
         this.avatarUrl = avatarUrl;
+        this.status = status;
     }
 
-    public User(String name, String email, String password, String phoneNumber, String address, int roleId, String avatarUrl) {
+    public User(String name, String email, String password, String phoneNumber, String address, int roleId, String avatarUrl, boolean status) {
         this.name = name;
         this.email = email;
         this.password = password;
@@ -31,6 +33,7 @@ public class User {
         this.address = address;
         this.roleId = roleId;
         this.avatarUrl = avatarUrl;
+        this.status = status;
     }
 
     public int getUserId() {
@@ -95,5 +98,13 @@ public class User {
 
     public void setAvatarUrl(String avatarUrl) {
         this.avatarUrl = avatarUrl;
+    }
+
+    public boolean isStatus() {
+        return status;
+    }
+
+    public void setStatus(boolean status) {
+        this.status = status;
     }
 }

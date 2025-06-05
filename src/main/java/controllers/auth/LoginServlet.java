@@ -15,7 +15,7 @@ public class LoginServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        // Redirect về trang home nơi có form login
+        // Redirect to the home page with the login form
         resp.sendRedirect(req.getContextPath() + "/");
     }
 
@@ -26,9 +26,15 @@ public class LoginServlet extends HttpServlet {
 
         User user = userService.login(email, password);
         if (user != null) {
+            if (!user.isStatus()) { // Check if the account is blocked
+                req.setAttribute("error", "Tài khoản của bạn đã bị khóa!");
+                req.getRequestDispatcher("views/user/home.jsp").forward(req, resp);
+                return;
+            }
+
             HttpSession session = req.getSession();
             session.setAttribute("user", user);
-            session.setMaxInactiveInterval(30 * 60); // 30 phút
+            session.setMaxInactiveInterval(30 * 60); // 30 minutes
             session.setAttribute("success", "Đăng nhập thành công!");
 
             if (req.getParameter("remember") != null) {
@@ -50,5 +56,4 @@ public class LoginServlet extends HttpServlet {
             req.getRequestDispatcher("views/user/home.jsp").forward(req, resp);
         }
     }
-
 }
