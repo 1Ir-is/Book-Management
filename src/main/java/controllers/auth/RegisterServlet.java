@@ -1,6 +1,5 @@
 package controllers.auth;
 
-
 import models.User;
 import services.user.IUserService;
 import services.user.UserService;
@@ -12,35 +11,38 @@ import java.io.IOException;
 
 @WebServlet("/register")
 public class RegisterServlet extends HttpServlet {
-    private IUserService userService = new UserService();
-
-    @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        req.getRequestDispatcher("/views/auth/register.jsp").forward(req, resp);
-    }
+    private final IUserService userService = new UserService();
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        req.setCharacterEncoding("UTF-8");
+        resp.setCharacterEncoding("UTF-8");
+
         String ten = req.getParameter("ten");
         String email = req.getParameter("email");
         String matKhau = req.getParameter("mat_khau");
         String soDienThoai = req.getParameter("so_dien_thoai");
         String diaChi = req.getParameter("dia_chi");
+        String avatarUrl = req.getParameter("avatar_url");
+
+        HttpSession session = req.getSession();
 
         if (userService.isEmailExists(email)) {
-            req.setAttribute("error", "Email đã được đăng ký!");
-            req.getRequestDispatcher("/views/auth/register.jsp").forward(req, resp);
+            session.setAttribute("registerError", "Email đã được sử dụng!");
+            resp.sendRedirect(req.getContextPath() + "views/user/home.jsp");
             return;
         }
 
-        User user = new User(ten, email, matKhau, soDienThoai, diaChi, 1); // 1 = vai trò mặc định user
+        // Updated constructor to include avatarUrl
+        User user = new User(ten, email, matKhau, soDienThoai, diaChi, 1, avatarUrl);
         boolean success = userService.register(user);
 
         if (success) {
-            resp.sendRedirect(req.getContextPath() + "/login");
+            session.setAttribute("registerSuccess", true);
         } else {
-            req.setAttribute("error", "Đăng ký thất bại. Vui lòng thử lại!");
-            req.getRequestDispatcher("/views/auth/register.jsp").forward(req, resp);
+            session.setAttribute("registerError", "Đăng ký thất bại. Vui lòng thử lại!");
         }
+
+        resp.sendRedirect(req.getContextPath() + "views/user/home.jsp");
     }
 }

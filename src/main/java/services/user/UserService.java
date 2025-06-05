@@ -25,4 +25,10 @@ public class UserService implements IUserService {
     public boolean isEmailExists(String email) {
         return userRepository.findByEmail(email) != null;
     }
+
+    @Override
+    public boolean updateUser(User user) {
+        return userRepository.update(user);
+    }
+
 }

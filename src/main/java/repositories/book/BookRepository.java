@@ -3,7 +3,6 @@ package repositories.book;
 import models.Book;
 import utils.JDBCUtils;
 
-import javax.xml.transform.Result;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -30,6 +29,7 @@ public class BookRepository implements IBookRepository {
                 book.setDescription(resultSet.getString("mo_ta"));
                 book.setCategoryId(resultSet.getInt("ma_danh_muc"));
                 book.setImgUrl(resultSet.getString("img_url"));
+                book.setPublishYear(resultSet.getInt("nam_xuat_ban"));
                 books.add(book);
             }
         } catch (SQLException e) {
@@ -55,6 +55,7 @@ public class BookRepository implements IBookRepository {
                 book.setDescription(resultSet.getString("mo_ta"));
                 book.setCategoryId(resultSet.getInt("ma_danh_muc"));
                 book.setImgUrl(resultSet.getString("img_url"));
+                book.setPublishYear(resultSet.getInt("nam_xuat_ban"));
                 return book;
             }
         } catch (SQLException e) {
@@ -65,7 +66,7 @@ public class BookRepository implements IBookRepository {
 
     @Override
     public boolean save(Book book) {
-        String sql = "INSERT INTO sach (ten_sach, tac_gia, nha_xuat_ban, gia, mo_ta, ma_danh_muc, img_url) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO sach (ten_sach, tac_gia, nha_xuat_ban, gia, mo_ta, ma_danh_muc, img_url, nam_xuat_ban) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         try (Connection connection = JDBCUtils.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             preparedStatement.setString(1, book.getBookName());
@@ -75,6 +76,7 @@ public class BookRepository implements IBookRepository {
             preparedStatement.setString(5, book.getDescription());
             preparedStatement.setInt(6, book.getCategoryId());
             preparedStatement.setString(7, book.getImgUrl());
+            preparedStatement.setInt(8, book.getPublishYear());
             return preparedStatement.executeUpdate() > 0;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -84,7 +86,7 @@ public class BookRepository implements IBookRepository {
 
     @Override
     public boolean update(Book book) {
-        String sql = "UPDATE sach SET ten_sach=?, tac_gia=?, nha_xuat_ban=?, gia=?, mo_ta=?, ma_danh_muc=?, img_url=? WHERE ma_sach=?";
+        String sql = "UPDATE sach SET ten_sach=?, tac_gia=?, nha_xuat_ban=?, gia=?, mo_ta=?, ma_danh_muc=?, img_url=?, nam_xuat_ban=? WHERE ma_sach=?";
         try (Connection connection = JDBCUtils.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             preparedStatement.setString(1, book.getBookName());
@@ -94,8 +96,8 @@ public class BookRepository implements IBookRepository {
             preparedStatement.setString(5, book.getDescription());
             preparedStatement.setInt(6, book.getCategoryId());
             preparedStatement.setString(7, book.getImgUrl());
-            preparedStatement.setInt(8, book.getBookId());
-
+            preparedStatement.setInt(8, book.getPublishYear());
+            preparedStatement.setInt(9, book.getBookId());
             return preparedStatement.executeUpdate() > 0;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -115,6 +117,7 @@ public class BookRepository implements IBookRepository {
         }
         return false;
     }
+  
     @Override
     public List<Book> searchBooks(String keyword, int categoryId) {
         List<Book> books = new ArrayList<>();
@@ -157,7 +160,4 @@ public class BookRepository implements IBookRepository {
         }
         return books;
     }
-
-
-
 }
