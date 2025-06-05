@@ -40,3 +40,6 @@ bin/
 
 ### Mac OS ###
 .DS_Store
+
+# Ignore config.properties but keep other resources
+src/main/resources/config.properties
