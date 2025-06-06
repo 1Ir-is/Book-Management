@@ -126,6 +126,27 @@
       background: #219150;
     }
 
+    #loading-overlay {
+      position: fixed;
+      z-index: 2000;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      background: rgba(255,255,255,0.7);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .loading-spinner {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      font-size: 2rem;
+      color: #27ae60;
+      gap: 1rem;
+    }
+    .loading-spinner i {
+      font-size: 3rem;
+    }
     .error-message {
       margin-top: 0.5rem;
       color: red;
