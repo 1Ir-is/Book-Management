@@ -427,12 +427,12 @@
                             <div class="action-buttons">
                                 <form method="post" action="${pageContext.request.contextPath}/admin/orders">
                                     <input type="hidden" name="orderId" value="${order[0]}">
-                                    <select name="status">
+                                    <select name="status" ${order[2] == 'Hoàn thành' ? 'disabled' : ''}>
                                         <option value="Đang xử lý" ${order[2] == 'Đang xử lý' ? 'selected' : ''}>Đang xử lý</option>
                                         <option value="Đã giao hàng" ${order[2] == 'Đã giao hàng' ? 'selected' : ''}>Đã giao hàng</option>
                                         <option value="Hoàn thành" ${order[2] == 'Hoàn thành' ? 'selected' : ''}>Hoàn thành</option>
                                     </select>
-                                    <button class="btn-edit" type="submit">Cập nhật</button>
+                                    <button class="btn-edit" type="submit" ${order[2] == 'Hoàn thành' ? 'disabled' : ''}>Cập nhật</button>
                                 </form>
                                 <form method="get" action="${pageContext.request.contextPath}/admin/order_detail">
                                     <input type="hidden" name="orderId" value="${order[0]}">
