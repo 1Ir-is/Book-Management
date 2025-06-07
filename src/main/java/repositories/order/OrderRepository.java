@@ -19,27 +19,28 @@ public class OrderRepository implements IOrderRepository {
     @Override
     public List<Object[]> findAllOrder() {
         List<Object[]> orders = new ArrayList<>();
-        String sql = "SELECT dh.ma_don_hang, dh.ngay_dat, dh.trang_thai, nd.ten AS ten_nguoi_dung, " +
+        String sql = "SELECT dh.ma_don_hang, dh.ngay_dat, dh.trang_thai, nd.ten AS ten_nguoi_dung, nd.email, " +
                 "GROUP_CONCAT(CONCAT(s.ten_sach, ' x ', ctdh.so_luong) SEPARATOR ', ') AS sach_va_so_luong, " +
                 "SUM(ctdh.so_luong * ctdh.gia) AS tong_tien " +
                 "FROM don_hang dh " +
                 "JOIN nguoi_dung nd ON dh.ma_nguoi_dung = nd.ma_nguoi_dung " +
                 "JOIN chi_tiet_don_hang ctdh ON dh.ma_don_hang = ctdh.ma_don_hang " +
                 "JOIN sach s ON ctdh.ma_sach = s.ma_sach " +
-                "GROUP BY dh.ma_don_hang, dh.ngay_dat, dh.trang_thai, nd.ten";
+                "GROUP BY dh.ma_don_hang, dh.ngay_dat, dh.trang_thai, nd.ten, nd.email";
 
         try (Connection connection = JDBCUtils.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sql);
              ResultSet resultSet = preparedStatement.executeQuery()) {
 
             while (resultSet.next()) {
-                Object[] orderData = new Object[6];
-                orderData[0] = resultSet.getInt("ma_don_hang"); // Order ID
-                orderData[1] = resultSet.getDate("ngay_dat"); // Order Date
-                orderData[2] = resultSet.getString("trang_thai"); // Order Status
-                orderData[3] = resultSet.getString("ten_nguoi_dung"); // User Name
-                orderData[4] = resultSet.getString("sach_va_so_luong"); // Books and Quantities
-                orderData[5] = resultSet.getDouble("tong_tien"); // Total Price
+                Object[] orderData = new Object[7];
+                orderData[0] = resultSet.getInt("ma_don_hang");       // 0 - Mã đơn
+                orderData[1] = resultSet.getDate("ngay_dat");         // 1 - Ngày đặt
+                orderData[2] = resultSet.getString("trang_thai");     // 2 - Trạng thái
+                orderData[3] = resultSet.getString("ten_nguoi_dung"); // 3 - Tên người đặt
+                orderData[4] = resultSet.getString("email");          // 4 - Email
+                orderData[5] = resultSet.getString("sach_va_so_luong");// 5 - Sách
+                orderData[6] = resultSet.getDouble("tong_tien");      // 6 - Tổng tiền
                 orders.add(orderData);
             }
         } catch (SQLException e) {
