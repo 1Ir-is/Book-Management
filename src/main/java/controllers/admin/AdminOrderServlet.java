@@ -2,7 +2,7 @@ package controllers.admin;
 
 import services.order.IOrderService;
 import services.order.OrderService;
-import utils.GmailServiceUtil;
+import utils.SMTPMailUtil;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -25,6 +25,7 @@ public class AdminOrderServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         request.setCharacterEncoding("UTF-8");
+        response.setCharacterEncoding("UTF-8");
         request.setAttribute("orders", orderService.getAllOrders());
         request.getRequestDispatcher("/views/admin/order_list.jsp").forward(request, response);
     }
@@ -33,6 +34,7 @@ public class AdminOrderServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         request.setCharacterEncoding("UTF-8");
         response.setCharacterEncoding("UTF-8");
+
         if ("true".equals(request.getParameter("clearToast"))) {
             request.getSession().removeAttribute("updateSuccess");
             return;
@@ -41,13 +43,12 @@ public class AdminOrderServlet extends HttpServlet {
         int orderId = Integer.parseInt(request.getParameter("orderId"));
         String newStatus = request.getParameter("status");
 
-        // Update order status
         boolean isUpdated = orderService.updateOrderStatus(orderId, newStatus);
 
         if (isUpdated) {
             request.getSession().setAttribute("updateSuccess", true);
 
-            // Get user email and order details
+            // Lấy thông tin người dùng và đơn hàng
             String userEmail = orderService.getUserEmailByOrderId(orderId);
             String orderDate = orderService.getOrderDateByOrderId(orderId);
             String customerName = orderService.getCustomerNameByOrderId(orderId);
@@ -55,7 +56,7 @@ public class AdminOrderServlet extends HttpServlet {
             String totalPrice = orderService.getTotalPriceByOrderId(orderId);
             String expectedDeliveryDate = orderService.calculateExpectedDeliveryDate(orderDate);
 
-            // Prepare email placeholders
+            // Tạo placeholder cho template
             Map<String, String> placeholders = new HashMap<>();
             placeholders.put("orderId", String.valueOf(orderId));
             placeholders.put("orderDate", orderDate);
@@ -66,15 +67,28 @@ public class AdminOrderServlet extends HttpServlet {
             placeholders.put("expectedDeliveryDate", expectedDeliveryDate);
 
             try {
+                String subject;
+                String template;
+
                 if ("Đã giao hàng".equals(newStatus)) {
-                    // Send email for "Đã giao hàng"
-                    GmailServiceUtil.sendEmail(userEmail, "Cập Nhật Trạng Thái Đơn Hàng", "mails/order_status.html", placeholders);
+                    subject = "📦 Cập Nhật Trạng Thái Đơn Hàng #" + orderId;
+                    template = "mails/order_status.html";
                 } else if ("Hoàn thành".equals(newStatus)) {
-                    // Send email for "Hoàn thành"
-                    GmailServiceUtil.sendEmail(userEmail, "Cảm ơn bạn đã ủng hộ", "mails/thank_you.html", placeholders);
+                    subject = "🎉 Cảm ơn bạn đã ủng hộ đơn hàng #" + orderId;
+                    template = "mails/thank_you.html";
+                } else {
+                    subject = null;
+                    template = null;
                 }
+
+                if (subject != null && template != null) {
+                    String html = SMTPMailUtil.loadHtmlTemplate(template, placeholders);
+                    SMTPMailUtil.sendEmail(userEmail, subject, html);
+                }
+
             } catch (Exception e) {
                 e.printStackTrace();
+                // Tùy chọn: Ghi log hoặc lưu thông báo lỗi vào session
             }
         }
 

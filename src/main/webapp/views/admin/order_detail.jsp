@@ -134,6 +134,26 @@
             border-color: #3498db;
             box-shadow: 0 0 5px rgba(52, 152, 219, 0.5);
         }
+        .actions {
+            margin-top: 1rem; /* Tăng khoảng cách giữa breadcrumb và nút */
+        }
+        .btn-back {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.8rem 1.5rem;
+            font-size: 1rem;
+            font-weight: bold;
+            color: #fff;
+            background: #3498db;
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
+            transition: background 0.3s ease;
+        }
+
+        .btn-back:hover {
+            background: #2980b9;
+        }
 
         /* Style for the Submit Button */
         button[type="submit"] {
@@ -395,11 +415,19 @@
         <div class="page-header">
             <h1 class="title">Chi tiết đơn hàng</h1>
             <ul class="breadcrumbs">
-                <li><a href="${pageContext.request.contextPath}/admin/orders">Quay lại</a></li>
+                <li><a href="${pageContext.request.contextPath}/admin/dashboard">Trang Chủ</a></li>
+                <li class="divider">/</li>
+                <li><a href="${pageContext.request.contextPath}/admin/orders">Quản lý đơn hàng</a></li>
                 <li class="divider">/</li>
                 <li><a href="#" class="active">Chi tiết đơn hàng</a></li>
             </ul>
+            <div class="actions">
+                <a href="${pageContext.request.contextPath}/admin/orders" class="btn-back">
+                    <i class="bx bxs-home"></i> Quay lại danh sách đơn hàng
+                </a>
+            </div>
         </div>
+
         <!-- Display Customer Name -->
         <div class="customer-info">
             <p><strong>Người đặt hàng:</strong> ${customerName}</p>

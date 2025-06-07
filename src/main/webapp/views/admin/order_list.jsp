@@ -7,6 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quản lý đơn hàng</title>
     <link href="https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css" rel="stylesheet" />
+
     <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/adminpage.css" />
     <style>
         /* Page Header */
@@ -163,6 +164,27 @@
             border-radius: 5px;
             cursor: pointer;
             transition: all 0.3s ease-in-out;
+        }
+        #loading-overlay {
+            position: fixed;
+            z-index: 2000;
+            top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            background: rgba(255,255,255,0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .loading-spinner {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-size: 2rem;
+            color: #27ae60;
+            gap: 1rem;
+        }
+        .loading-spinner i {
+            font-size: 3rem;
         }
 
         .btn-edit:hover {
@@ -451,8 +473,28 @@
 
 <!-- Toast Notification -->
 <div id="toast" style="display: none;">Cập nhật trạng thái đơn hàng thành công!</div>
+<!-- Loading Overlay -->
+<div id="loading-overlay" style="display:none;">
+    <div class="loading-spinner">
+        <i class='bx bx-loader-alt bx-spin'></i>
+        <span>Đang xử lý...</span>
+    </div>
+</div>
 
 <script>
+
+    // Hiện loading khi form cập nhật trạng thái được submit
+    document.querySelectorAll('form[action$="/admin/orders"]').forEach(form => {
+        form.addEventListener('submit', function(e) {
+            const select = form.querySelector('select[name="status"]');
+            const button = form.querySelector('button[type="submit"]');
+
+            if (select && button && !button.disabled) {
+                document.getElementById('loading-overlay').style.display = 'flex';
+            }
+        });
+    });
+
     // Check if the session attribute for success exists
     <c:if test="${not empty sessionScope.updateSuccess}">
     const toast = document.getElementById('toast');
