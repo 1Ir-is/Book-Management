@@ -12,7 +12,7 @@ import java.io.IOException;
 import java.util.List;
 
 @WebServlet("")
-public class HomeServlet extends HttpServlet {
+public class UserHomeServlet extends HttpServlet {
     private final ICategoryService categoryService = new CategoryService();
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)

@@ -15,7 +15,7 @@ import java.util.Map;
 import java.util.Scanner;
 
 @WebServlet("/contact-admin")
-public class ContactAdminServlet extends HttpServlet {
+public class UserContactAdminServlet extends HttpServlet {
 
     private String loadEmailTemplate(String path) throws IOException {
         try (InputStream inputStream = getServletContext().getResourceAsStream(path);

@@ -13,7 +13,7 @@ import java.io.IOException;
 
 @WebServlet("/update-profile")
 @MultipartConfig
-public class UpdateProfileServlet extends HttpServlet {
+public class UserUpdateProfileServlet extends HttpServlet {
     private final IUserService userService = new UserService();
 
     @Override

@@ -14,8 +14,8 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
-@WebServlet(name = "ExportOrderExcelServlet", urlPatterns = {"/admin/export-orders"})
-public class ExportOrderExcelServlet extends HttpServlet {
+@WebServlet(name = "AdminExportOrderExcelServlet", urlPatterns = {"/admin/export-orders"})
+public class AdminExportOrderExcelServlet extends HttpServlet {
 
     private final IOrderService orderService = new OrderService();
 
