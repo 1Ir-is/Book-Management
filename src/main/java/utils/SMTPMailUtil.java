@@ -7,8 +7,10 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 public class SMTPMailUtil {
-    private static final String USERNAME = "irissoveriegn@gmail.com"; 
-    private static final String APP_PASSWORD = "xdlj vfco chta llps"; 
+
+    private static final String USERNAME = ConfigReader.get("mail.username");
+    private static final String APP_PASSWORD = ConfigReader.get("mail.app_password");
+
     public static void sendEmail(String to, String subject, String htmlContent) throws MessagingException, UnsupportedEncodingException {
         Properties props = new Properties();
 
@@ -20,7 +22,6 @@ public class SMTPMailUtil {
         props.put("mail.smtp.auth", "true");
         props.put("mail.smtp.ssl.protocols", "TLSv1.2");
 
-
         Session session = Session.getInstance(props, new Authenticator() {
             protected PasswordAuthentication getPasswordAuthentication() {
                 return new PasswordAuthentication(USERNAME, APP_PASSWORD);
@@ -30,7 +31,7 @@ public class SMTPMailUtil {
         Message message = new MimeMessage(session);
         message.setFrom(new InternetAddress(USERNAME, "4Book Corporation"));
         message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(to));
-        message.setSubject(MimeUtility.encodeText(subject, "UTF-8", "B")); 
+        message.setSubject(MimeUtility.encodeText(subject, "UTF-8", "B"));
         message.setContent(htmlContent, "text/html; charset=UTF-8");
 
         Transport.send(message);
