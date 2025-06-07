@@ -591,6 +591,10 @@
                 const toastText = document.getElementById('toastMessage');
                 toastText.textContent = toastMessage;
                 toast.style.display = 'block';
+
+                // Clear the toastMessage session attribute
+                fetch('${pageContext.request.contextPath}/admin/books?action=clearToastMessage', { method: 'POST' });
+
                 setTimeout(() => {
                     toast.style.display = 'none';
                 }, 3000);

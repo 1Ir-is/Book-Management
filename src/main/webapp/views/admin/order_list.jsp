@@ -1,15 +1,13 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
-<%@ taglib prefix="fnc" uri="http://java.sun.com/jsp/jstl/functions" %>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản lý đơn hàng</title>
     <link href="https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css" rel="stylesheet" />
+
     <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/adminpage.css" />
     <style>
         /* Page Header */
@@ -19,6 +17,23 @@
             flex-direction: column;
             gap: 1rem;
         }
+        /* Style riêng cho nút Chi tiết */
+        .btn-detail {
+            background-color: #f39c12 !important;
+            color: #fff;
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+            font-weight: bold;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .btn-detail:hover {
+            background-color: #e67e22 !important;
+        }
+
 
         .page-header .actions {
             display: flex;
@@ -115,30 +130,72 @@
             background: #fff;
         }
 
-        .btn-edit {
-            background: #f39c12;
-            color: #fff;
-            padding: 0.3rem 0.6rem;
-            border: none;
-            border-radius: 3px;
+        /* Style for the Select Dropdown */
+        select[name="status"] {
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #fff;
+            color: #333;
             cursor: pointer;
+            transition: all 0.3s ease-in-out;
+        }
+
+        select[name="status"]:hover {
+            border-color: #3498db;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        select[name="status"]:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 5px rgba(52, 152, 219, 0.5);
+        }
+
+        /* Style for the Submit Button */
+        .btn-edit {
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+            font-weight: bold;
+            color: #fff;
+            background-color: #27ae60;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease-in-out;
+        }
+        #loading-overlay {
+            position: fixed;
+            z-index: 2000;
+            top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            background: rgba(255,255,255,0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .loading-spinner {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-size: 2rem;
+            color: #27ae60;
+            gap: 1rem;
+        }
+        .loading-spinner i {
+            font-size: 3rem;
         }
 
         .btn-edit:hover {
-            background: #e67e22;
+            background-color: #219150;
+            transform: scale(1.05);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
 
-        .btn-delete {
-            background: #e74c3c;
-            color: #fff;
-            padding: 0.3rem 0.6rem;
-            border: none;
-            border-radius: 3px;
-            cursor: pointer;
-        }
-
-        .btn-delete:hover {
-            background: #c0392b;
+        button[type="submit"]:focus {
+            outline: none;
+            box-shadow: 0 0 5px rgba(39, 174, 96, 0.5);
         }
 
         .modal {
@@ -206,6 +263,13 @@
         .modal-actions .btn-cancel:hover {
             background-color: #2980b9;
         }
+
+        .action-buttons {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
 
         .close {
             position: absolute;
@@ -318,41 +382,20 @@
                 gap: 0.3rem;
             }
 
-            .action-buttons {
-                display: flex;
-                flex-direction: column;
-                align-items: stretch;
-            }
-
-            /* Nút hành động */
-            .btn-edit,
-            .btn-delete {
-                padding: 0.3rem 0.5rem;
-                font-size: 0.8rem;
-                display: inline-block;
-                margin: 0.2rem 0; /* Tạo khoảng cách giữa các nút */
-                width: 100%; /* Nút chiếm toàn bộ chiều rộng */
-                text-align: center;
-            }
-
-            .btn-edit {
-                background: #f39c12;
+            .btn-detail {
+                background-color: #f39c12; /* Orange color for "Chi tiết" button */
                 color: #fff;
-                border-radius: 3px;
+                padding: 0.5rem 1rem;
+                font-size: 0.9rem;
+                font-weight: bold;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+                transition: all 0.3s ease-in-out;
             }
 
-            .btn-edit:hover {
-                background: #e67e22;
-            }
-
-            .btn-delete {
-                background: #e74c3c;
-                color: #fff;
-                border-radius: 3px;
-            }
-
-            .btn-delete:hover {
-                background: #c0392b;
+            .btn-detail:hover {
+                background-color: #e67e22; /* Darker orange on hover */
             }
 
             main,
@@ -363,10 +406,8 @@
             }
         }
     </style>
-    <title>Quản lý người dùng</title>
 </head>
 <body>
-
 <!-- SIDEBAR -->
 <jsp:include page="views/common/sidebar.jsp" />
 <!-- SIDEBAR -->
@@ -377,128 +418,98 @@
     <!-- NAVBAR -->
     <main>
         <div class="page-header">
-            <h1 class="title">Quản lý người dùng</h1>
+            <h1 class="title">Quản lý đơn hàng</h1>
             <ul class="breadcrumbs">
                 <li><a href="${pageContext.request.contextPath}/admin/dashboard">Trang Chủ</a></li>
                 <li class="divider">/</li>
-                <li><a href="#" class="active">Quản lý người dùng</a></li>
+                <li><a href="#" class="active">Quản lý đơn hàng</a></li>
             </ul>
-            <div class="actions">
-                <a href="${pageContext.request.contextPath}/admin/dashboard" class="btn-back">
-                    <i class="bx bxs-home"></i> Quay lại trang chính
-                </a>
-            </div>
         </div>
         <div class="table-container">
             <table class="data-table">
                 <thead>
                 <tr>
-                    <th>Tên</th>
-                    <th>Email</th>
-                    <th>Số điện thoại</th>
-                    <th>Địa chỉ</th>
+                    <th>Mã đơn hàng</th>
+                    <th>Ngày đặt</th>
+                    <th>Người đặt</th>
+                    <th>Tổng tiền</th>
                     <th>Trạng thái</th>
                     <th>Hành động</th>
                 </tr>
                 </thead>
                 <tbody>
-                <c:forEach items="${users}" var="user">
-                    <c:if test="${user.roleId != 0}">
-                        <tr>
-                            <td>${user.name}</td>
-                            <td>${user.email}</td>
-                            <td>${user.phoneNumber}</td>
-                            <td>${user.address}</td>
-                            <td>${user.status ? "Hoạt động" : "Bị khóa"}</td>
-                            <td>
-                                <c:if test="${user.status}">
-                                    <form method="post" action="${pageContext.request.contextPath}/admin/users" style="display:inline;">
-                                        <input type="hidden" name="userId" value="${user.userId}" />
-                                        <input type="hidden" name="action" value="block" />
-                                        <button
-                                                type="button"
-                                                class="btn-delete"
-                                                data-user-id="${user.userId}"
-                                                onclick="showDeleteModalFromButton(this)">Khóa</button>
+                <c:forEach var="order" items="${orders}">
+                    <tr>
+                        <td>${order[0]}</td> <!-- Order ID -->
+                        <td>${order[1]}</td> <!-- Order Date -->
+                        <td>${order[3]}</td> <!-- Customer Name -->
+                        <td>${order[5]}</td> <!-- Total Price -->
+                        <td>${order[2]}</td> <!-- Status -->
+                        <td>
+                            <div class="action-buttons">
+                                <form method="post" action="${pageContext.request.contextPath}/admin/orders">
+                                    <input type="hidden" name="orderId" value="${order[0]}">
+                                    <select name="status" ${order[2] == 'Hoàn thành' ? 'disabled' : ''}>
+                                        <option value="Đang xử lý" ${order[2] == 'Đang xử lý' ? 'selected' : ''}>Đang xử lý</option>
+                                        <option value="Đã giao hàng" ${order[2] == 'Đã giao hàng' ? 'selected' : ''}>Đã giao hàng</option>
+                                        <option value="Hoàn thành" ${order[2] == 'Hoàn thành' ? 'selected' : ''}>Hoàn thành</option>
+                                    </select>
+                                    <button class="btn-edit" type="submit" ${order[2] == 'Hoàn thành' ? 'disabled' : ''}>Cập nhật</button>
+                                </form>
+                                <form method="get" action="${pageContext.request.contextPath}/admin/order_detail">
+                                    <input type="hidden" name="orderId" value="${order[0]}">
+                                    <button class="btn-detail" type="submit">Chi tiết</button>
+                                </form>
+                            </div>
 
-
-                                    </form>
-                                </c:if>
-                                <c:if test="${!user.status}">
-                                    <form method="post" action="${pageContext.request.contextPath}/admin/users" style="display:inline;">
-                                        <input type="hidden" name="userId" value="${user.userId}" />
-                                        <input type="hidden" name="action" value="unblock" />
-                                        <button type="submit" class="btn-edit">Mở khóa</button>
-                                    </form>
-                                </c:if>
-                            </td>
-                        </tr>
-                    </c:if>
+                        </td>
+                    </tr>
                 </c:forEach>
                 </tbody>
-
             </table>
         </div>
     </main>
 </section>
 
-<!-- Modal xác nhận xóa -->
-<div id="deleteModal" class="modal" style="display:none;">
-    <div class="modal-content">
-        <span class="close" onclick="closeModal()" title="Đóng">&times;</span>
-        <div class="modal-icon">
-            <i class="bx bxs-error-circle"></i>
-        </div>
-        <h2>Xác nhận khoá tài khoản</h2>
-        <p id="deleteMessage">Bạn có chắc chắn muốn khóa người dùng này không?</p>
-        <form id="deleteForm" method="post" action="${pageContext.request.contextPath}/admin/users">
-            <input type="hidden" name="action" value="block">
-            <input type="hidden" name="userId" id="deleteUserId" value="">
-            <div class="modal-actions">
-                <button type="submit" class="btn btn-delete">Xác nhận khóa</button>
-                <button type="button" class="btn btn-cancel" onclick="closeModal()">Hủy</button>
-            </div>
-        </form>
+<!-- Toast Notification -->
+<div id="toast" style="display: none;">Cập nhật trạng thái đơn hàng thành công!</div>
+<!-- Loading Overlay -->
+<div id="loading-overlay" style="display:none;">
+    <div class="loading-spinner">
+        <i class='bx bx-loader-alt bx-spin'></i>
+        <span>Đang xử lý...</span>
     </div>
 </div>
 
-<!-- Toast Message -->
-<div id="toast" class="toast" style="display: none;">
-    <p id="toastMessage"></p>
-</div>
-<c:if test="${not empty toastMessage}">
-    <script>
-        window.onload = function () {
-            const toastMessage = "${toastMessage}";
-            const toast = document.getElementById('toast');
-            const toastText = document.getElementById('toastMessage');
-            toastText.textContent = toastMessage;
-            toast.style.display = 'block';
-            setTimeout(() => {
-                toast.style.display = 'none';
-            }, 3000);
-        };
-    </script>
-</c:if>
-
 <script>
-    function showDeleteModalFromButton(button) {
-        const userId = button.getAttribute('data-user-id');
-        showDeleteModal(userId);
-    }
 
-    function showDeleteModal(userId) {
-        const modal = document.getElementById('deleteModal');
-        const input = document.getElementById('deleteUserId');
-        const message = document.getElementById('deleteMessage');
-        input.value = userId;
-        message.textContent = `Bạn có chắc chắn muốn khóa tài khoản của người dùng này không?`;
-        modal.style.display = 'flex';
-    }
+    // Hiện loading khi form cập nhật trạng thái được submit
+    document.querySelectorAll('form[action$="/admin/orders"]').forEach(form => {
+        form.addEventListener('submit', function(e) {
+            const select = form.querySelector('select[name="status"]');
+            const button = form.querySelector('button[type="submit"]');
 
-    function closeModal() {
-        document.getElementById('deleteModal').style.display = 'none';
-    }
+            if (select && button && !button.disabled) {
+                document.getElementById('loading-overlay').style.display = 'flex';
+            }
+        });
+    });
+
+    // Check if the session attribute for success exists
+    <c:if test="${not empty sessionScope.updateSuccess}">
+    const toast = document.getElementById('toast');
+    toast.style.display = 'block';
+    setTimeout(() => {
+        toast.style.display = 'none';
+    }, 3000); // Hide after 3 seconds
+
+    // Clear the session attribute using an AJAX request
+    fetch('${pageContext.request.contextPath}/admin/orders', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: 'clearToast=true'
+    });
+    </c:if>
 </script>
 
 <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>

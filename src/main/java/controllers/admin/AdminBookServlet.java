@@ -74,6 +74,13 @@ public class AdminBookServlet extends HttpServlet {
         resp.setCharacterEncoding("UTF-8");
 
         String action = req.getParameter("action");
+        
+        if ("clearToastMessage".equals(action)) {
+            req.getSession().removeAttribute("toastMessage");
+            resp.setStatus(HttpServletResponse.SC_OK);
+            return;
+        }
+        
         if ("delete".equals(action)) {
             int deleteId = Integer.parseInt(req.getParameter("id"));
             bookService.deleteBook(deleteId);

@@ -68,6 +68,12 @@ public class AdminCategoryServlet extends HttpServlet {
         req.setCharacterEncoding("UTF-8");
         String action = req.getParameter("action");
 
+        if ("clearToastMessage".equals(action)) {
+            req.getSession().removeAttribute("toastMessage");
+            resp.setStatus(HttpServletResponse.SC_OK);
+            return;
+        }
+
         if ("delete".equals(action)) {
             try {
                 int id = Integer.parseInt(req.getParameter("id"));
@@ -85,7 +91,6 @@ public class AdminCategoryServlet extends HttpServlet {
             return;
         }
 
-        // Xử lý thêm/sửa như cũ...
         String idRaw = req.getParameter("ma_danh_muc");
         String name = req.getParameter("ten_danh_muc");
 
@@ -113,5 +118,4 @@ public class AdminCategoryServlet extends HttpServlet {
 
         resp.sendRedirect(req.getContextPath() + "/admin/categories");
     }
-
 }

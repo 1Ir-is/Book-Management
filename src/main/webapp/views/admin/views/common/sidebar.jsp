@@ -33,14 +33,14 @@
 
         <li>
             <a href="${pageContext.request.contextPath}/admin/users"
-               class="${fn:startsWith(pageContext.request.requestURI, '/admin/users') ? 'active' : ''}">
+               class="${fn:contains(pageContext.request.requestURI, 'user_list.jsp') ? 'active' : ''}">
                 <i class="bx bxs-user icon"></i> Quản lý người dùng
             </a>
         </li>
 
         <li>
             <a href="${pageContext.request.contextPath}/admin/orders"
-               class="${fn:startsWith(pageContext.request.requestURI, '/admin/orders') ? 'active' : ''}">
+               class="${fn:contains(pageContext.request.requestURI, 'order_list.jsp') ? 'active' : ''}">
                 <i class="bx bxs-cart icon"></i> Quản lý đơn hàng
             </a>
         </li>

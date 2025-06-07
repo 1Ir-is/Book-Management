@@ -1,14 +1,11 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
-<%@ taglib prefix="fnc" uri="http://java.sun.com/jsp/jstl/functions" %>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chi tiết đơn hàng</title>
     <link href="https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/adminpage.css" />
     <style>
@@ -115,30 +112,71 @@
             background: #fff;
         }
 
-        .btn-edit {
-            background: #f39c12;
-            color: #fff;
-            padding: 0.3rem 0.6rem;
-            border: none;
-            border-radius: 3px;
+        /* Style for the Select Dropdown */
+        select[name="status"] {
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #fff;
+            color: #333;
             cursor: pointer;
+            transition: all 0.3s ease-in-out;
         }
 
-        .btn-edit:hover {
-            background: #e67e22;
+        select[name="status"]:hover {
+            border-color: #3498db;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
 
-        .btn-delete {
-            background: #e74c3c;
+        select[name="status"]:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 5px rgba(52, 152, 219, 0.5);
+        }
+        .actions {
+            margin-top: 1rem; /* Tăng khoảng cách giữa breadcrumb và nút */
+        }
+        .btn-back {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.8rem 1.5rem;
+            font-size: 1rem;
+            font-weight: bold;
             color: #fff;
-            padding: 0.3rem 0.6rem;
+            background: #3498db;
             border: none;
-            border-radius: 3px;
-            cursor: pointer;
+            border-radius: 5px;
+            text-decoration: none;
+            transition: background 0.3s ease;
         }
 
-        .btn-delete:hover {
-            background: #c0392b;
+        .btn-back:hover {
+            background: #2980b9;
+        }
+
+        /* Style for the Submit Button */
+        button[type="submit"] {
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+            font-weight: bold;
+            color: #fff;
+            background-color: #27ae60;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease-in-out;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #219150;
+            transform: scale(1.05);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        button[type="submit"]:focus {
+            outline: none;
+            box-shadow: 0 0 5px rgba(39, 174, 96, 0.5);
         }
 
         .modal {
@@ -363,10 +401,8 @@
             }
         }
     </style>
-    <title>Quản lý người dùng</title>
 </head>
 <body>
-
 <!-- SIDEBAR -->
 <jsp:include page="views/common/sidebar.jsp" />
 <!-- SIDEBAR -->
@@ -377,129 +413,47 @@
     <!-- NAVBAR -->
     <main>
         <div class="page-header">
-            <h1 class="title">Quản lý người dùng</h1>
+            <h1 class="title">Chi tiết đơn hàng</h1>
             <ul class="breadcrumbs">
                 <li><a href="${pageContext.request.contextPath}/admin/dashboard">Trang Chủ</a></li>
                 <li class="divider">/</li>
-                <li><a href="#" class="active">Quản lý người dùng</a></li>
+                <li><a href="${pageContext.request.contextPath}/admin/orders">Quản lý đơn hàng</a></li>
+                <li class="divider">/</li>
+                <li><a href="#" class="active">Chi tiết đơn hàng</a></li>
             </ul>
             <div class="actions">
-                <a href="${pageContext.request.contextPath}/admin/dashboard" class="btn-back">
-                    <i class="bx bxs-home"></i> Quay lại trang chính
+                <a href="${pageContext.request.contextPath}/admin/orders" class="btn-back">
+                    <i class="bx bxs-home"></i> Quay lại danh sách đơn hàng
                 </a>
             </div>
+        </div>
+
+        <!-- Display Customer Name -->
+        <div class="customer-info">
+            <p><strong>Người đặt hàng:</strong> ${customerName}</p>
         </div>
         <div class="table-container">
             <table class="data-table">
                 <thead>
                 <tr>
-                    <th>Tên</th>
-                    <th>Email</th>
-                    <th>Số điện thoại</th>
-                    <th>Địa chỉ</th>
-                    <th>Trạng thái</th>
-                    <th>Hành động</th>
+                    <th>Tên sách</th>
+                    <th>Số lượng</th>
+                    <th>Giá / 1 cuốn</th>
                 </tr>
                 </thead>
                 <tbody>
-                <c:forEach items="${users}" var="user">
-                    <c:if test="${user.roleId != 0}">
-                        <tr>
-                            <td>${user.name}</td>
-                            <td>${user.email}</td>
-                            <td>${user.phoneNumber}</td>
-                            <td>${user.address}</td>
-                            <td>${user.status ? "Hoạt động" : "Bị khóa"}</td>
-                            <td>
-                                <c:if test="${user.status}">
-                                    <form method="post" action="${pageContext.request.contextPath}/admin/users" style="display:inline;">
-                                        <input type="hidden" name="userId" value="${user.userId}" />
-                                        <input type="hidden" name="action" value="block" />
-                                        <button
-                                                type="button"
-                                                class="btn-delete"
-                                                data-user-id="${user.userId}"
-                                                onclick="showDeleteModalFromButton(this)">Khóa</button>
-
-
-                                    </form>
-                                </c:if>
-                                <c:if test="${!user.status}">
-                                    <form method="post" action="${pageContext.request.contextPath}/admin/users" style="display:inline;">
-                                        <input type="hidden" name="userId" value="${user.userId}" />
-                                        <input type="hidden" name="action" value="unblock" />
-                                        <button type="submit" class="btn-edit">Mở khóa</button>
-                                    </form>
-                                </c:if>
-                            </td>
-                        </tr>
-                    </c:if>
+                <c:forEach var="detail" items="${orderDetails}">
+                    <tr>
+                        <td>${detail[0]}</td> <!-- Book Name -->
+                        <td>${detail[1]}</td> <!-- Quantity -->
+                        <td>${detail[2]}</td> <!-- Price -->
+                    </tr>
                 </c:forEach>
                 </tbody>
-
             </table>
         </div>
     </main>
 </section>
-
-<!-- Modal xác nhận xóa -->
-<div id="deleteModal" class="modal" style="display:none;">
-    <div class="modal-content">
-        <span class="close" onclick="closeModal()" title="Đóng">&times;</span>
-        <div class="modal-icon">
-            <i class="bx bxs-error-circle"></i>
-        </div>
-        <h2>Xác nhận khoá tài khoản</h2>
-        <p id="deleteMessage">Bạn có chắc chắn muốn khóa người dùng này không?</p>
-        <form id="deleteForm" method="post" action="${pageContext.request.contextPath}/admin/users">
-            <input type="hidden" name="action" value="block">
-            <input type="hidden" name="userId" id="deleteUserId" value="">
-            <div class="modal-actions">
-                <button type="submit" class="btn btn-delete">Xác nhận khóa</button>
-                <button type="button" class="btn btn-cancel" onclick="closeModal()">Hủy</button>
-            </div>
-        </form>
-    </div>
-</div>
-
-<!-- Toast Message -->
-<div id="toast" class="toast" style="display: none;">
-    <p id="toastMessage"></p>
-</div>
-<c:if test="${not empty toastMessage}">
-    <script>
-        window.onload = function () {
-            const toastMessage = "${toastMessage}";
-            const toast = document.getElementById('toast');
-            const toastText = document.getElementById('toastMessage');
-            toastText.textContent = toastMessage;
-            toast.style.display = 'block';
-            setTimeout(() => {
-                toast.style.display = 'none';
-            }, 3000);
-        };
-    </script>
-</c:if>
-
-<script>
-    function showDeleteModalFromButton(button) {
-        const userId = button.getAttribute('data-user-id');
-        showDeleteModal(userId);
-    }
-
-    function showDeleteModal(userId) {
-        const modal = document.getElementById('deleteModal');
-        const input = document.getElementById('deleteUserId');
-        const message = document.getElementById('deleteMessage');
-        input.value = userId;
-        message.textContent = `Bạn có chắc chắn muốn khóa tài khoản của người dùng này không?`;
-        modal.style.display = 'flex';
-    }
-
-    function closeModal() {
-        document.getElementById('deleteModal').style.display = 'none';
-    }
-</script>
 
 <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 <script src="${pageContext.request.contextPath}/assets/js/script.js"></script>
