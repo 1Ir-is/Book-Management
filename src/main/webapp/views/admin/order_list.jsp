@@ -424,7 +424,14 @@
                 <li class="divider">/</li>
                 <li><a href="#" class="active">Quản lý đơn hàng</a></li>
             </ul>
+
+            <div class="actions">
+                <a href="${pageContext.request.contextPath}/admin/export-orders" class="btn-create" style="background-color: #8e44ad;">
+                    <i class='bx bx-file'></i> Xuất Excel
+                </a>
+            </div>
         </div>
+
         <div class="table-container">
             <table class="data-table">
                 <thead>
@@ -440,11 +447,11 @@
                 <tbody>
                 <c:forEach var="order" items="${orders}">
                     <tr>
-                        <td>${order[0]}</td> <!-- Order ID -->
-                        <td>${order[1]}</td> <!-- Order Date -->
-                        <td>${order[3]}</td> <!-- Customer Name -->
-                        <td>${order[5]}</td> <!-- Total Price -->
-                        <td>${order[2]}</td> <!-- Status -->
+                        <td>${order[0]}</td> <!-- order id -->
+                        <td>${order[1]}</td> <!-- ngay order -->
+                        <td>${order[3]}</td> <!-- ten khach hang -->
+                        <td>${order[6]}</td> <!-- gia -->
+                        <td>${order[2]}</td> <!-- trang thai -->
                         <td>
                             <div class="action-buttons">
                                 <form method="post" action="${pageContext.request.contextPath}/admin/orders">
