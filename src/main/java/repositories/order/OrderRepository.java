@@ -173,4 +173,35 @@ public class OrderRepository implements IOrderRepository {
         }
         return details;
     }
+
+    @Override
+    public int countOrders() {
+        String sql = "SELECT COUNT(*) FROM don_hang";
+        try (Connection conn = JDBCUtils.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    @Override
+    public double sumTotalRevenue() {
+        String sql = "SELECT SUM(total_price) FROM don_hang";
+        try (Connection conn = JDBCUtils.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                return rs.getDouble(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0.0;
+    }
+
 }

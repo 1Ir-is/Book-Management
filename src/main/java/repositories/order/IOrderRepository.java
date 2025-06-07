@@ -6,6 +6,8 @@ import java.util.List;
 public interface IOrderRepository {
     List<Object[]> findAllOrder();
     List<Object[]> getOrderDetailsByOrderId(int orderId);
+    int countOrders();
+    double sumTotalRevenue();
     boolean updateOrderStatus(int orderId, String status);
     String getUserEmailByOrderId(int orderId);
     String getOrderDateByOrderId(int orderId);

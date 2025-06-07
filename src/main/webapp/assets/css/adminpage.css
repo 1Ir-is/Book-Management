@@ -433,6 +433,11 @@ main .card .progress::before {
   background: var(--blue);
   width: var(--value);
 }
+
+main .card .progress[data-value]:before {
+  width: attr(data-value);
+}
+
 main .card .label {
   font-size: 14px;
   font-weight: 700;

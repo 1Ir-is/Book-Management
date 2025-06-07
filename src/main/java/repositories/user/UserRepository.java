@@ -126,4 +126,20 @@ public class UserRepository implements IUserRepository {
         user.setStatus(resultSet.getBoolean("trang_thai"));
         return user;
     }
+
+    @Override
+    public int countUsers() {
+        String sql = "SELECT COUNT(*) FROM nguoi_dung";
+        try (Connection conn = JDBCUtils.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
 }

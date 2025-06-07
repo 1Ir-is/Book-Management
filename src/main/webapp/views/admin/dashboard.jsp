@@ -33,48 +33,53 @@
                 <div class="card">
                     <div class="head">
                         <div>
-                            <h2>1500</h2>
-                            <p>Traffic</p>
+                            <h2>${totalUsers}</h2>
+                            <p>Users</p>
                         </div>
-                        <i class="bx bx-trending-up icon"></i>
+                        <i class="bx bx-user icon"></i>
                     </div>
-                    <span class="progress" data-value="40%"></span>
-                    <span class="label">40%</span>
+                    <span class="progress" data-value="${userProgress}%"></span>
+                    <span class="label">${userProgress}%</span>
                 </div>
+
+
                 <div class="card">
                     <div class="head">
                         <div>
-                            <h2>234</h2>
-                            <p>Sales</p>
+                            <h2>${totalBooks}</h2>
+                            <p>Books</p>
                         </div>
-                        <i class="bx bx-trending-down icon down"></i>
+                        <i class="bx bx-book icon"></i>
                     </div>
-                    <span class="progress" data-value="60%"></span>
-                    <span class="label">60%</span>
+                    <span class="progress" data-value="${bookProgress}%"></span>
+                    <span class="label">${bookProgress}%</span>
                 </div>
+
                 <div class="card">
                     <div class="head">
                         <div>
-                            <h2>465</h2>
-                            <p>Pageviews</p>
+                            <h2>${totalOrders}</h2>
+                            <p>Orders</p>
                         </div>
-                        <i class="bx bx-trending-up icon"></i>
+                        <i class="bx bx-cart icon"></i>
                     </div>
-                    <span class="progress" data-value="30%"></span>
-                    <span class="label">30%</span>
+                    <span class="progress" data-value="${orderProgress}%"></span>
+                    <span class="label">${orderProgress}%</span>
                 </div>
+
                 <div class="card">
                     <div class="head">
                         <div>
-                            <h2>235</h2>
-                            <p>Visitors</p>
+                            <h2>${totalRevenue}</h2>
+                            <p>Total Revenue</p>
                         </div>
-                        <i class="bx bx-trending-up icon"></i>
+                        <i class="bx bx-dollar icon"></i>
                     </div>
-                    <span class="progress" data-value="80%"></span>
-                    <span class="label">80%</span>
+                    <span class="progress" data-value="${revenueProgress}%"></span>
+                    <span class="label">${revenueProgress}%</span>
                 </div>
             </div>
+
             <div class="data">
                 <div class="content-data">
                     <div class="head">
@@ -155,6 +160,18 @@
         <!-- MAIN -->
     </section>
     <!-- NAVBAR -->
+
+    <script>
+        document.querySelectorAll(".progress").forEach(progress => {
+            const value = progress.getAttribute("data-value");
+            const bar = document.createElement("div");
+            bar.style.width = value;
+            bar.style.height = "100%";
+            bar.style.background = "#00aaff";
+            bar.style.transition = "width 0.5s ease-in-out";
+            progress.appendChild(bar);
+        });
+    </script>
 
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
     <script src="${pageContext.request.contextPath}/assets/js/script.js"></script>

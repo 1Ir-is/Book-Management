@@ -47,4 +47,10 @@ public class UserService implements IUserService {
     public boolean unblockUser(int userId) {
         return userRepository.updateStatus(userId, true);
     }
+
+    @Override
+    public int getTotalUsers() {
+        return userRepository.countUsers();
+    }
+
 }

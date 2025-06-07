@@ -160,4 +160,20 @@ public class BookRepository implements IBookRepository {
         }
         return books;
     }
+
+    @Override
+    public int countBooks() {
+        String sql = "SELECT COUNT(*) FROM sach";
+        try (Connection conn = JDBCUtils.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
 }

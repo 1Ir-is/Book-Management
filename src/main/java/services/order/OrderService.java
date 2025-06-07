@@ -61,4 +61,15 @@ public class OrderService implements IOrderService {
     public List<Object[]> getOrderDetailsByOrderId(int orderId) {
         return orderRepository.getOrderDetailsByOrderId(orderId);
     }
+
+    @Override
+    public int getTotalOrders() {
+        return orderRepository.countOrders();
+    }
+
+    @Override
+    public double getTotalRevenue() {
+        return orderRepository.sumTotalRevenue();
+    }
+    
 }
