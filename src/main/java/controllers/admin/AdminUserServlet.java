@@ -33,8 +33,10 @@ public class AdminUserServlet extends HttpServlet {
 
         if ("block".equals(action)) {
             userService.blockUser(userId);
+            request.getSession().setAttribute("toastMessage", "Tài khoản đã bị khóa!");
         } else if ("unblock".equals(action)) {
             userService.unblockUser(userId);
+            request.getSession().setAttribute("toastMessage", "Tài khoản đã được mở khóa!");
         }
 
         response.sendRedirect(request.getContextPath() + "/admin/users");

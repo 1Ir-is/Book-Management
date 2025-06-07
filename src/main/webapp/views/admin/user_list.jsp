@@ -1,5 +1,8 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
+<%@ taglib prefix="fnc" uri="http://java.sun.com/jsp/jstl/functions" %>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -412,7 +415,13 @@
                                     <form method="post" action="${pageContext.request.contextPath}/admin/users" style="display:inline;">
                                         <input type="hidden" name="userId" value="${user.userId}" />
                                         <input type="hidden" name="action" value="block" />
-                                        <button type="submit" class="btn-delete">Khóa</button>
+                                        <button
+                                                type="button"
+                                                class="btn-delete"
+                                                data-user-id="${user.userId}"
+                                                onclick="showDeleteModalFromButton(this)">Khóa</button>
+
+
                                     </form>
                                 </c:if>
                                 <c:if test="${!user.status}">
@@ -440,13 +449,13 @@
         <div class="modal-icon">
             <i class="bx bxs-error-circle"></i>
         </div>
-        <h2>Xác nhận xóa</h2>
-        <p>Bạn có chắc chắn muốn xóa thể loại này không?</p>
-        <form id="deleteForm" method="post" action="">
-            <input type="hidden" name="action" value="delete">
-            <input type="hidden" name="id" id="deleteCategoryId" value="">
+        <h2>Xác nhận khoá tài khoản</h2>
+        <p id="deleteMessage">Bạn có chắc chắn muốn khóa người dùng này không?</p>
+        <form id="deleteForm" method="post" action="${pageContext.request.contextPath}/admin/users">
+            <input type="hidden" name="action" value="block">
+            <input type="hidden" name="userId" id="deleteUserId" value="">
             <div class="modal-actions">
-                <button type="submit" class="btn btn-delete">Xác nhận xóa</button>
+                <button type="submit" class="btn btn-delete">Xác nhận khóa</button>
                 <button type="button" class="btn btn-cancel" onclick="closeModal()">Hủy</button>
             </div>
         </form>
@@ -473,10 +482,17 @@
 </c:if>
 
 <script>
-    function showDeleteModal(categoryId) {
+    function showDeleteModalFromButton(button) {
+        const userId = button.getAttribute('data-user-id');
+        showDeleteModal(userId);
+    }
+
+    function showDeleteModal(userId) {
         const modal = document.getElementById('deleteModal');
-        const input = document.getElementById('deleteCategoryId');
-        input.value = categoryId;
+        const input = document.getElementById('deleteUserId');
+        const message = document.getElementById('deleteMessage');
+        input.value = userId;
+        message.textContent = `Bạn có chắc chắn muốn khóa tài khoản của người dùng này không?`;
         modal.style.display = 'flex';
     }
 
