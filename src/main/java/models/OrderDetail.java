@@ -5,6 +5,7 @@ public class OrderDetail {
    private int bookId;
    private int quantity;
    private double price;
+   private Book book;
 
     public OrderDetail() {
     }
@@ -14,6 +15,14 @@ public class OrderDetail {
         this.bookId = bookId;
         this.quantity = quantity;
         this.price = price;
+    }
+
+    public OrderDetail(int orderId, int bookId, int quantity, double price, Book book) {
+        this.orderId = orderId;
+        this.bookId = bookId;
+        this.quantity = quantity;
+        this.price = price;
+        this.book = book;
     }
 
     public int getOrderId() {
@@ -46,5 +55,13 @@ public class OrderDetail {
 
     public void setPrice(double price) {
         this.price = price;
+    }
+
+    public Book getBook() {
+        return book;
+    }
+
+    public void setBook(Book book) {
+        this.book = book;
     }
 }

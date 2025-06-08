@@ -72,5 +72,29 @@ public class OrderService implements IOrderService {
 
         return true;
     }
+
+    @Override
+    public List<Order> getOrdersByUserId(int userId) {
+        return orderRepo.getOrdersByUserId(userId);
+    }
+
+    @Override
+    public List<Order> getOrderHistory(int userId) {
+        List<Order> orders = orderRepo.getOrdersByUserId(userId);
+        if (orders == null) return new ArrayList<>();
+
+        for (Order order : orders) {
+            List<OrderDetail> details = detailsRepo.getDetailsByOrderId(order.getOrderId());
+            order.setDetails(details);
+
+            // Tính tổng tiền
+            double total = 0;
+            for (OrderDetail d : details) {
+                total += d.getPrice() * d.getQuantity();
+            }
+            order.setTotal(total);
+        }
+        return orders;
+    }
 }
 

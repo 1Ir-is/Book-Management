@@ -1,31 +1,34 @@
-<%--
-  Created by IntelliJ IDEA.
-  User: ACER
-  Date: 04/06/2025
-  Time: 9:34 CH
-  To change this template use File | Settings | File Templates.
---%>
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-
-<html>
-<head>
-    <title>Lịch Sử</title>
-</head>
-<body>
-<h2>Lịch sử đơn hàng</h2>
-
 <c:forEach var="order" items="${orders}">
-    <div>
-        <h3>Đơn hàng #${order.orderId} - Ngày: ${order.orderDate}</h3>
+    <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+
+    <div class="order-summary">
+        <p>Mã đơn hàng: ${order.id}</p>
+        <p>Ngày đặt: ${order.orderDate}</p>
+        <p>Tổng tiền: ${order.total}đ</p>
         <p>Trạng thái: ${order.status}</p>
-        <ul>
-            <c:forEach var="detail" items="${order.details}">
-                <li>${detail.bookTitle} - Số lượng: ${detail.quantity} - Giá: ${detail.price}</li>
-            </c:forEach>
-        </ul>
-        <hr>
     </div>
+
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Ảnh</th>
+            <th>Tên sách</th>
+            <th>Giá</th>
+            <th>Số lượng</th>
+            <th>Thành tiền</th>
+        </tr>
+        </thead>
+        <tbody>
+        <c:forEach var="detail" items="${orderDetailMap[order.id]}">
+            <tr>
+                <td><img src="${detail.book.image}" width="80"/></td>
+                <td>${detail.book.title}</td>
+                <td>${detail.price}đ</td>
+                <td>${detail.quantity}</td>
+                <td>${detail.price * detail.quantity}đ</td>
+            </tr>
+        </c:forEach>
+        </tbody>
+    </table>
+    <hr/>
 </c:forEach>
-</body>
-</html>

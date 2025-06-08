@@ -118,7 +118,7 @@
 <body>
 <div class="cart-container">
     <h2>Giỏ hàng của bạn</h2>
-    <form action="${pageContext.request.contextPath}/cart/batch" method="post">
+    <form action="${pageContext.request.contextPath}/cart?action=batch" method="post">
 
         <c:if test="${not empty cartItems}">
             <div class="select-all">
@@ -178,9 +178,10 @@
             </div>
 
             <div class="cart-controls">
-                <button type="submit" name="action" value="checkout" class="btn btn-success">Đặt hàng</button>
-                <button type="submit" name="action" value="delete"> Xóa đã chọn</button>
+                <button type="submit" name="subAction" value="checkout" class="btn btn-success">Đặt hàng</button>
+                <button type="submit" name="subAction" value="delete">Xóa đã chọn</button>
             </div>
+
         </c:if>
 
         <c:if test="${empty cartItems}">
@@ -199,22 +200,22 @@
         checkboxes.forEach(cb => cb.checked = source.checked);
     }
 
-    function updateQuantity(bookId, action) {
+    function updateQuantity(bookId, change) {
         const form = document.createElement('form');
         form.method = 'post';
-        form.action = '${pageContext.request.contextPath}/cart/update';
+        form.action = '${pageContext.request.contextPath}/cart?action=update';
 
-        const hiddenBookId = document.createElement('input');
-        hiddenBookId.type = 'hidden';
-        hiddenBookId.name = 'bookId';
-        hiddenBookId.value = bookId;
-        form.appendChild(hiddenBookId);
+        const input1 = document.createElement('input');
+        input1.type = 'hidden';
+        input1.name = 'bookId';
+        input1.value = bookId;
+        form.appendChild(input1);
 
-        const hiddenAction = document.createElement('input');
-        hiddenAction.type = 'hidden';
-        hiddenAction.name = 'action';
-        hiddenAction.value = action;
-        form.appendChild(hiddenAction);
+        const input2 = document.createElement('input');
+        input2.type = 'hidden';
+        input2.name = 'change';
+        input2.value = change;
+        form.appendChild(input2);
 
         document.body.appendChild(form);
         form.submit();
@@ -245,7 +246,7 @@
     function deleteItem(bookId) {
         const form = document.createElement('form');
         form.method = 'post';
-        form.action = '${pageContext.request.contextPath}/cart/delete';
+        form.action = '${pageContext.request.contextPath}/cart?action=delete';
 
         const input = document.createElement('input');
         input.type = 'hidden';

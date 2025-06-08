@@ -17,7 +17,8 @@
 <% if (book != null) { %>
 <% if (book.getImgUrl() != null) { %>
 <img src="<%= book.getImgUrl() %>" alt="Ảnh sách" width="150">
-<form action="<%= request.getContextPath() %>/add-to-cart" method="post" style="margin-top: 10px;">
+<form action="<%= request.getContextPath() %>/cart" method="post" style="margin-top: 10px;">
+    <input type="hidden" name="action" value="add">
     <input type="hidden" name="bookId" value="<%= book.getBookId() %>">
     <label>Số lượng:</label>
     <input type="number" name="soLuong" value="1" min="1" required>
