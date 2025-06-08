@@ -277,7 +277,7 @@
     <div class="icons">
       <div id="search-btn" class="fas fa-search"></div>
       <a href="#" class="fas fa-heart"></a>
-      <a href="#" id="cart-icon" class="fas fa-shopping-cart"></a>
+      <a href="<%= request.getContextPath() %>/cart" id="cart-icon" class="fas fa-shopping-cart"></a>
 
       <div class="dropdown">
         <c:if test="${user != null}">
