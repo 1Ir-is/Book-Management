@@ -2,8 +2,13 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ page import="java.util.Map" %>
+<%@ page import="models.Book" %>
 <%
     request.setAttribute("categoryMap", request.getAttribute("categoryMap"));
+%>
+<%
+    Book book = (Book) request.getAttribute("book");
+    Map<Integer, String> categoryMap = (Map<Integer, String>) request.getAttribute("categoryMap");
 %>
 <!DOCTYPE html>
 <html lang="vi">
@@ -194,6 +199,13 @@
             <button class="add-cart-btn-desktop">
                 <i class="fas fa-shopping-cart"></i> Thêm vào giỏ hàng
             </button>
+            <form action="<%= request.getContextPath() %>/cart" method="post" style="margin-top: 10px;">
+                <input type="hidden" name="action" value="add">
+                <input type="hidden" name="bookId" value="<%= book.getBookId() %>">
+                <label>Số lượng:</label>
+                <input type="number" name="soLuong" value="1" min="1" required>
+                <button type="submit">Thêm vào giỏ hàng</button>
+            </form>
         </div>
         <div class="book-detail-right">
             <c:if test="${not empty book}">
