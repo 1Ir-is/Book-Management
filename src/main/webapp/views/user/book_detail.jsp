@@ -140,6 +140,41 @@
             color: #888;
             margin-left: 0.3rem;
         }
+
+        .quantity-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 18px;
+        }
+        .qty-btn {
+            width: 36px;
+            height: 36px;
+            border: 1.5px solid #2196f3;
+            background: #f5f7fa;
+            color: #2196f3;
+            border-radius: 8px;
+            font-size: 1.3rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s, color 0.2s;
+            outline: none;
+        }
+        .qty-btn:hover {
+            background: #e3f2fd;
+            color: #1769aa;
+        }
+        .qty-input {
+            width: 48px;
+            text-align: center;
+            font-size: 1.15rem;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 6px 0;
+            background: #fff;
+            pointer-events: none;
+        }
+
         @media (max-width: 991px) {
             .book-detail-main {
                 flex-direction: column;
@@ -155,6 +190,17 @@
         }
 
         @media (max-width: 600px) {
+            .qty-btn {
+                width: 32px;
+                height: 32px;
+                font-size: 1.1rem;
+                border-radius: 6px;
+            }
+            .qty-input {
+                width: 36px;
+                font-size: 1rem;
+                padding: 4px 0;
+            }
             .book-title-desktop {
                 font-size: 3.2rem;
                 margin-bottom: 2rem;
@@ -196,15 +242,18 @@
             <c:if test="${not empty book and not empty book.imgUrl}">
                 <img src="${book.imgUrl}" alt="${book.bookName}" class="book-main-img" />
             </c:if>
-            <button class="add-cart-btn-desktop">
-                <i class="fas fa-shopping-cart"></i> Thêm vào giỏ hàng
-            </button>
-            <form action="<%= request.getContextPath() %>/cart" method="post" style="margin-top: 10px;">
+            <form action="<%= request.getContextPath() %>/user/cart" method="post" style="width: 100%; margin-top: 12px;">
                 <input type="hidden" name="action" value="add">
                 <input type="hidden" name="bookId" value="<%= book.getBookId() %>">
-                <label>Số lượng:</label>
-                <input type="number" name="soLuong" value="1" min="1" required>
-                <button type="submit">Thêm vào giỏ hàng</button>
+                <div class="quantity-group">
+                    <label for="soLuong" style="font-size: 1.1rem; margin-right: 10px;">Số lượng:</label>
+                    <button type="button" class="qty-btn" onclick="changeQty(-1)">-</button>
+                    <input type="text" id="soLuong" name="soLuong" value="1" min="1" readonly class="qty-input" />
+                    <button type="button" class="qty-btn" onclick="changeQty(1)">+</button>
+                </div>
+                <button type="submit" class="add-cart-btn-desktop">
+                    <i class="fas fa-shopping-cart"></i> Thêm vào giỏ hàng
+                </button>
             </form>
         </div>
         <div class="book-detail-right">
@@ -243,6 +292,16 @@
 </section>
 
 <jsp:include page="views/common/footer.jsp" />
+
+<script>
+    function changeQty(delta) {
+        const input = document.getElementById('soLuong');
+        let value = parseInt(input.value) || 1;
+        value += delta;
+        if (value < 1) value = 1;
+        input.value = value;
+    }
+</script>
 
 <script src="${pageContext.request.contextPath}/assets/js/app.js"></script>
 <script src="${pageContext.request.contextPath}/assets/js/script.js"></script>

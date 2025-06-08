@@ -101,4 +101,11 @@ public class CartService implements ICartService {
         }
     }
 
+    @Override
+    public int countItemsInCart(int userId) {
+        List<CartDetails> items = getListInCart(userId);
+        return items.stream().mapToInt(CartDetails::getQuantity).sum();
+    }
+
+
 }

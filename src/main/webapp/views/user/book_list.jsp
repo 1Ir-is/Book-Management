@@ -16,6 +16,25 @@
 
     <!-- Custom CSS -->
     <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/style.css" />
+
+    <style>
+        .toast-message {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background-color: #28a745;
+            color: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.2);
+            opacity: 0;
+            z-index: 9999;
+            transition: opacity 0.5s ease;
+        }
+        .toast-message.show {
+            opacity: 1;
+        }
+    </style>
 </head>
 <body>
 
@@ -46,7 +65,12 @@
                             <div class="price">
                                 <fmt:formatNumber value="${book.price}" type="number" groupingUsed="true" /> VND
                             </div>
-                            <a href="#" class="btn">Thêm vào giỏ</a>
+                            <form class="add-to-cart-form" action="${pageContext.request.contextPath}/user/cart" data-book-id="${book.bookId}" style="margin-top: 10px;">
+                            <button type="submit" class="btn add-to-cart-btn">
+                                    <i class="fas fa-shopping-cart"></i> Thêm vào giỏ
+                                </button>
+                            </form>
+
                         </div>
                     </div>
                 </c:forEach>
@@ -58,8 +82,76 @@
     </div>
 </section>
 
+<div id="toast" class="toast-message">Đã thêm vào giỏ hàng!</div>
+
+
 <!-- Footer -->
 <jsp:include page="views/common/footer.jsp" />
+
+<script>
+
+    function showToast(message) {
+        const toast = document.getElementById("toast");
+        toast.textContent = message;
+        toast.classList.add("show");
+
+        setTimeout(() => {
+            toast.classList.remove("show");
+        }, 3000); // Hiển thị trong 3 giây
+    }
+
+
+    document.addEventListener("DOMContentLoaded", () => {
+        const cartCountEl = document.getElementById("cart-count");
+
+        document.querySelectorAll(".add-to-cart-form").forEach(form => {
+            form.addEventListener("submit", async (e) => {
+                e.preventDefault();
+                const bookId = form.getAttribute("data-book-id");
+
+                try {
+                    const response = await fetch(form.action || "/user/cart", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/x-www-form-urlencoded",
+                            "X-Requested-With": "XMLHttpRequest" // <-- thêm header để phân biệt
+                        },
+                        body: new URLSearchParams({
+                            action: "add",
+                            bookId: bookId,
+                            soLuong: 1
+                        })
+                    });
+
+                    if (response.ok) {
+                        await updateCartCount();
+                        showToast("Đã thêm vào giỏ hàng!");
+                    } else {
+                        alert("Thêm vào giỏ thất bại!");
+                    }
+                } catch (err) {
+                    console.error("Lỗi thêm vào giỏ:", err);
+                    alert("Lỗi khi thêm vào giỏ hàng!");
+                }
+            });
+        });
+
+        async function updateCartCount() {
+            try {
+                const response = await fetch("/cart/count");
+                if (response.ok) {
+                    const data = await response.json();
+                    if (cartCountEl) {
+                        cartCountEl.textContent = data.count;
+                    }
+                }
+            } catch (err) {
+                console.error("Không thể cập nhật số lượng giỏ hàng", err);
+            }
+        }
+    });
+
+</script>
 
 <!-- Scripts -->
 <script src="${pageContext.request.contextPath}/assets/js/app.js"></script>

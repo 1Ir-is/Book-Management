@@ -69,6 +69,18 @@
       animation: modalFadeIn 0.25s ease;
     }
 
+    .cart-count {
+      position: absolute;
+      top: -8px;
+      right: -8px;
+      background: red;
+      color: white;
+      border-radius: 50%;
+      font-size: 12px;
+      padding: 2px 6px;
+    }
+
+
     @keyframes modalFadeIn {
       from {
         transform: translateY(20px) scale(0.95);
@@ -277,7 +289,11 @@
     <div class="icons">
       <div id="search-btn" class="fas fa-search"></div>
       <a href="#" class="fas fa-heart"></a>
-      <a href="<%= request.getContextPath() %>/cart" id="cart-icon" class="fas fa-shopping-cart"></a>
+        <a href="<%= request.getContextPath() %>/user/cart" id="cart-icon" class="fas fa-shopping-cart" style="position: relative;">
+          <span id="cart-count" class="cart-count">0</span>
+        </a>
+
+
 
       <div class="dropdown">
         <c:if test="${user != null}">
@@ -720,7 +736,7 @@
     document.getElementById("register-form").style.display = "none";
     </c:when>
     <c:otherwise>
-    window.location.href = "${pageContext.request.contextPath}/cart.jsp";
+    window.location.href = "<%= request.getContextPath() %>/user/cart";
     </c:otherwise>
     </c:choose>
   });

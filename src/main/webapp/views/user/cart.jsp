@@ -8,117 +8,348 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 
-
-<html>
+<!DOCTYPE html>
+<html lang="vi">
 <head>
-  <title>Giỏ Hàng</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Giỏ Hàng | 4Book</title>
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
   <style>
-    /* CSS giữ nguyên như trước */
+    /* ...existing code... */
     .cart-container {
-      max-width: 1000px;
-      margin: auto;
-      font-family: Arial, sans-serif;
+      max-width: 900px;
+      margin: 32px auto 24px auto;
+      background: #fff;
+      border-radius: 14px;
+      box-shadow: 0 4px 24px #0001;
+      padding: 32px 32px 24px 32px;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      font-size: 1.18rem;
     }
 
-    .cart-header, .cart-item {
+    .cart-container h2 {
+      font-size: 2.2rem;
+      font-weight: 700;
+      margin-bottom: 18px;
+      color: #219150;
+      text-align: center;
+    }
+
+    .select-all {
+      margin: 18px 0 10px 0;
+      font-size: 1.18rem;
       display: flex;
       align-items: center;
-    }
-
-    .cart-header {
-      background: #f5f5f5;
-      padding: 10px;
-      font-weight: bold;
+      gap: 8px;
     }
 
     .cart-item {
-      border-bottom: 1px solid #ddd;
-      padding: 15px 0;
+      display: flex;
+      align-items: center;
+      border-bottom: 1px solid #f0f0f0;
+      padding: 22px 0;
+      gap: 18px;
+      font-size: 1.18rem;
+    }
+
+    .cart-item:last-child {
+      border-bottom: none;
     }
 
     .cart-item img {
       width: 80px;
+      height: 104px;
+      object-fit: cover;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px #0001;
     }
 
     .item-info {
       flex: 2;
-      margin-left: 15px;
+      margin-left: 10px;
+    }
+
+    .item-info strong {
+      font-size: 1.18rem;
+      color: #222;
     }
 
     .item-info .price {
       font-weight: bold;
-      display: inline-block;
+      color: #219150;
       margin-right: 10px;
+      font-size: 1.12rem;
     }
 
     .original-price {
       text-decoration: line-through;
-      color: #888;
-      font-size: 0.9em;
+      color: #aaa;
+      font-size: 1.05em;
     }
 
     .quantity-wrapper {
       display: flex;
       align-items: center;
-      justify-content: center;
-      gap: 5px;
+      gap: 10px;
       flex: 1;
+      justify-content: center;
     }
 
     .quantity-wrapper button {
-      width: 25px;
-      height: 25px;
-      font-size: 16px;
+      width: 36px;
+      height: 36px;
+      font-size: 1.3rem;
+      border: 1.5px solid #2196f3;
+      background: #f5f7fa;
+      color: #2196f3;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s;
+      font-weight: bold;
+    }
+
+    .quantity-wrapper button:hover {
+      background: #e3f2fd;
+      color: #1769aa;
+    }
+
+    .quantity-input {
+      width: 56px;
+      text-align: center;
+      font-size: 1.18rem;
+      border: 1.5px solid #ddd;
+      border-radius: 8px;
+      padding: 6px 0;
+      background: #fff;
     }
 
     .total-price {
       flex: 1;
-      color: red;
+      color: #e74c3c;
       font-weight: bold;
       text-align: right;
+      font-size: 1.18rem;
     }
 
     .delete-btn-wrapper {
-      flex: 0 0 40px;
+      flex: 0 0 80px;
       display: flex;
       justify-content: center;
     }
 
     .delete-btn {
-      background: none;
-      border: none;
+      background: #fff0f0;
+      border: 1.5px solid #e74c3c;
       cursor: pointer;
-      font-size: 20px;
-      color: #900;
+      font-size: 1.18rem;
+      color: #e74c3c;
+      padding: 10px 22px;
+      border-radius: 10px;
+      font-weight: 600;
+      min-width: 100px;
+      min-height: 48px;
+      transition: background 0.2s, color 0.2s, border 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
-    .select-all {
-      margin: 15px 0;
+    .delete-btn:hover {
+      background: #e74c3c;
+      color: #fff;
+      border: 1.5px solid #e74c3c;
     }
 
     .cart-controls {
-      margin-top: 20px;
+      margin-top: 32px;
       display: flex;
       justify-content: flex-end;
-      gap: 10px;
+      gap: 16px;
     }
 
     .cart-controls button {
-      padding: 8px 15px;
-      font-size: 14px;
+      padding: 12px 28px;
+      font-size: 1.18rem;
+      border-radius: 10px;
+      border: none;
+      font-weight: 600;
+      background: #27ae60;
+      color: #fff;
       cursor: pointer;
+      transition: background 0.2s;
+      min-width: 140px;
+      min-height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .cart-controls button.btn-success {
+      background: #27ae60;
+    }
+
+    .cart-controls button.btn-success:hover {
+      background: #219150;
+    }
+
+    .cart-controls button:not(.btn-success) {
+      background: #f2f2f2;
+      color: #222;
+      border: 1.5px solid #ddd;
+    }
+
+    .cart-controls button:not(.btn-success):hover {
+      background: #e0e0e0;
+    }
+
+    #grand-total {
+      color: #27ae60;
+      font-size: 1.35rem;
+      font-weight: bold;
     }
 
     input[type="checkbox"] {
-      transform: scale(1.2);
-      margin-right: 10px;
+      accent-color: #27ae60;
+      width: 22px;
+      height: 22px;
+      margin-right: 8px;
+      cursor: pointer;
+      border-radius: 5px;
+      border: 1.5px solid #27ae60;
+      transition: box-shadow 0.2s;
+      box-shadow: 0 1px 4px #0001;
+    }
+
+    input[type="checkbox"]:hover {
+      box-shadow: 0 0 0 2px #27ae6033;
+    }
+
+    a[href="books"] {
+      display: inline-block;
+      margin-top: 18px;
+      font-size: 1.18rem;
+      color: #2196f3;
+      background: #e3f2fd;
+      padding: 12px 28px;
+      border-radius: 10px;
+      text-decoration: none;
+      font-weight: 600;
+      transition: background 0.2s, color 0.2s;
+      min-width: 180px;
+      text-align: center;
+    }
+
+    a[href="books"]:hover {
+      background: #2196f3;
+      color: #fff;
+    }
+
+    @media (max-width: 700px) {
+      .cart-container {
+        padding: 8px 2vw 8px 2vw;
+        max-width: 100vw;
+        border-radius: 8px;
+        font-size: 1rem;
+      }
+      .cart-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+        padding: 10px 0;
+        font-size: 1rem;
+      }
+      .cart-item img {
+        width: 60px;
+        height: 80px;
+      }
+      .item-info {
+        margin-left: 0;
+        width: 100%;
+      }
+      .quantity-wrapper {
+        justify-content: flex-start;
+        width: 100%;
+        gap: 6px;
+      }
+      .quantity-wrapper button {
+        width: 32px;
+        height: 32px;
+        font-size: 1.1rem;
+        padding: 0;
+      }
+      .quantity-input {
+        width: 40px;
+        font-size: 1rem;
+        padding: 4px 0;
+      }
+      .total-price {
+        text-align: left;
+        width: 100%;
+        margin-top: 2px;
+        font-size: 1rem;
+      }
+      .delete-btn-wrapper {
+        justify-content: flex-start;
+        width: 100%;
+        margin-top: 2px;
+      }
+      .delete-btn {
+        padding: 4px 10px;
+        font-size: 0.85rem;
+        border-radius: 4px;
+        width: fit-content;
+        min-width: unset;
+        max-width: 70px;
+        white-space: nowrap;
+        display: inline-block; /* hoặc flex nếu cần */
+        margin: 0; /* bỏ auto */
+      }
+
+
+
+      .cart-controls {
+        flex-direction: column;
+        gap: 8px;
+        align-items: stretch;
+        margin-top: 18px;
+      }
+      .cart-controls button {
+        width: 100%;
+        min-width: unset;
+        min-height: 40px;
+        font-size: 1rem;
+        padding: 10px 0;
+        border-radius: 7px;
+      }
+      .return-books {
+        width: 100%;
+        text-align: center;
+        margin-top: 18px;
+        font-size: 1rem;
+        padding: 10px 0;
+        min-width: unset;
+        border-radius: 7px;
+      }
+      .select-all {
+        font-size: 1rem;
+        gap: 6px;
+      }
+      input[type="checkbox"] {
+        width: 18px;
+        height: 18px;
+        margin-right: 6px;
+      }
     }
   </style>
 </head>
 <body>
+<jsp:include page="views/common/header.jsp" />
+
 <div class="cart-container">
   <h2>Giỏ hàng của bạn</h2>
-  <form action="${pageContext.request.contextPath}/cart?action=batch" method="post">
+  <form action="${pageContext.request.contextPath}/user/cart?action=batch" method="post">
 
     <c:if test="${not empty cartItems}">
       <div class="select-all">
@@ -166,7 +397,7 @@
           </div>
 
           <div class="delete-btn-wrapper">
-            <button type="button" onclick="deleteItem(${item.bookId})">Xóa</button>
+            <button class="delete-btn" type="button" onclick="deleteItem(${item.bookId})">Xóa</button>
           </div>
         </div>
       </c:forEach>
@@ -180,6 +411,7 @@
       <div class="cart-controls">
         <button type="submit" name="subAction" value="checkout" class="btn btn-success">Đặt hàng</button>
         <button type="submit" name="subAction" value="delete">Xóa đã chọn</button>
+
       </div>
 
     </c:if>
@@ -190,8 +422,11 @@
   </form>
 
   <br>
-  <a href="books">← Tiếp tục mua sắm</a>
+  <a class="return-books" href="${pageContext.request.contextPath}/books">← Tiếp tục mua sắm</a>
 </div>
+
+<jsp:include page="views/common/footer.jsp" />
+
 
 <script>
 
@@ -203,7 +438,7 @@
   function updateQuantity(bookId, change) {
     const form = document.createElement('form');
     form.method = 'post';
-    form.action = '${pageContext.request.contextPath}/cart?action=update';
+    form.action = '${pageContext.request.contextPath}/user/cart?action=update';
 
     const input1 = document.createElement('input');
     input1.type = 'hidden';
@@ -246,7 +481,7 @@
   function deleteItem(bookId) {
     const form = document.createElement('form');
     form.method = 'post';
-    form.action = '${pageContext.request.contextPath}/cart?action=delete';
+    form.action = '${pageContext.request.contextPath}/user/cart?action=delete';
 
     const input = document.createElement('input');
     input.type = 'hidden';
@@ -259,5 +494,7 @@
   }
 </script>
 
+<script src="${pageContext.request.contextPath}/assets/js/app.js"></script>
+<script src="${pageContext.request.contextPath}/assets/js/script.js"></script>
 </body>
 </html>

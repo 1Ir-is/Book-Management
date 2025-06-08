@@ -18,4 +18,6 @@ public interface ICartService {
     void updateQuantity(int userId, int bookId, int quantity);
 
     void removeItems(Integer userId, List<Integer> bookIds);
+
+    int countItemsInCart(int userId);
 }
