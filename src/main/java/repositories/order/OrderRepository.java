@@ -1,13 +1,12 @@
 package repositories.order;
 
 import models.Order;
+import models.OrderDetails;
 import utils.JDBCUtils;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -150,6 +149,7 @@ public class OrderRepository implements IOrderRepository {
         return null;
     }
 
+
     @Override
     public List<Object[]> getOrderDetailsByOrderId(int orderId) {
         List<Object[]> details = new ArrayList<>();
@@ -173,4 +173,137 @@ public class OrderRepository implements IOrderRepository {
         }
         return details;
     }
+
+    @Override
+    public int createOrder(int userId, Date date, String status) {
+        String sql = "INSERT INTO don_hang(ma_nguoi_dung,ngay_dat,trang_thai) values\n" +
+                "(?,?,?)";
+        try (Connection connection = JDBCUtils.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            preparedStatement.setInt(1, userId);
+            preparedStatement.setDate(2, new java.sql.Date(date.getTime()));
+            preparedStatement.setString(3, status);
+            preparedStatement.executeUpdate();
+            try (ResultSet generatedKeys = preparedStatement.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    return generatedKeys.getInt(1); // trả về ID mới
+                } else {
+                    throw new SQLException("Creating order failed, no ID obtained.");
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return -1;
+    }
+
+    @Override
+    public void saveOrderDetails(int orderId, List<OrderDetails> orderDetails) {
+        String sql = "INSERT INTO chi_tiet_don_hang(ma_don_hang,ma_sach,so_luong,gia) values (?,?,?,?)";
+        try (Connection connection = JDBCUtils.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            preparedStatement.setInt(1, orderId);
+            for (OrderDetails details : orderDetails) {
+                preparedStatement.setInt(2, details.getBookId());
+                preparedStatement.setInt(3, details.getQuantity());
+                preparedStatement.setDouble(4, details.getPrice());
+                preparedStatement.executeUpdate();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public List<Object[]> getOrdersByUser(int userId, int page, int pageSize) {
+        int offset = (page - 1) * pageSize;
+        List<Object[]> orders = new ArrayList<>();
+        String sql = "SELECT dh.ma_don_hang, dh.ngay_dat, dh.trang_thai, SUM(ctdh.so_luong * ctdh.gia) AS tong_tien " +
+                "FROM don_hang dh " +
+                "JOIN chi_tiet_don_hang ctdh ON dh.ma_don_hang = ctdh.ma_don_hang " +
+                "WHERE dh.ma_nguoi_dung = ? " +
+                "GROUP BY dh.ma_don_hang, dh.ngay_dat, dh.trang_thai " +
+                "ORDER BY dh.ngay_dat DESC " +
+                "LIMIT ? OFFSET ?";
+
+        try (Connection conn = JDBCUtils.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, userId);
+            stmt.setInt(2, pageSize);
+            stmt.setInt(3, offset);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    Object[] row = new Object[4];
+                    row[0] = rs.getInt("ma_don_hang");
+                    row[1] = rs.getDate("ngay_dat");
+                    row[2] = rs.getString("trang_thai");
+                    row[3] = rs.getDouble("tong_tien");
+                    orders.add(row);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return orders;
+    }
+
+
+    @Override
+    public int countOrdersByUser(int userId) {
+        String sql = "SELECT COUNT(*) FROM don_hang WHERE ma_nguoi_dung = ?";
+        int count = 0;
+
+        try (Connection conn = JDBCUtils.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, userId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    count = rs.getInt(1);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return count;
+    }
+
+    @Override
+    public List<Object[]> getOrderDetails(int orderId, int userId) {
+        List<Object[]> details = new ArrayList<>();
+        String sql = "SELECT s.ten_sach, s.img_url, ctdh.so_luong, ctdh.gia, (ctdh.so_luong * ctdh.gia) AS thanh_tien " +
+                "FROM don_hang dh " +
+                "JOIN chi_tiet_don_hang ctdh ON dh.ma_don_hang = ctdh.ma_don_hang " +
+                "JOIN sach s ON ctdh.ma_sach = s.ma_sach " +
+                "WHERE dh.ma_don_hang = ? AND dh.ma_nguoi_dung = ?";
+
+        try (Connection conn = JDBCUtils.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, orderId);
+            stmt.setInt(2, userId);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    Object[] row = new Object[5];
+                    row[0] = rs.getString("ten_sach");
+                    row[1] = rs.getString("img_url");
+                    row[2] = rs.getInt("so_luong");
+                    row[3] = rs.getDouble("gia");
+                    row[4] = rs.getDouble("thanh_tien");
+                    details.add(row);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return details;
+    }
+
+
+
+
 }

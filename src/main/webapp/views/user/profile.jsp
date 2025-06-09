@@ -195,8 +195,8 @@
   <div class="profile-menu-container">
     <nav class="profile-menu">
       <a class="active" href="#">Thông tin tài khoản</a>
-      <a href="#">Lịch sử mua hàng</a>
-      <a href="#">Đơn hàng của tôi</a>
+      <a href="${pageContext.request.contextPath}/user/cart?action=history">Lịch sử mua hàng</a>
+      <a href="<%= request.getContextPath() %>/user/cart">Đơn hàng của tôi</a>
     </nav>
   </div>
 

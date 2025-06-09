@@ -1,5 +1,6 @@
 package services.order;
 
+import models.CartDetails;
 import models.Order;
 import java.util.List;
 
@@ -13,4 +14,7 @@ public interface IOrderService {
     String getProductDetailsByOrderId(int orderId);
     String getTotalPriceByOrderId(int orderId);
     String calculateExpectedDeliveryDate(String orderDate);
+    boolean checkout(int userId, List<CartDetails> cartDetails);
+    List<Object[]> getOrdersByUser(int userId, int page, int pageSize);
+    List<Object[]> getOrderDetails(int orderId, int userId);
 }

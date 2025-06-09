@@ -318,10 +318,11 @@
                style="padding: 6px 14px; display: block; text-decoration: none; color: #333; font-size: 13px;">
               Thông tin
             </a>
-            <a class="drop-content" href="${pageContext.request.contextPath}/history.jsp"
+            <a class="drop-content" href="${pageContext.request.contextPath}/user/cart?action=history"
                style="padding: 6px 14px; display: block; text-decoration: none; color: #333; font-size: 13px;">
               Lịch sử mua hàng
             </a>
+
             <c:if test="${user != null}">
               <a href="javascript:void(0)" id="logout-link" class="drop-content"
                  style="padding: 6px 14px; display: block; text-decoration: none; color: #333; font-size: 13px;">
@@ -673,7 +674,7 @@
         "onclick": null,
         "showDuration": "300",
         "hideDuration": "300",
-        "timeOut": "3000",
+        "timeOut": "1500",
         "extendedTimeOut": "500",
         "showEasing": "swing",
         "hideEasing": "linear",

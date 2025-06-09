@@ -10,6 +10,8 @@
     import repositories.cart_details.ICartDetailsRepository;
     //import repositories.orderdetails.IOrderDetailsRepository;
     //import repositories.orderdetails.OrderDetailsRepository;
+    import repositories.order.IOrderRepository;
+    import repositories.order.OrderRepository;
     import services.cart.CartService;
     import services.cart.ICartService;
     import services.order.OrderService;
@@ -35,44 +37,92 @@
                 ICartRepository cartRepo = new CartRepository(conn);
                 ICartDetailsRepository cartDetailsRepo = new CartDetailsRepository(conn);
                 IBookRepository bookRepo = new BookRepository();
-    //            IOrderRepository orderRepo = new OrderRepository(conn);
-    //            IOrderDetailsRepository orderDetailsRepo = new OrderDetailsRepository(conn);
-    
+                IOrderRepository orderRepository = new OrderRepository();
                 cartService = new CartService(cartRepo, cartDetailsRepo, bookRepo);
-    //            orderService = new OrderService(orderRepo, orderDetailsRepo, cartRepo, cartDetailsRepo);
+                orderService = new OrderService();
             } catch (SQLException e) {
                 throw new RuntimeException("Failed to connect to DB", e);
             }
         }
-    
+
         @Override
         protected void doGet(HttpServletRequest request, HttpServletResponse response)
                 throws ServletException, IOException {
             String action = request.getParameter("action");
             if (action == null) action = "";
+
             switch (action) {
                 case "history":
                     showOrderHistory(request, response);
                     break;
+                case "orderDetail":
+                    showOrderDetail(request, response);
+                    break;
                 default:
                     showCart(request, response);
+                    break;
             }
         }
-    
-        private void showOrderHistory(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+        private void showOrderDetail(HttpServletRequest request, HttpServletResponse response)
+                throws ServletException, IOException {
             HttpSession session = request.getSession(false);
-            if (session == null || session.getAttribute("user") == null) {
-                response.sendRedirect(request.getContextPath() + "/login");
+            User user = (User) session.getAttribute("user");
+
+            if (user == null) {
+                response.sendRedirect(request.getContextPath() + "/auth/login.jsp");
                 return;
             }
-    
-            User user = (User) session.getAttribute("user");
-    //        List<Order> orderList = orderService.getOrderHistory(user.getUserId());
-    //
-    //        request.setAttribute("orderList", orderList);
-            request.getRequestDispatcher("/views/user/order_history.jsp").forward(request, response);
+
+            int orderId;
+            try {
+                orderId = Integer.parseInt(request.getParameter("orderId"));
+            } catch (NumberFormatException e) {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Mã đơn hàng không hợp lệ.");
+                return;
+            }
+
+            List<Object[]> orderDetails = orderService.getOrderDetails(orderId, user.getUserId());
+            request.setAttribute("orderDetails", orderDetails);
+            request.getRequestDispatcher("/views/user/order-detail.jsp").forward(request, response);
         }
-    
+
+
+        private void showOrderHistory(HttpServletRequest request, HttpServletResponse response)
+                throws ServletException, IOException {
+            HttpSession session = request.getSession(false);
+            User user = (User) session.getAttribute("user");
+
+            if (user == null) {
+                response.sendRedirect(request.getContextPath() + "/auth/login.jsp");
+                return;
+            }
+
+            int userId = user.getUserId();
+
+            int page = 1;
+            int pageSize = 5; // số đơn hàng trên 1 trang
+
+            String pageParam = request.getParameter("page");
+            if (pageParam != null) {
+                try {
+                    page = Integer.parseInt(pageParam);
+                } catch (NumberFormatException ignored) {}
+            }
+
+            List<Object[]> orderList = orderService.getOrdersByUser(userId, page, pageSize);
+            int totalOrders = orderService.countOrdersByUser(userId);
+            int totalPages = (int) Math.ceil((double) totalOrders / pageSize);
+
+            request.setAttribute("orderList", orderList);
+            request.setAttribute("currentPage", page);
+            request.setAttribute("totalPages", totalPages);
+
+            request.getRequestDispatcher("/views/user/order-history.jsp").forward(request, response);
+        }
+
+
+
         @Override
         protected void doPost(HttpServletRequest request, HttpServletResponse response)
                 throws ServletException, IOException {
@@ -232,6 +282,7 @@
     
             Integer userId = user.getUserId();
             String[] selectedBooks = request.getParameterValues("selectedBooks");
+            List<Integer> bookIds = new ArrayList<>();
             String subAction = request.getParameter("subAction");
     
             if (selectedBooks == null || selectedBooks.length == 0) {
@@ -241,7 +292,6 @@
             }
     
             if ("delete".equals(subAction)) {
-                List<Integer> bookIds = new ArrayList<>();
                 for (String bookIdStr : selectedBooks) {
                     try {
                         bookIds.add(Integer.parseInt(bookIdStr));
@@ -255,21 +305,37 @@
                 response.sendRedirect(request.getContextPath() + "/user/cart");
     
             } else if ("checkout".equals(subAction)) {
-                List<Integer> bookIds = new ArrayList<>();
                 for (String bookIdStr : selectedBooks) {
                     try {
                         bookIds.add(Integer.parseInt(bookIdStr));
-                    } catch (NumberFormatException ignored) {
+                    } catch (NumberFormatException ignored) {}
+                }
+
+                // Lấy toàn bộ item trong giỏ
+                List<CartDetails> allItems = cartService.getListInCart(userId);
+                List<CartDetails> selectedItems = new ArrayList<>();
+
+                for (CartDetails cartDetails : allItems) {
+                    if (bookIds.contains(cartDetails.getBookId())) {
+                        selectedItems.add(cartDetails);
                     }
                 }
-    //            boolean success = orderService.checkout(userId, selectedBooks);
-    //            if (success) {
-    //                response.sendRedirect(request.getContextPath() + "/orders");
-    //            } else {
-    //                request.setAttribute("error", "Không thể đặt hàng. Vui lòng thử lại.");
-    //                request.getRequestDispatcher(CART_PAGE).forward(request, response);
-    //            }
-    
+
+                if (selectedItems.isEmpty()) {
+                    request.setAttribute("error", "Không có sản phẩm hợp lệ để đặt hàng.");
+                    request.getRequestDispatcher(CART_PAGE).forward(request, response);
+                    return;
+                }
+
+                boolean success = orderService.checkout(userId, selectedItems);
+
+                if (success) {
+                    cartService.removeItems(userId, bookIds); // xoá các sản phẩm đã đặt
+                    response.sendRedirect(request.getContextPath() + "/user/cart?action=history");
+                } else {
+                    request.setAttribute("error", "Đặt hàng thất bại. Vui lòng thử lại.");
+                    request.getRequestDispatcher(CART_PAGE).forward(request, response);
+                }
             } else {
                 response.sendRedirect(request.getContextPath() + "/user/cart");
             }
