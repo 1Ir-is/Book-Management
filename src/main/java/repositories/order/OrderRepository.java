@@ -1,13 +1,12 @@
 package repositories.order;
 
 import models.Order;
+import models.OrderDetails;
 import utils.JDBCUtils;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -172,5 +171,64 @@ public class OrderRepository implements IOrderRepository {
             e.printStackTrace();
         }
         return details;
+    }
+
+    @Override
+    public int createOrder(int userId, Date date, String status) {
+        String sql = "INSERT INTO don_hang (ma_nguoi_dung, ngay_dat, trang_thai) VALUES (?, ?, ?)";
+        try (Connection connection = JDBCUtils.getConnection();
+                PreparedStatement stmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            stmt.setInt(1, userId);
+            stmt.setDate(2, new java.sql.Date(date.getTime()));
+            stmt.setString(3, status);
+            stmt.executeUpdate();
+
+            try (ResultSet rs = stmt.getGeneratedKeys()) {
+                if (rs.next()) return rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return -1;
+    }
+
+    @Override
+    public void saveOrderDetails(int orderId, List<OrderDetails> details) {
+        String sql = "INSERT INTO chi_tiet_don_hang (ma_don_hang, ma_sach, so_luong, gia) VALUES (?, ?, ?, ?)";
+        try (Connection connection = JDBCUtils.getConnection();
+                PreparedStatement stmt = connection.prepareStatement(sql)) {
+            for (OrderDetails d : details) {
+                stmt.setInt(1, orderId);
+                stmt.setInt(2, d.getBookId());
+                stmt.setInt(3, d.getQuantity());
+                stmt.setDouble(4, d.getPrice());
+                stmt.addBatch();
+            }
+            stmt.executeBatch();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public List<Order> getOrdersByUser(int userId) {
+        List<Order> orders = new ArrayList<>();
+        String sql = "SELECT * FROM don_hang WHERE ma_nguoi_dung = ? ORDER BY ngay_dat DESC";
+        try (Connection connection = JDBCUtils.getConnection();
+                PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setInt(1, userId);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                Order o = new Order();
+                o.setOrderId(rs.getInt("ma_don_hang"));
+                o.setOrderDate(rs.getDate("ngay_dat"));
+                o.setStatus(rs.getString("trang_thai"));
+                o.setUserId(rs.getInt("ma_nguoi_dung"));
+                orders.add(o);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return orders;
     }
 }

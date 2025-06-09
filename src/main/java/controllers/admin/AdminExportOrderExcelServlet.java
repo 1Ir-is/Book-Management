@@ -4,6 +4,9 @@ import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import services.order.IOrderService;
 import services.order.OrderService;
+import repositories.cart.CartRepository;
+import repositories.cart_details.CartDetailsRepository;
+import utils.JDBCUtils;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.annotation.WebServlet;
@@ -11,13 +14,23 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.sql.Connection;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 @WebServlet(name = "AdminExportOrderExcelServlet", urlPatterns = {"/admin/export-orders"})
 public class AdminExportOrderExcelServlet extends HttpServlet {
 
-    private final IOrderService orderService = new OrderService();
+    private final IOrderService orderService;
+
+    public AdminExportOrderExcelServlet() {
+        try (Connection connection = JDBCUtils.getConnection()) {
+            this.orderService = new OrderService(new CartRepository(connection), new CartDetailsRepository(connection));
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to initialize OrderService", e);
+        }
+    }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -28,21 +41,21 @@ public class AdminExportOrderExcelServlet extends HttpServlet {
         Workbook workbook = new XSSFWorkbook();
         Sheet sheet = workbook.createSheet("Orders");
 
-        // Style có border
+        // Style with border
         CellStyle borderStyle = workbook.createCellStyle();
         borderStyle.setBorderTop(BorderStyle.THIN);
         borderStyle.setBorderBottom(BorderStyle.THIN);
         borderStyle.setBorderLeft(BorderStyle.THIN);
         borderStyle.setBorderRight(BorderStyle.THIN);
 
-        // Style cho tiêu đề: border + in đậm
+        // Style for header: border + bold
         Font headerFont = workbook.createFont();
         headerFont.setBold(true);
         CellStyle headerStyle = workbook.createCellStyle();
         headerStyle.cloneStyleFrom(borderStyle);
         headerStyle.setFont(headerFont);
 
-        // Tạo dòng tiêu đề
+        // Create header row
         Row headerRow = sheet.createRow(0);
         String[] columns = {"Mã đơn hàng", "Ngày đặt", "Trạng thái", "Người đặt", "Email", "Sản phẩm và số lượng", "Tổng tiền"};
         for (int i = 0; i < columns.length; i++) {
@@ -51,10 +64,10 @@ public class AdminExportOrderExcelServlet extends HttpServlet {
             cell.setCellStyle(headerStyle);
         }
 
-        // Định dạng ngày
+        // Date format
         SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
 
-        // Thêm dữ liệu từng đơn hàng
+        // Add data for each order
         for (int i = 0; i < orders.size(); i++) {
             Object[] order = orders.get(i);
             Row row = sheet.createRow(i + 1);
@@ -64,7 +77,11 @@ public class AdminExportOrderExcelServlet extends HttpServlet {
             cell0.setCellStyle(borderStyle);
 
             Cell cell1 = row.createCell(1);
-            cell1.setCellValue(sdf.format(order[1]));
+            if (order[1] instanceof Date) {
+                cell1.setCellValue(sdf.format((Date) order[1]));
+            } else {
+                cell1.setCellValue(order[1].toString());
+            }
             cell1.setCellStyle(borderStyle);
 
             Cell cell2 = row.createCell(2);
@@ -84,16 +101,20 @@ public class AdminExportOrderExcelServlet extends HttpServlet {
             cell5.setCellStyle(borderStyle);
 
             Cell cell6 = row.createCell(6);
-            cell6.setCellValue((Double) order[6]);
+            if (order[6] instanceof Number) {
+                cell6.setCellValue(Double.parseDouble(order[6].toString()));
+            } else {
+                cell6.setCellValue(order[6].toString());
+            }
             cell6.setCellStyle(borderStyle);
         }
 
-        // Tự động điều chỉnh độ rộng cột
+        // Auto-adjust column widths
         for (int i = 0; i < columns.length; i++) {
             sheet.autoSizeColumn(i);
         }
 
-        // Ghi file vào response output stream
+        // Write workbook to response output stream
         try (ServletOutputStream outputStream = response.getOutputStream()) {
             workbook.write(outputStream);
         }

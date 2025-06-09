@@ -1,7 +1,12 @@
 package controllers.admin;
 
+import repositories.cart.CartRepository;
+import repositories.cart.ICartRepository;
+import repositories.cart_details.CartDetailsRepository;
+import repositories.cart_details.ICartDetailsRepository;
 import services.order.IOrderService;
 import services.order.OrderService;
+import utils.JDBCUtils;
 import utils.SMTPMailUtil;
 
 import javax.servlet.ServletException;
@@ -10,6 +15,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -18,8 +25,11 @@ public class AdminOrderServlet extends HttpServlet {
 
     private final IOrderService orderService;
 
-    public AdminOrderServlet() {
-        this.orderService = new OrderService();
+    public AdminOrderServlet() throws SQLException {
+        Connection connection = JDBCUtils.getConnection();
+        ICartRepository cartRepository = new CartRepository(connection);
+        ICartDetailsRepository cartDetailsRepository = new CartDetailsRepository(connection);
+        this.orderService = new OrderService(cartRepository, cartDetailsRepository);
     }
 
     @Override
