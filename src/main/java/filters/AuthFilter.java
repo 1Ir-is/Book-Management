@@ -1,7 +1,10 @@
 package filters;
 
 import models.User;
+import repositories.cart_details.CartDetailsRepository;
+import repositories.cart_details.ICartDetailsRepository;
 import services.user.UserService;
+import utils.JDBCUtils;
 
 import javax.servlet.*;
 import javax.servlet.annotation.WebFilter;
@@ -68,6 +71,21 @@ public class AuthFilter implements Filter {
             if (user == null || user.getRoleId() != 0) {
                 resp.sendRedirect(req.getContextPath() + "/access-denied");
                 return;
+            }
+        }
+
+        if (user != null) {
+            try {
+                ICartDetailsRepository cartRepo = new CartDetailsRepository(JDBCUtils.getConnection());
+                int cartCount = cartRepo.getCartDetailsByUserId(user.getUserId())
+                        .stream()
+                        .mapToInt(item -> item.getQuantity())
+                        .sum();
+
+                // Gắn vào request để JSP có thể dùng
+                req.setAttribute("cartCount", cartCount);
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
 

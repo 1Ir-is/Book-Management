@@ -290,7 +290,14 @@
       <div id="search-btn" class="fas fa-search"></div>
       <a href="#" class="fas fa-heart"></a>
         <a href="<%= request.getContextPath() %>/user/cart" id="cart-icon" class="fas fa-shopping-cart" style="position: relative;">
-          <span id="cart-count" class="cart-count">0</span>
+          <span id="cart-count" class="cart-count">
+            <c:choose>
+              <c:when test="${not empty cartCount}">
+                ${cartCount}
+              </c:when>
+              <c:otherwise>0</c:otherwise>
+            </c:choose>
+          </span>
         </a>
 
 
