@@ -261,83 +261,112 @@
     
             response.sendRedirect(request.getContextPath() + "/user/cart");
         }
-    
+
         private void batchAction(HttpServletRequest request, HttpServletResponse response)
                 throws ServletException, IOException {
             final String CART_PAGE = "/views/user/cart.jsp";
-            final String ORDER_HISTORY_PAGE = "/views/user/order_history.jsp";
-            final String LOGIN_PAGE = "/auth/login.jsp";
-    
-            HttpSession session = request.getSession(false);
-            if (session == null) {
-                response.sendRedirect(request.getContextPath() + LOGIN_PAGE);
-                return;
-            }
-    
+            HttpSession session = request.getSession();
             User user = (User) session.getAttribute("user");
+
             if (user == null) {
-                response.sendRedirect(request.getContextPath() + LOGIN_PAGE);
+                response.sendRedirect(request.getContextPath() + "/login");
                 return;
             }
-    
+
             Integer userId = user.getUserId();
             String[] selectedBooks = request.getParameterValues("selectedBooks");
             List<Integer> bookIds = new ArrayList<>();
             String subAction = request.getParameter("subAction");
-    
+
             if (selectedBooks == null || selectedBooks.length == 0) {
-                request.setAttribute("error", "Vui lòng chọn ít nhất một sản phẩm.");
-                request.getRequestDispatcher(CART_PAGE).forward(request, response);
+                if (isAjax(request)) {
+                    writeJson(response, false, "Vui lòng chọn ít nhất một sản phẩm.");
+                } else {
+                    List<CartDetails> items = cartService.getListInCart(userId);
+                    request.setAttribute("cartItems", items);
+                    request.setAttribute("error", "Vui lòng chọn ít nhất một sản phẩm.");
+                    request.getRequestDispatcher(CART_PAGE).forward(request, response);
+                }
                 return;
             }
-    
-            if ("delete".equals(subAction)) {
-                for (String bookIdStr : selectedBooks) {
-                    try {
-                        bookIds.add(Integer.parseInt(bookIdStr));
-                    } catch (NumberFormatException ignored) {
+
+            for (String bookIdStr : selectedBooks) {
+                try {
+                    bookIds.add(Integer.parseInt(bookIdStr));
+                } catch (NumberFormatException ignored) {}
+            }
+
+            switch (subAction) {
+                case "delete":
+                    if (!bookIds.isEmpty()) {
+                        cartService.removeItems(userId, bookIds);
                     }
-                }
-    
-                if (!bookIds.isEmpty()) {
-                    cartService.removeItems(userId, bookIds);
-                }
-                response.sendRedirect(request.getContextPath() + "/user/cart");
-    
-            } else if ("checkout".equals(subAction)) {
-                for (String bookIdStr : selectedBooks) {
-                    try {
-                        bookIds.add(Integer.parseInt(bookIdStr));
-                    } catch (NumberFormatException ignored) {}
-                }
-
-                // Lấy toàn bộ item trong giỏ
-                List<CartDetails> allItems = cartService.getListInCart(userId);
-                List<CartDetails> selectedItems = new ArrayList<>();
-
-                for (CartDetails cartDetails : allItems) {
-                    if (bookIds.contains(cartDetails.getBookId())) {
-                        selectedItems.add(cartDetails);
+                    if (isAjax(request)) {
+                        writeJson(response, true, "Xóa sản phẩm thành công!");
+                    } else {
+                        response.sendRedirect(request.getContextPath() + "/user/cart");
                     }
-                }
+                    break;
 
-                if (selectedItems.isEmpty()) {
-                    request.setAttribute("error", "Không có sản phẩm hợp lệ để đặt hàng.");
-                    request.getRequestDispatcher(CART_PAGE).forward(request, response);
-                    return;
-                }
+                case "checkout":
+                    List<CartDetails> allItems = cartService.getListInCart(userId);
+                    List<CartDetails> selectedItems = new ArrayList<>();
 
-                boolean success = orderService.checkout(userId, selectedItems);
+                    for (CartDetails cartDetails : allItems) {
+                        if (bookIds.contains(cartDetails.getBookId())) {
+                            selectedItems.add(cartDetails);
+                        }
+                    }
 
-                if (success) {
-                    cartService.removeItems(userId, bookIds); // xoá các sản phẩm đã đặt
-                    response.sendRedirect(request.getContextPath() + "/user/cart?action=history");
-                } else {
-                    request.setAttribute("error", "Đặt hàng thất bại. Vui lòng thử lại.");
-                    request.getRequestDispatcher(CART_PAGE).forward(request, response);
-                }
-            } else {
-                response.sendRedirect(request.getContextPath() + "/user/cart");
+                    if (selectedItems.isEmpty()) {
+                        if (isAjax(request)) {
+                            writeJson(response, false, "Không có sản phẩm hợp lệ để đặt hàng.");
+                        } else {
+                            request.setAttribute("cartItems", allItems);
+                            request.setAttribute("error", "Không có sản phẩm hợp lệ để đặt hàng.");
+                            request.getRequestDispatcher(CART_PAGE).forward(request, response);
+                        }
+                        return;
+                    }
+
+                    boolean success = orderService.checkout(userId, selectedItems);
+
+                    if (success) {
+                        cartService.removeItems(userId, bookIds);
+                        if (isAjax(request)) {
+                            writeJson(response, true, "Đặt hàng thành công!");
+                        } else {
+                            response.sendRedirect(request.getContextPath() + "/user/cart?action=history");
+                        }
+                    } else {
+                        if (isAjax(request)) {
+                            writeJson(response, false, "Đặt hàng thất bại. Vui lòng thử lại.");
+                        } else {
+                            request.setAttribute("cartItems", allItems);
+                            request.setAttribute("error", "Đặt hàng thất bại. Vui lòng thử lại.");
+                            request.getRequestDispatcher(CART_PAGE).forward(request, response);
+                        }
+                    }
+                    break;
+
+                default:
+                    response.sendRedirect(request.getContextPath() + "/user/cart");
             }
         }
+
+        private boolean isAjax(HttpServletRequest request) {
+            String requestedWith = request.getHeader("X-Requested-With");
+            return "XMLHttpRequest".equals(requestedWith);
+        }
+
+        private void writeJson(HttpServletResponse response, boolean success, String message)
+                throws IOException {
+            response.setContentType("application/json");
+            response.setCharacterEncoding("UTF-8");
+            response.getWriter().write("{\"success\":" + success + ",\"message\":\"" + message + "\"}");
+        }
+
+
+
+
     }

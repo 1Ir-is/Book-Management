@@ -8,6 +8,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 
+
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -16,6 +17,9 @@
   <title>Giỏ Hàng | 4Book</title>
   <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/style.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet"/>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
   <style>
     /* ...existing code... */
     .cart-container {
@@ -346,7 +350,6 @@
 </head>
 <body>
 <jsp:include page="views/common/header.jsp" />
-
 <div class="cart-container">
   <h2>Giỏ hàng của bạn</h2>
   <form action="${pageContext.request.contextPath}/user/cart?action=batch" method="post">
@@ -368,12 +371,12 @@
           <div class="item-info">
             <div><strong>${item.book.bookName}</strong></div>
             <div>
-            <span class="price">
-                <fmt:formatNumber value="${item.book.price}" type="number" groupingUsed="true"/> đ
-            </span>
+              <span class="price">
+                  <fmt:formatNumber value="${item.book.price}" type="number" groupingUsed="true"/> đ
+              </span>
               <span class="original-price">
-                <fmt:formatNumber value="${item.book.price + 20000}" type="number" groupingUsed="true"/> đ
-            </span>
+                  <fmt:formatNumber value="${item.book.price + 20000}" type="number" groupingUsed="true"/> đ
+              </span>
             </div>
           </div>
 
@@ -404,14 +407,13 @@
 
       <div style="text-align:right; margin-top:10px;">
         <strong>Tổng cộng: <span id="grand-total">
-                    <fmt:formatNumber value="${grandTotal}" type="number" groupingUsed="true"/> đ
-                </span></strong>
+          <fmt:formatNumber value="${grandTotal}" type="number" groupingUsed="true"/> đ
+        </span></strong>
       </div>
 
       <div class="cart-controls">
         <button type="submit" name="subAction" value="checkout" class="btn btn-success">Đặt hàng</button>
         <button type="submit" name="subAction" value="delete">Xóa đã chọn</button>
-
       </div>
 
     </c:if>
@@ -427,8 +429,68 @@
 
 <jsp:include page="views/common/footer.jsp" />
 
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+  document.querySelector("form").addEventListener("submit", function (e) {
+    e.preventDefault(); // Ngăn form submit theo cách truyền thống
+
+    const form = e.target;
+    const formData = new FormData(form);
+    const actionUrl = form.action;
+
+    fetch(actionUrl, {
+      method: "POST",
+      body: formData,
+      headers: {
+        "X-Requested-With": "XMLHttpRequest"
+      }
+    })
+            .then(response => {
+              if (!response.ok) throw new Error("Có lỗi xảy ra");
+
+              return response.json(); // Backend sẽ trả JSON
+            })
+            .then(data => {
+              if (data.success) {
+                Swal.fire({
+                  toast: true,
+                  position: 'top-end',
+                  icon: 'success',
+                  title: data.message,
+                  showConfirmButton: false,
+                  timer: 2000
+                });
+
+                // Làm mới nội dung giỏ hàng bằng fetch lại HTML (có thể AJAX lại phần cartItems)
+                setTimeout(() => location.reload(), 2000);
+              } else {
+                Swal.fire({
+                  toast: true,
+                  position: 'top-end',
+                  icon: 'error',
+                  title: data.message,
+                  showConfirmButton: false,
+                  timer: 2500
+                });
+              }
+            })
+            .catch(error => {
+              console.error("Lỗi:", error);
+              Swal.fire({
+                toast: true,
+                position: 'top-end',
+                icon: 'error',
+                title: "Đã xảy ra lỗi",
+                showConfirmButton: false,
+                timer: 2500
+              });
+            });
+  });
+</script>
+
 
 <script>
+  const contextPath = '<%= request.getContextPath() %>';
 
   function toggleAll(source) {
     const checkboxes = document.querySelectorAll('input[name="selectedBooks"]');
@@ -438,7 +500,7 @@
   function updateQuantity(bookId, change) {
     const form = document.createElement('form');
     form.method = 'post';
-    form.action = '${pageContext.request.contextPath}/user/cart?action=update';
+    form.action = contextPath + '/user/cart?action=update';
 
     const input1 = document.createElement('input');
     input1.type = 'hidden';
@@ -481,7 +543,7 @@
   function deleteItem(bookId) {
     const form = document.createElement('form');
     form.method = 'post';
-    form.action = '${pageContext.request.contextPath}/user/cart?action=delete';
+    form.action = contextPath + '/user/cart?action=delete';
 
     const input = document.createElement('input');
     input.type = 'hidden';
@@ -493,6 +555,7 @@
     form.submit();
   }
 </script>
+
 
 <script src="${pageContext.request.contextPath}/assets/js/app.js"></script>
 <script src="${pageContext.request.contextPath}/assets/js/script.js"></script>
