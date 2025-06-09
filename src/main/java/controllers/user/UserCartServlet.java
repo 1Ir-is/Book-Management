@@ -142,7 +142,7 @@
 
                 cartService.addBookToCart(user.getUserId(), bookId, quantity);
 
-                // Nếu là AJAX thì trả về 200
+
                 String requestedWith = request.getHeader("X-Requested-With");
                 if ("XMLHttpRequest".equals(requestedWith)) {
                     response.setStatus(HttpServletResponse.SC_OK);
