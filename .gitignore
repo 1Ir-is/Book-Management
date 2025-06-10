@@ -41,5 +41,5 @@ bin/
 ### Mac OS ###
 .DS_Store
 
-# Ignore sensitive config file
-resources/config.properties
+## Cấu hình database cá nhân (không đẩy lên Git)
+src/main/resources/config.properties
