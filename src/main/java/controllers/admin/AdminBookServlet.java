@@ -34,7 +34,6 @@ public class AdminBookServlet extends HttpServlet {
 
         switch (action) {
             case "add":
-
                 List<Category> categoriesAdd = categoryService.getAll();
                 req.setAttribute("categories", categoriesAdd);
                 req.getRequestDispatcher("/views/admin/book_form.jsp").forward(req, resp);
@@ -53,18 +52,60 @@ public class AdminBookServlet extends HttpServlet {
                 req.getSession().setAttribute("toastMessage", "Xóa sách thành công!");
                 resp.sendRedirect(req.getContextPath() + "/admin/books");
                 break;
+            case "search":
+                String keyword = req.getParameter("keyword");
+                List<Book> searchResults = bookService.searchBooksByKeyword(keyword);
+                List<Category> allCategories = categoryService.getAll();
+
+                Map<Integer, String> categoryMapSearch = new HashMap<>();
+                for (Category category : allCategories) {
+                    categoryMapSearch.put(category.getCategoryId(), category.getCategoryName());
+                }
+
+                req.setAttribute("books", searchResults);
+                req.setAttribute("categoryMap", categoryMapSearch);
+                req.setAttribute("searchKeyword", keyword); // để hiển thị lại keyword trong ô input
+                req.getRequestDispatcher("/views/admin/book_list.jsp").forward(req, resp);
+                break;
+
             default:
-                List<Book> books = bookService.getAllBooks();
+                List<Book> allBooks = bookService.getAllBooks();
                 List<Category> categories = categoryService.getAll();
 
+                // Tạo map từ categoryId -> categoryName
                 Map<Integer, String> categoryMap = new HashMap<>();
                 for (Category category : categories) {
                     categoryMap.put(category.getCategoryId(), category.getCategoryName());
                 }
 
-                req.setAttribute("books", books);
+                // Lấy page hiện tại từ request param
+                int booksPerPage = 5;
+                int currentPage = 1;
+                try {
+                    currentPage = Integer.parseInt(req.getParameter("page"));
+                } catch (NumberFormatException ignored) {
+                }
+
+                int totalBooks = allBooks.size();
+                int totalPages = (int) Math.ceil((double) totalBooks / booksPerPage);
+
+                // Tính chỉ số bắt đầu và kết thúc
+                int startIndex = (currentPage - 1) * booksPerPage;
+                int endIndex = Math.min(startIndex + booksPerPage, totalBooks);
+
+                // Lấy danh sách sách theo trang
+                List<Book> paginatedBooks = allBooks.subList(startIndex, endIndex);
+
+                // Truyền dữ liệu sang JSP
+                req.setAttribute("books", paginatedBooks); // chỉ sách cần hiển thị
+                req.setAttribute("totalBooks", totalBooks);
+                req.setAttribute("totalPages", totalPages);
+                req.setAttribute("currentPage", currentPage);
                 req.setAttribute("categoryMap", categoryMap);
+
                 req.getRequestDispatcher("/views/admin/book_list.jsp").forward(req, resp);
+                break;
+
         }
     }
 

@@ -39,5 +39,10 @@ public class BookService implements IBookService {
         return bookRepository.searchBooks(keyword, categoryId);
     }
 
+    @Override
+    public List<Book> searchBooksByKeyword(String keyword) {
+        return bookRepository.searchByKeyword(keyword);
+    }
+
 
 }

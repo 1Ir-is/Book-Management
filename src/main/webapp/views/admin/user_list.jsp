@@ -254,6 +254,106 @@
             }
         }
 
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 32px;
+            gap: 0;
+            background: #fff;
+            border-radius: 14px;
+            box-shadow: 0 2px 12px #0001;
+            padding: 18px 0;
+            min-width: 340px;
+        }
+        .pagination a,
+        .pagination span {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 42px;
+            height: 42px;
+            margin: 0 4px;
+            border-radius: 8px;
+            font-size: 1.25rem;
+            font-weight: 500;
+            color: #6c63ff;
+            background: transparent;
+            text-decoration: none;
+            border: none;
+            transition: background 0.2s, color 0.2s;
+            cursor: pointer;
+            user-select: none;
+        }
+        .pagination a:hover:not(.active):not(.disabled) {
+            background: #f3f3fa;
+        }
+        .pagination .active,
+        .pagination a.active {
+            color: #222;
+            font-weight: bold;
+            border-bottom: 2px solid #6c63ff;
+            background: transparent;
+            pointer-events: none;
+        }
+        .pagination .disabled {
+            color: #ccc;
+            cursor: default;
+            pointer-events: none;
+            background: transparent;
+        }
+        .pagination .arrow {
+            font-size: 1.4rem;
+            color: #6c63ff;
+            background: transparent;
+            border: none;
+            transition: color 0.2s;
+            padding: 0;
+        }
+        .pagination .arrow.disabled {
+            color: #e0e0e0;
+            cursor: default;
+        }
+
+        .search-form {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .search-form input {
+            padding: 0.5rem;
+            font-size: 1rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            width: 250px;
+            transition: border-color 0.3s ease-in-out;
+        }
+
+        .search-form input:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 5px rgba(52, 152, 219, 0.5);
+        }
+
+        .search-form button {
+            padding: 0.5rem 1rem;
+            font-size: 1rem;
+            font-weight: bold;
+            color: #fff;
+            background-color: #27ae60;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease-in-out, transform 0.2s ease-in-out;
+        }
+
+        .search-form button:hover {
+            background-color: #219150;
+            transform: scale(1.05);
+        }
+
 
         /* Responsive for mobile */
         @media screen and (max-width: 768px) {
@@ -389,6 +489,11 @@
                 </a>
             </div>
         </div>
+        <form class="search-form" action="${pageContext.request.contextPath}/admin/users" method="get">
+            <input type="text" name="keyword" value="${keyword}" placeholder="Tìm theo tên hoặc email" />
+            <button type="submit">Tìm kiếm</button>
+        </form>
+
         <div class="table-container">
             <table class="data-table">
                 <thead>
@@ -402,43 +507,75 @@
                 </tr>
                 </thead>
                 <tbody>
-                <c:forEach items="${users}" var="user">
-                    <c:if test="${user.roleId != 0}">
+                <c:choose>
+                    <c:when test="${empty users}">
                         <tr>
-                            <td>${user.name}</td>
-                            <td>${user.email}</td>
-                            <td>${user.phoneNumber}</td>
-                            <td>${user.address}</td>
-                            <td>${user.status ? "Hoạt động" : "Bị khóa"}</td>
-                            <td>
-                                <c:if test="${user.status}">
-                                    <form method="post" action="${pageContext.request.contextPath}/admin/users" style="display:inline;">
-                                        <input type="hidden" name="userId" value="${user.userId}" />
-                                        <input type="hidden" name="action" value="block" />
-                                        <button
-                                                type="button"
-                                                class="btn-delete"
-                                                data-user-id="${user.userId}"
-                                                onclick="showDeleteModalFromButton(this)">Khóa</button>
-
-
-                                    </form>
-                                </c:if>
-                                <c:if test="${!user.status}">
-                                    <form method="post" action="${pageContext.request.contextPath}/admin/users" style="display:inline;">
-                                        <input type="hidden" name="userId" value="${user.userId}" />
-                                        <input type="hidden" name="action" value="unblock" />
-                                        <button type="submit" class="btn-edit">Mở khóa</button>
-                                    </form>
-                                </c:if>
+                            <td colspan="6" style="text-align: center; font-style: italic; color: #888;">
+                                Không tìm thấy người dùng nào.
                             </td>
                         </tr>
-                    </c:if>
-                </c:forEach>
+                    </c:when>
+                    <c:otherwise>
+                        <c:forEach var="user" items="${users}">
+                            <c:if test="${user.roleId != 0}">
+                                <tr>
+                                    <td>${user.name}</td>
+                                    <td>${user.email}</td>
+                                    <td>${user.phoneNumber}</td>
+                                    <td>${user.address}</td>
+                                    <td>${user.status ? "Hoạt động" : "Bị khóa"}</td>
+                                    <td>
+                                        <c:if test="${user.status}">
+                                            <form method="post" action="${pageContext.request.contextPath}/admin/users" style="display:inline;">
+                                                <input type="hidden" name="userId" value="${user.userId}" />
+                                                <input type="hidden" name="action" value="block" />
+                                                <button
+                                                        type="button"
+                                                        class="btn-delete"
+                                                        data-user-id="${user.userId}"
+                                                        onclick="showDeleteModalFromButton(this)">Khóa</button>
+                                            </form>
+                                        </c:if>
+                                        <c:if test="${!user.status}">
+                                            <form method="post" action="${pageContext.request.contextPath}/admin/users" style="display:inline;">
+                                                <input type="hidden" name="userId" value="${user.userId}" />
+                                                <input type="hidden" name="action" value="unblock" />
+                                                <button type="submit" class="btn-edit">Mở khóa</button>
+                                            </form>
+                                        </c:if>
+                                    </td>
+                                </tr>
+                            </c:if>
+                        </c:forEach>
+                    </c:otherwise>
+                </c:choose>
                 </tbody>
 
             </table>
         </div>
+        <c:if test="${totalPages > 1}">
+            <div class="pagination">
+                <c:if test="${currentPage > 1}">
+                    <a href="?page=${currentPage - 1}" class="arrow" title="Trang trước">&#60;</a>
+                </c:if>
+
+                <c:forEach var="i" begin="1" end="${totalPages}">
+                    <c:choose>
+                        <c:when test="${i == currentPage}">
+                            <span class="active">${i}</span>
+                        </c:when>
+                        <c:otherwise>
+                            <a href="?page=${i}">${i}</a>
+                        </c:otherwise>
+                    </c:choose>
+                </c:forEach>
+
+                <c:if test="${currentPage < totalPages}">
+                    <a href="?page=${currentPage + 1}" class="arrow" title="Trang sau">&#62;</a>
+                </c:if>
+            </div>
+        </c:if>
+
     </main>
 </section>
 

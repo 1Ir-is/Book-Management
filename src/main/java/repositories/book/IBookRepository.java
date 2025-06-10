@@ -11,5 +11,5 @@ public interface IBookRepository {
     boolean update(Book book);
     boolean delete(int maSach);
     List<Book> searchBooks(String keyword, int categoryId);
-
+    List<Book> searchByKeyword(String keyword);
 }

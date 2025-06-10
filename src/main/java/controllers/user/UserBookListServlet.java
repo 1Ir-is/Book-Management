@@ -19,9 +19,6 @@ public class UserBookListServlet extends HttpServlet {
     private final ICategoryService categoryService = new CategoryService();
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-//        List<Book> books = bookService.getAllBooks(); // Lấy tất cả sách từ DB
-//        req.setAttribute("books", books);
-//        req.getRequestDispatcher("views/user/book_list.jsp").forward(req, resp);
         req.setCharacterEncoding("UTF-8");
         resp.setCharacterEncoding("UTF-8");
 
@@ -37,14 +34,32 @@ public class UserBookListServlet extends HttpServlet {
             }
         }
 
-        List<Book> books;
-        if ((keyword != null && !keyword.trim().isEmpty()) || categoryId > 0) {
-            books = bookService.searchBooks(keyword, categoryId);
-        } else {
-            books = bookService.getAllBooks();
+        int booksPerPage = 12; // Number of books per page
+        int currentPage = 1;
+        try {
+            currentPage = Integer.parseInt(req.getParameter("page"));
+        } catch (NumberFormatException ignored) {
         }
 
-        req.setAttribute("books", books);
+        List<Book> allBooks;
+        if ((keyword != null && !keyword.trim().isEmpty()) || categoryId > 0) {
+            allBooks = bookService.searchBooks(keyword, categoryId);
+        } else {
+            allBooks = bookService.getAllBooks();
+        }
+
+        int totalBooks = allBooks.size();
+        int totalPages = (int) Math.ceil((double) totalBooks / booksPerPage);
+
+        int startIndex = (currentPage - 1) * booksPerPage;
+        int endIndex = Math.min(startIndex + booksPerPage, totalBooks);
+
+        List<Book> paginatedBooks = allBooks.subList(startIndex, endIndex);
+
+        req.setAttribute("books", paginatedBooks);
+        req.setAttribute("totalBooks", totalBooks);
+        req.setAttribute("totalPages", totalPages);
+        req.setAttribute("currentPage", currentPage);
         req.setAttribute("keyword", keyword);
         req.setAttribute("category", categoryIdStr);
         req.setAttribute("categories", categoryService.getAll());

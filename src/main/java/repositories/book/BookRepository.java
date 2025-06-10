@@ -160,4 +160,38 @@ public class BookRepository implements IBookRepository {
         }
         return books;
     }
+
+    @Override
+    public List<Book> searchByKeyword(String keyword) {
+        List<Book> result = new ArrayList<>();
+        String sql = "SELECT * FROM sach WHERE ten_sach LIKE ?";
+
+        try (Connection conn = JDBCUtils.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, "%" + keyword + "%");
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                int bookId = rs.getInt("ma_sach");
+                String bookName = rs.getString("ten_sach");
+                String author = rs.getString("tac_gia");
+                String publisher = rs.getString("nha_xuat_ban");
+                double price = rs.getDouble("gia");
+                String description = rs.getString("mo_ta");
+                int categoryId = rs.getInt("ma_danh_muc");
+                String imgUrl = rs.getString("img_url");
+                int publishYear = rs.getInt("nam_xuat_ban");
+
+                Book book = new Book(bookId, bookName, author, publisher, price, description, categoryId, imgUrl, publishYear);
+                result.add(book);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return result;
+    }
+
+
+
 }

@@ -34,6 +34,67 @@
         .toast-message.show {
             opacity: 1;
         }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 32px;
+            gap: 0;
+            background: #fff;
+            border-radius: 14px;
+            box-shadow: 0 2px 12px #0001;
+            padding: 18px 0;
+            min-width: 340px;
+        }
+        .pagination a,
+        .pagination span {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 42px;
+            height: 42px;
+            margin: 0 4px;
+            border-radius: 8px;
+            font-size: 1.25rem;
+            font-weight: 500;
+            color: #6c63ff;
+            background: transparent;
+            text-decoration: none;
+            border: none;
+            transition: background 0.2s, color 0.2s;
+            cursor: pointer;
+            user-select: none;
+        }
+        .pagination a:hover:not(.active):not(.disabled) {
+            background: #f3f3fa;
+        }
+        .pagination .active,
+        .pagination a.active {
+            color: #222;
+            font-weight: bold;
+            border-bottom: 2px solid #6c63ff;
+            background: transparent;
+            pointer-events: none;
+        }
+        .pagination .disabled {
+            color: #ccc;
+            cursor: default;
+            pointer-events: none;
+            background: transparent;
+        }
+        .pagination .arrow {
+            font-size: 1.4rem;
+            color: #6c63ff;
+            background: transparent;
+            border: none;
+            transition: color 0.2s;
+            padding: 0;
+        }
+        .pagination .arrow.disabled {
+            color: #e0e0e0;
+            cursor: default;
+        }
     </style>
 </head>
 <body>
@@ -80,6 +141,28 @@
             </c:otherwise>
         </c:choose>
     </div>
+    <c:if test="${totalPages > 1}">
+        <div class="pagination">
+            <c:if test="${currentPage > 1}">
+                <a href="?page=${currentPage - 1}&keyword=${keyword}&category=${category}" class="arrow" title="Trang trước">&#60;</a>
+            </c:if>
+
+            <c:forEach var="i" begin="1" end="${totalPages}">
+                <c:choose>
+                    <c:when test="${i == currentPage}">
+                        <span class="active">${i}</span>
+                    </c:when>
+                    <c:otherwise>
+                        <a href="?page=${i}&keyword=${keyword}&category=${category}">${i}</a>
+                    </c:otherwise>
+                </c:choose>
+            </c:forEach>
+
+            <c:if test="${currentPage < totalPages}">
+                <a href="?page=${currentPage + 1}&keyword=${keyword}&category=${category}" class="arrow" title="Trang sau">&#62;</a>
+            </c:if>
+        </div>
+    </c:if>
 </section>
 
 <div id="toast" class="toast-message">Đã thêm vào giỏ hàng!</div>

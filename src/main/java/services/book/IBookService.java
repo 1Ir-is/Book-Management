@@ -11,7 +11,7 @@ public interface IBookService {
     boolean updateBook(Book book);
     boolean deleteBook(int maSach);
     List<Book> searchBooks(String keyword, int categoryId);
-
+    List<Book> searchBooksByKeyword(String keyword);
 
 
 

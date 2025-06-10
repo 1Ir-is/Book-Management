@@ -1,3 +1,4 @@
+-- Tạo lại bảng
 CREATE TABLE IF NOT EXISTS vai_tro (
                                        ma_vai_tro INT PRIMARY KEY,
                                        ten_vai_tro VARCHAR(50)
@@ -66,4 +67,6 @@ CREATE TABLE IF NOT EXISTS chi_tiet_don_hang (
                                                  PRIMARY KEY (ma_don_hang, ma_sach),
     FOREIGN KEY (ma_don_hang) REFERENCES don_hang(ma_don_hang),
     FOREIGN KEY (ma_sach) REFERENCES sach(ma_sach)
+    ON DELETE CASCADE
     );
+

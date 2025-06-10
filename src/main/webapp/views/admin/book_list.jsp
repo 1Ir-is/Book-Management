@@ -339,6 +339,46 @@
             color: #e0e0e0;
             cursor: default;
         }
+
+        .search-form {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .search-form input {
+            padding: 0.5rem;
+            font-size: 1rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            width: 250px;
+            transition: border-color 0.3s ease-in-out;
+        }
+
+        .search-form input:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 5px rgba(52, 152, 219, 0.5);
+        }
+
+        .search-form button {
+            padding: 0.5rem 1rem;
+            font-size: 1rem;
+            font-weight: bold;
+            color: #fff;
+            background-color: #27ae60;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease-in-out, transform 0.2s ease-in-out;
+        }
+
+        .search-form button:hover {
+            background-color: #219150;
+            transform: scale(1.05);
+        }
+
         /* Responsive for mobile */
         @media screen and (max-width: 768px) {
             /* Thu hẹp khoảng cách nội dung */
@@ -476,13 +516,14 @@
                     </a>
                 </div>
             </div>
-            <c:set var="booksPerPage" value="5" />
-            <c:set var="currentPage" value="${param.page != null ? param.page : 1}" />
-            <c:set var="totalBooks" value="${fn:length(books)}" />
-            <c:set var="totalPages" value="${(totalBooks / booksPerPage) + (totalBooks % booksPerPage > 0 ? 1 : 0)}" />
-            <c:set var="startIndex" value="${(currentPage - 1) * booksPerPage}" />
-            <c:set var="endIndex" value="${startIndex + booksPerPage > totalBooks ? totalBooks : startIndex + booksPerPage}" />
-            <c:set var="paginatedBooks" value="${books.subList(startIndex, endIndex)}" />
+
+            <form class="search-form" method="get" action="${pageContext.request.contextPath}/admin/books" style="margin-bottom: 20px;">
+                <input type="hidden" name="action" value="search" />
+                <input type="text" name="keyword" placeholder="Tìm kiếm sách..." value="${searchKeyword != null ? searchKeyword : ''}" />
+                <button type="submit">Tìm kiếm</button>
+            </form>
+
+
             <div class="table-container">
                 <table class="data-table">
                     <thead>
@@ -499,59 +540,75 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <c:forEach var="book" items="${paginatedBooks}">
-                        <tr>
-                            <td>
-                                <c:choose>
-                                    <c:when test="${not empty book.imgUrl}">
-                                        <img class="book-img" src="${book.imgUrl}" alt="Ảnh sách" />
-                                    </c:when>
-                                    <c:otherwise>Chưa có ảnh</c:otherwise>
-                                </c:choose>
-                            </td>
-                            <td>${book.bookName}</td>
-                            <td>${book.author}</td>
-                            <td>${book.publisher}</td>
-                            <td>${book.publishYear}</td>
-                            <td>${book.price} VND</td>
-                            <td class="description-cell">
-                                <c:choose>
-                                    <c:when test="${fn:length(book.description) > 100}">
-                                        ${fn:substring(book.description, 0, 100)}...
-                                    </c:when>
-                                    <c:otherwise>${book.description}</c:otherwise>
-                                </c:choose>
-                            </td>
-                            <td>${categoryMap[book.categoryId]}</td>
-                            <td>
-                                <div class="action-buttons">
-                                    <a class="btn-edit" href="books?action=edit&id=${book.bookId}">Sửa</a>
-                                    <button class="btn-delete" onclick="showDeleteModal(${book.bookId})">Xóa</button>
-                                </div>
-                            </td>
-                        </tr>
-                    </c:forEach>
-                    </tbody>
-                </table>
-            </div>
-            <div class="pagination">
-                <c:if test="${currentPage > 1}">
-                    <a href="?page=${currentPage - 1}" class="arrow" title="Trang trước">&#60;</a>
-                </c:if>
-                <c:forEach var="i" begin="1" end="${totalPages}">
                     <c:choose>
-                        <c:when test="${i == currentPage}">
-                            <span class="active">${i}</span>
+                        <c:when test="${empty books}">
+                            <tr>
+                                <td colspan="9" style="text-align: center; font-style: italic; color: #888;">
+                                    Không tìm thấy kết quả nào.
+                                </td>
+                            </tr>
                         </c:when>
                         <c:otherwise>
-                            <a href="?page=${i}">${i}</a>
+                            <c:forEach var="book" items="${books}">
+                                <tr>
+                                    <td>
+                                        <c:choose>
+                                            <c:when test="${not empty book.imgUrl}">
+                                                <img class="book-img" src="${book.imgUrl}" alt="Ảnh sách" />
+                                            </c:when>
+                                            <c:otherwise>Chưa có ảnh</c:otherwise>
+                                        </c:choose>
+                                    </td>
+                                    <td>${book.bookName}</td>
+                                    <td>${book.author}</td>
+                                    <td>${book.publisher}</td>
+                                    <td>${book.publishYear}</td>
+                                    <td>${book.price} VND</td>
+                                    <td class="description-cell">
+                                        <c:choose>
+                                            <c:when test="${fn:length(book.description) > 100}">
+                                                ${fn:substring(book.description, 0, 100)}...
+                                            </c:when>
+                                            <c:otherwise>${book.description}</c:otherwise>
+                                        </c:choose>
+                                    </td>
+                                    <td>${categoryMap[book.categoryId]}</td>
+                                    <td>
+                                        <div class="action-buttons">
+                                            <a class="btn-edit" href="books?action=edit&id=${book.bookId}">Sửa</a>
+                                            <button class="btn-delete" onclick="showDeleteModal(${book.bookId})">Xóa</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </c:forEach>
                         </c:otherwise>
                     </c:choose>
-                </c:forEach>
-                <c:if test="${currentPage < totalPages}">
-                    <a href="?page=${currentPage + 1}" class="arrow" title="Trang sau">&#62;</a>
-                </c:if>
+                    </tbody>
+
+                </table>
             </div>
+            <c:if test="${totalPages > 1}">
+                <div class="pagination">
+                    <c:if test="${currentPage > 1}">
+                        <a href="?page=${currentPage - 1}" class="arrow" title="Trang trước">&#60;</a>
+                    </c:if>
+
+                    <c:forEach var="i" begin="1" end="${totalPages}">
+                        <c:choose>
+                            <c:when test="${i == currentPage}">
+                                <span class="active">${i}</span>
+                            </c:when>
+                            <c:otherwise>
+                                <a href="?page=${i}">${i}</a>
+                            </c:otherwise>
+                        </c:choose>
+                    </c:forEach>
+
+                    <c:if test="${currentPage < totalPages}">
+                        <a href="?page=${currentPage + 1}" class="arrow" title="Trang sau">&#62;</a>
+                    </c:if>
+                </div>
+            </c:if>
         </main>
     </section>
     <div id="deleteModal" class="modal" style="display:none;">

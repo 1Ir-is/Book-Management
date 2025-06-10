@@ -11,6 +11,7 @@ public class SMTPMailUtil {
     private static final String USERNAME = ConfigReader.get("mail.username");
     private static final String APP_PASSWORD = ConfigReader.get("mail.app_password");
 
+
     public static void sendEmail(String to, String subject, String htmlContent) throws MessagingException, UnsupportedEncodingException {
         Properties props = new Properties();
 

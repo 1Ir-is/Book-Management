@@ -91,9 +91,5 @@ public class AuthFilter implements Filter {
 
         chain.doFilter(request, response);
 
-        System.out.println("URI: " + uri);
-        System.out.println("Session ID: " + (session != null ? session.getId() : "null"));
-        System.out.println("User in session: " + (user != null ? user.getEmail() : "null"));
-
     }
 }
