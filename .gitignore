@@ -42,4 +42,4 @@ bin/
 .DS_Store
 
 # Ignore sensitive config file
-src/main/resources/config.properties
+resources/config.properties
